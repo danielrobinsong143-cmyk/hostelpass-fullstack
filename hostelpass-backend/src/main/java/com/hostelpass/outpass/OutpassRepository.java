@@ -12,12 +12,12 @@ import java.util.Optional;
 /**
  * Data access for OutpassRequest. Supports every read pattern the SDD Section 7
  * API list requires:
- *  - GET /outpass-requests/my            -> findByStudentId(...)
- *  - GET /outpass-requests?status=...    -> findByStatus(...)
- *  - GET /outpass-requests/search?...    -> JpaSpecificationExecutor (built in the
- *    service layer later, combining optional name/status/date-range filters)
- *  - existsByStudentIdAndStatus          -> enforces FR-18 (one PENDING request at
- *    a time per student) without loading full entities.
+ * - GET /outpass-requests/my -> findByStudentId(...)
+ * - GET /outpass-requests?status=... -> findByStatus(...)
+ * - GET /outpass-requests/search?... -> JpaSpecificationExecutor (built in the
+ * service layer later, combining optional name/status/date-range filters)
+ * - existsByStudentIdAndStatus -> enforces FR-18 (one PENDING request at
+ * a time per student) without loading full entities.
  */
 public interface OutpassRepository extends JpaRepository<OutpassRequest, Long>,
         JpaSpecificationExecutor<OutpassRequest> {
@@ -34,7 +34,7 @@ public interface OutpassRepository extends JpaRepository<OutpassRequest, Long>,
     // view/cancel another student's request by guessing its id).
     Optional<OutpassRequest> findByIdAndStudentId(Long id, Long studentId);
 
-    //Page<OutpassRequest> findByStatus(OutpassStatus status, Pageable pageable);
+    // Page<OutpassRequest> findByStatus(OutpassStatus status, Pageable pageable);
 
     Optional<OutpassRequest> findByPassCode(String passCode);
 
@@ -43,4 +43,6 @@ public interface OutpassRepository extends JpaRepository<OutpassRequest, Long>,
     long countByStudentId(Long studentId);
 
     long countByStudentIdAndStatus(Long studentId, OutpassStatus status);
+
+    long countByStatus(OutpassStatus status);
 }

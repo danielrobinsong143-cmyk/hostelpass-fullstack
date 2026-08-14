@@ -141,6 +141,31 @@ public class OutpassService {
         }
 
         @Transactional(readOnly = true)
+        public OutpassStatsResponse getStats() {
+
+                long total = outpassRepository.count();
+
+                long pending = outpassRepository.countByStatus(
+                                OutpassStatus.PENDING);
+
+                long approved = outpassRepository.countByStatus(
+                                OutpassStatus.APPROVED);
+
+                long denied = outpassRepository.countByStatus(
+                                OutpassStatus.DENIED);
+
+                long cancelled = outpassRepository.countByStatus(
+                                OutpassStatus.CANCELLED);
+
+                return new OutpassStatsResponse(
+                                total,
+                                pending,
+                                approved,
+                                denied,
+                                cancelled);
+        }
+
+        @Transactional(readOnly = true)
         public PageResponse<OutpassResponse> getRequests(
                         String search,
                         OutpassStatus status,

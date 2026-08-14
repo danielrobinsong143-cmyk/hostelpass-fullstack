@@ -1,26 +1,32 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getOutpassRequests } from "../services/outpassService";
+import { getOutpassStats } from "../services/outpassService";
 
 import "../styles/StaffDashboard.css";
 
 function StaffDashboard() {
   const navigate = useNavigate();
 
-  const [pendingCount, setPendingCount] = useState(0);
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    approved: 0,
+    denied: 0,
+    cancelled: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const loadPendingRequests = useCallback(async () => {
+  const loadStats = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
 
-      const response = await getOutpassRequests(0, 1, "", "PENDING");
+      const response = await getOutpassStats();
 
-      setPendingCount(response.data.totalElements ?? 0);
+      setStats(response.data);
     } catch (error) {
-      console.error("Failed to load pending requests:", error);
+      console.error("Failed to load dashboard statistics:", error);
       setError("Failed to load dashboard information.");
     } finally {
       setLoading(false);
@@ -29,11 +35,11 @@ function StaffDashboard() {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      void loadPendingRequests();
+      void loadStats();
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, [loadPendingRequests]);
+  }, [loadStats]);
 
   return (
     <div className="staff-dashboard">
@@ -53,7 +59,7 @@ function StaffDashboard() {
         <div className="message error">
           <p>{error}</p>
 
-          <button onClick={loadPendingRequests}>Try Again</button>
+          <button onClick={loadStats}>Try Again</button>
         </div>
       )}
 
@@ -61,9 +67,23 @@ function StaffDashboard() {
         <>
           <div className="staff-summary-grid">
             <div className="staff-summary-card">
-              <span className="summary-number">{pendingCount}</span>
+              <span className="summary-number">{stats.total}</span>
+              <span className="summary-title">Total Requests</span>
+            </div>
 
-              <span className="summary-title">Pending Requests</span>
+            <div className="staff-summary-card">
+              <span className="summary-number">{stats.pending}</span>
+              <span className="summary-title">Pending</span>
+            </div>
+
+            <div className="staff-summary-card">
+              <span className="summary-number">{stats.approved}</span>
+              <span className="summary-title">Approved</span>
+            </div>
+
+            <div className="staff-summary-card">
+              <span className="summary-number">{stats.denied}</span>
+              <span className="summary-title">Denied</span>
             </div>
           </div>
 
@@ -71,18 +91,18 @@ function StaffDashboard() {
             <div>
               <h2>Pending Outpass Requests</h2>
 
-              {pendingCount > 0 ? (
+              {stats.pending > 0 ? (
                 <p>
-                  There {pendingCount === 1 ? "is" : "are"} {pendingCount}{" "}
+                  There {stats.pending === 1 ? "is" : "are"} {stats.pending}{" "}
                   request
-                  {pendingCount === 1 ? "" : "s"} waiting for your review.
+                  {stats.pending === 1 ? "" : "s"} waiting for your review.
                 </p>
               ) : (
                 <p>There are currently no pending outpass requests.</p>
               )}
             </div>
 
-            {pendingCount > 0 && (
+            {stats.pending > 0 && (
               <button
                 className="view-requests-button"
                 onClick={() => navigate("/staff/requests")}

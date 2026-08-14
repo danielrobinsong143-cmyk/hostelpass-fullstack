@@ -82,6 +82,14 @@ public class OutpassController {
                                 outpassService.getMyStats(principal.getId()));
         }
 
+        @GetMapping("/stats")
+        @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
+        public ResponseEntity<OutpassStatsResponse> getStats() {
+
+                return ResponseEntity.ok(
+                                outpassService.getStats());
+        }
+
         @GetMapping
         @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
         public ResponseEntity<PageResponse<OutpassResponse>> getRequests(
