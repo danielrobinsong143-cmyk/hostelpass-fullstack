@@ -5,6 +5,8 @@ import com.hostelpass.exception.ResourceNotFoundException;
 import com.hostelpass.outpass.dto.OutpassCreateRequest;
 import com.hostelpass.outpass.dto.OutpassDecisionRequest;
 import com.hostelpass.outpass.dto.OutpassResponse;
+import com.hostelpass.outpass.dto.OutpassStatsResponse;
+
 import com.hostelpass.common.PageResponse;
 import com.hostelpass.staff.Staff;
 import com.hostelpass.staff.StaffRepository;
@@ -107,6 +109,35 @@ public class OutpassService {
                 return PageResponse.from(
                                 outpassRepository.findAll(finalSpecification, pageable)
                                                 .map(this::toResponse));
+        }
+
+        @Transactional(readOnly = true)
+        public OutpassStatsResponse getMyStats(Long studentId) {
+
+                long total = outpassRepository.countByStudentId(studentId);
+
+                long pending = outpassRepository.countByStudentIdAndStatus(
+                                studentId,
+                                OutpassStatus.PENDING);
+
+                long approved = outpassRepository.countByStudentIdAndStatus(
+                                studentId,
+                                OutpassStatus.APPROVED);
+
+                long denied = outpassRepository.countByStudentIdAndStatus(
+                                studentId,
+                                OutpassStatus.DENIED);
+
+                long cancelled = outpassRepository.countByStudentIdAndStatus(
+                                studentId,
+                                OutpassStatus.CANCELLED);
+
+                return new OutpassStatsResponse(
+                                total,
+                                pending,
+                                approved,
+                                denied,
+                                cancelled);
         }
 
         @Transactional(readOnly = true)

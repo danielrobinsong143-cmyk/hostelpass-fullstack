@@ -4,6 +4,7 @@ import com.hostelpass.common.PageResponse;
 import com.hostelpass.outpass.dto.OutpassCreateRequest;
 import com.hostelpass.outpass.dto.OutpassDecisionRequest;
 import com.hostelpass.outpass.dto.OutpassResponse;
+import com.hostelpass.outpass.dto.OutpassStatsResponse;
 import com.hostelpass.security.UserPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,82 +47,91 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class OutpassController {
 
-    private final OutpassService outpassService;
+        private final OutpassService outpassService;
 
-    @PostMapping
-    @PreAuthorize("hasRole('STUDENT')")
-    public ResponseEntity<OutpassResponse> create(@AuthenticationPrincipal UserPrincipal principal,
-            @Valid @RequestBody OutpassCreateRequest request) {
-        OutpassResponse response = outpassService.createRequest(principal.getId(), request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
+        @PostMapping
+        @PreAuthorize("hasRole('STUDENT')")
+        public ResponseEntity<OutpassResponse> create(@AuthenticationPrincipal UserPrincipal principal,
+                        @Valid @RequestBody OutpassCreateRequest request) {
+                OutpassResponse response = outpassService.createRequest(principal.getId(), request);
+                return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        }
 
-    @GetMapping("/my")
-    @PreAuthorize("hasRole('STUDENT')")
-    public ResponseEntity<PageResponse<OutpassResponse>> getMyRequests(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false) OutpassStatus status,
-            @PageableDefault(size = 20, sort = "submittedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        @GetMapping("/my")
+        @PreAuthorize("hasRole('STUDENT')")
+        public ResponseEntity<PageResponse<OutpassResponse>> getMyRequests(
+                        @AuthenticationPrincipal UserPrincipal principal,
+                        @RequestParam(required = false) String search,
+                        @RequestParam(required = false) OutpassStatus status,
+                        @PageableDefault(size = 20, sort = "submittedAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        return ResponseEntity.ok(
-                outpassService.getMyRequests(
-                        principal.getId(),
-                        search,
-                        status,
-                        pageable));
-    }
+                return ResponseEntity.ok(
+                                outpassService.getMyRequests(
+                                                principal.getId(),
+                                                search,
+                                                status,
+                                                pageable));
+        }
 
-    @GetMapping
-    @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
-    public ResponseEntity<PageResponse<OutpassResponse>> getRequests(
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false) OutpassStatus status,
-            @PageableDefault(size = 20, sort = "submittedAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        @GetMapping("/my/stats")
+        @PreAuthorize("hasRole('STUDENT')")
+        public ResponseEntity<OutpassStatsResponse> getMyStats(
+                        @AuthenticationPrincipal UserPrincipal principal) {
 
-        return ResponseEntity.ok(
-                outpassService.getRequests(search, status, pageable));
-    }
+                return ResponseEntity.ok(
+                                outpassService.getMyStats(principal.getId()));
+        }
 
-    @PatchMapping("/{id}/approve")
-    @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
-    public ResponseEntity<OutpassResponse> approve(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @PathVariable Long id,
-            @Valid @RequestBody OutpassDecisionRequest request) {
+        @GetMapping
+        @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
+        public ResponseEntity<PageResponse<OutpassResponse>> getRequests(
+                        @RequestParam(required = false) String search,
+                        @RequestParam(required = false) OutpassStatus status,
+                        @PageableDefault(size = 20, sort = "submittedAt", direction = Sort.Direction.ASC) Pageable pageable) {
 
-        return ResponseEntity.ok(
-                outpassService.approveRequest(
-                        principal.getId(),
-                        id,
-                        request));
-    }
+                return ResponseEntity.ok(
+                                outpassService.getRequests(search, status, pageable));
+        }
 
-    @PatchMapping("/{id}/deny")
-    @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
-    public ResponseEntity<OutpassResponse> deny(
-            @AuthenticationPrincipal UserPrincipal principal,
-            @PathVariable Long id,
-            @Valid @RequestBody OutpassDecisionRequest request) {
+        @PatchMapping("/{id}/approve")
+        @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
+        public ResponseEntity<OutpassResponse> approve(
+                        @AuthenticationPrincipal UserPrincipal principal,
+                        @PathVariable Long id,
+                        @Valid @RequestBody OutpassDecisionRequest request) {
 
-        return ResponseEntity.ok(
-                outpassService.denyRequest(
-                        principal.getId(),
-                        id,
-                        request));
-    }
+                return ResponseEntity.ok(
+                                outpassService.approveRequest(
+                                                principal.getId(),
+                                                id,
+                                                request));
+        }
 
-    @GetMapping("/my/{id}")
-    @PreAuthorize("hasRole('STUDENT')")
-    public ResponseEntity<OutpassResponse> getMyRequestById(@AuthenticationPrincipal UserPrincipal principal,
-            @PathVariable Long id) {
-        return ResponseEntity.ok(outpassService.getMyRequestById(principal.getId(), id));
-    }
+        @PatchMapping("/{id}/deny")
+        @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
+        public ResponseEntity<OutpassResponse> deny(
+                        @AuthenticationPrincipal UserPrincipal principal,
+                        @PathVariable Long id,
+                        @Valid @RequestBody OutpassDecisionRequest request) {
 
-    @PatchMapping("/{id}/cancel")
-    @PreAuthorize("hasRole('STUDENT')")
-    public ResponseEntity<OutpassResponse> cancel(@AuthenticationPrincipal UserPrincipal principal,
-            @PathVariable Long id) {
-        return ResponseEntity.ok(outpassService.cancelRequest(principal.getId(), id));
-    }
+                return ResponseEntity.ok(
+                                outpassService.denyRequest(
+                                                principal.getId(),
+                                                id,
+                                                request));
+        }
+
+        @GetMapping("/my/{id}")
+        @PreAuthorize("hasRole('STUDENT')")
+        public ResponseEntity<OutpassResponse> getMyRequestById(@AuthenticationPrincipal UserPrincipal principal,
+                        @PathVariable Long id) {
+                return ResponseEntity.ok(outpassService.getMyRequestById(principal.getId(), id));
+        }
+
+        @PatchMapping("/{id}/cancel")
+        @PreAuthorize("hasRole('STUDENT')")
+        public ResponseEntity<OutpassResponse> cancel(@AuthenticationPrincipal UserPrincipal principal,
+                        @PathVariable Long id) {
+                return ResponseEntity.ok(outpassService.cancelRequest(principal.getId(), id));
+        }
 }
