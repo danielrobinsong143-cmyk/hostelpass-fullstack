@@ -17,9 +17,18 @@ function MyRequests() {
   const [totalElements, setTotalElements] = useState(0);
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState("");
 
   const pageSize = 20;
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 350);
+
+    return () => window.clearTimeout(timer);
+  }, [search]);
 
   const loadRequests = useCallback(async () => {
     try {
@@ -29,7 +38,7 @@ function MyRequests() {
       const response = await getMyOutpassRequests(
         currentPage,
         pageSize,
-        search,
+        debouncedSearch,
         status,
       );
 
@@ -47,7 +56,7 @@ function MyRequests() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, search, status]);
+  }, [currentPage, debouncedSearch, status]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
