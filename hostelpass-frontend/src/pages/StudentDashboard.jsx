@@ -1,13 +1,24 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/authContextDefinition";
-import { getMyOutpassRequests } from "../services/outpassService";
+import {
+  getMyOutpassRequests,
+  getMyOutpassStats,
+} from "../services/outpassService";
 import "../styles/StudentDashboard.css";
 
 function StudentDashboard() {
   const { principal } = useContext(AuthContext);
 
   const [outpassRequests, setOutpassRequests] = useState([]);
+  const [stats, setStats] = useState({
+    total: 0,
+    pending: 0,
+    approved: 0,
+    denied: 0,
+    cancelled: 0,
+  });
   const [loading, setLoading] = useState(true);
+
   const [error, setError] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
 
@@ -16,11 +27,14 @@ function StudentDashboard() {
       try {
         setLoading(true);
 
-        const response = await getMyOutpassRequests();
+        const [requestsResponse, statsResponse] = await Promise.all([
+          getMyOutpassRequests(),
+          getMyOutpassStats(),
+        ]);
 
-        //console.log("Outpass API Response:", response.data);
+        setOutpassRequests(requestsResponse.data.content || []);
+        setStats(statsResponse.data);
 
-        setOutpassRequests(response.data.content || []);
       } catch (error) {
         console.error("Failed to fetch outpass requests:", error);
         setError("Failed to load outpass requests.");
@@ -32,19 +46,19 @@ function StudentDashboard() {
     fetchOutpassRequests();
   }, []);
 
-  const totalRequests = outpassRequests.length;
+  // const totalRequests = outpassRequests.length;
 
-  const approvedRequests = outpassRequests.filter(
-    (request) => request.status === "APPROVED",
-  ).length;
+  // const approvedRequests = outpassRequests.filter(
+  //   (request) => request.status === "APPROVED",
+  // ).length;
 
-  const pendingRequests = outpassRequests.filter(
-    (request) => request.status === "PENDING",
-  ).length;
+  // const pendingRequests = outpassRequests.filter(
+  //   (request) => request.status === "PENDING",
+  // ).length;
 
-  const deniedRequests = outpassRequests.filter(
-    (request) => request.status === "DENIED",
-  ).length;
+  // const deniedRequests = outpassRequests.filter(
+  //   (request) => request.status === "DENIED",
+  // ).length;
 
   const formatDate = (dateTime) => {
     if (!dateTime) return "-";
@@ -88,22 +102,22 @@ function StudentDashboard() {
           {/* Summary Cards */}
           <div className="summary-grid">
             <div className="summary-card">
-              <span className="summary-number">{totalRequests}</span>
+              <span className="summary-number">{stats.total}</span>
               <span className="summary-title">Total Requests</span>
             </div>
 
             <div className="summary-card">
-              <span className="summary-number">{approvedRequests}</span>
+              <span className="summary-number">{stats.approved}</span>
               <span className="summary-title">Approved</span>
             </div>
 
             <div className="summary-card">
-              <span className="summary-number">{pendingRequests}</span>
+              <span className="summary-number">{stats.pending}</span>
               <span className="summary-title">Pending</span>
             </div>
 
             <div className="summary-card">
-              <span className="summary-number">{deniedRequests}</span>
+              <span className="summary-number">{stats.denied}</span>
               <span className="summary-title">Denied</span>
             </div>
           </div>

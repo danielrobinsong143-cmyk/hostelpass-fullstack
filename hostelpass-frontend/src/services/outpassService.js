@@ -61,3 +61,7 @@ export const denyOutpassRequest = async (id, remark) => {
 export const getOutpassStats = async () => {
   return api.get("/outpass-requests/stats");
 };
+
+export const getMyOutpassStats = async () => {
+  return api.get("/outpass-requests/my/stats");
+};
