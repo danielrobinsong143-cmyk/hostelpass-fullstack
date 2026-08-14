@@ -242,40 +242,6 @@ function StaffRequests() {
         onPageChange={handlePageChange}
       />
 
-      {/* Pagination
-      {totalPages > 1 && (
-        <div className="pagination">
-          <button
-            className="pagination-button"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 0}
-          >
-            ← Previous
-          </button>
-
-          <div className="pagination-pages">
-            {Array.from({ length: totalPages }, (_, index) => (
-              <button
-                key={index}
-                className={`pagination-button ${
-                  currentPage === index ? "active" : ""
-                }`}
-                onClick={() => handlePageChange(index)}
-              >
-                {index + 1}
-              </button>
-            ))}
-          </div>
-
-          <button
-            className="pagination-button"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages - 1}
-          >
-            Next →
-          </button>
-        </div>
-      )} */}
       {selectedRequest && (
         <div className="request-modal-overlay">
           <div className="request-modal">
