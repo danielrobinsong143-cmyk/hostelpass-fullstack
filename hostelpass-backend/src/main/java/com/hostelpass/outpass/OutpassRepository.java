@@ -39,4 +39,8 @@ public interface OutpassRepository extends JpaRepository<OutpassRequest, Long>,
     Optional<OutpassRequest> findByPassCode(String passCode);
 
     boolean existsByStudentIdAndStatus(Long studentId, OutpassStatus status);
+
+    long countByStudentId(Long studentId);
+
+    long countByStudentIdAndStatus(Long studentId, OutpassStatus status);
 }
