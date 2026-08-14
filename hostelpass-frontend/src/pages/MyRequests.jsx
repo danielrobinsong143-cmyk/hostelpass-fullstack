@@ -11,7 +11,6 @@ function MyRequests() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
@@ -20,7 +19,13 @@ function MyRequests() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState("");
 
+  const [selectedRequest, setSelectedRequest] = useState(null);
+
   const pageSize = 20;
+
+  /* ================================
+     SEARCH DEBOUNCE
+     ================================ */
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -30,9 +35,13 @@ function MyRequests() {
     return () => window.clearTimeout(timer);
   }, [search]);
 
+  /* ================================
+     LOAD REQUESTS
+     ================================ */
+
   const loadRequests = useCallback(async () => {
     try {
-      //setLoading(true);
+      setLoading(true);
       setError("");
 
       const response = await getMyOutpassRequests(
@@ -59,12 +68,12 @@ function MyRequests() {
   }, [currentPage, debouncedSearch, status]);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      void loadRequests();
-    }, 0);
-
-    return () => window.clearTimeout(timer);
+    void loadRequests();
   }, [loadRequests]);
+
+  /* ================================
+     CANCEL REQUEST
+     ================================ */
 
   const handleCancel = async (id) => {
     const confirmed = window.confirm(
@@ -77,6 +86,8 @@ function MyRequests() {
 
     try {
       await cancelOutpassRequest(id);
+
+      setSelectedRequest(null);
 
       alert("Outpass request cancelled successfully.");
 
@@ -96,13 +107,27 @@ function MyRequests() {
     }
   };
 
+  /* ================================
+     DATE FORMAT
+     ================================ */
+
   const formatDateTime = (dateTime) => {
     if (!dateTime) {
       return "—";
     }
 
-    return new Date(dateTime).toLocaleString();
+    return new Date(dateTime).toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
+
+  /* ================================
+     STATUS CLASS
+     ================================ */
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -121,29 +146,56 @@ function MyRequests() {
     }
   };
 
-  // Change page
+  /* ================================
+     PAGINATION
+     ================================ */
+
   const handlePageChange = (page) => {
     if (page < 0 || page >= totalPages) {
       return;
     }
 
     setCurrentPage(page);
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
+
+  /* ================================
+     LOADING
+     ================================ */
 
   if (loading) {
     return (
       <div className="my-requests-page">
-        <h1>My Outpass Requests</h1>
+        <div className="requests-header">
+          <div>
+            <p className="requests-label">OUTPASS REQUESTS</p>
+            <h1>My Outpass Requests</h1>
+            <p>Track the status of your outpass applications.</p>
+          </div>
+        </div>
 
         <div className="requests-message">Loading your requests...</div>
       </div>
     );
   }
 
+  /* ================================
+     ERROR
+     ================================ */
+
   if (error) {
     return (
       <div className="my-requests-page">
-        <h1>My Outpass Requests</h1>
+        <div className="requests-header">
+          <div>
+            <p className="requests-label">OUTPASS REQUESTS</p>
+            <h1>My Outpass Requests</h1>
+            <p>Track the status of your outpass applications.</p>
+          </div>
+        </div>
 
         <div className="requests-error">
           <p>{error}</p>
@@ -156,28 +208,43 @@ function MyRequests() {
 
   return (
     <div className="my-requests-page">
+      {/* ================================
+          HEADER
+          ================================ */}
+
       <div className="requests-header">
         <div>
+          <p className="requests-label">OUTPASS REQUESTS</p>
+
           <h1>My Outpass Requests</h1>
+
           <p>Track the status of your outpass applications.</p>
         </div>
 
         <div className="request-count">
-          {totalElements}
-          <span>Requests</span>
+          <strong>{totalElements}</strong>
+          <span>All Requests</span>
         </div>
       </div>
 
+      {/* ================================
+          SEARCH + FILTER
+          ================================ */}
+
       <div className="request-filters">
-        <input
-          type="text"
-          placeholder="Search by pass code, place, or reason..."
-          value={search}
-          onChange={(event) => {
-            setSearch(event.target.value);
-            setCurrentPage(0);
-          }}
-        />
+        <div className="search-wrapper">
+          <span className="search-icon">⌕</span>
+
+          <input
+            type="text"
+            placeholder="Search by pass code, place, or reason..."
+            value={search}
+            onChange={(event) => {
+              setSearch(event.target.value);
+              setCurrentPage(0);
+            }}
+          />
+        </div>
 
         <select
           value={status}
@@ -194,6 +261,10 @@ function MyRequests() {
         </select>
       </div>
 
+      {/* ================================
+          EMPTY
+          ================================ */}
+
       {requests.length === 0 ? (
         <div className="empty-requests">
           <h2>No Outpass Requests</h2>
@@ -201,22 +272,30 @@ function MyRequests() {
           <p>You haven't submitted any outpass requests yet.</p>
         </div>
       ) : (
+        /* ================================
+           REQUEST LIST
+           ================================ */
+
         <div className="my-request-list">
           {requests.map((request) => (
             <div className="my-request-card" key={request.id}>
+              {/* Card Header */}
+
               <div className="my-request-header">
                 <div>
                   <h2>{request.passCode}</h2>
 
-                  <span
-                    className={`status-badge ${getStatusClass(request.status)}`}
-                  >
-                    {request.status}
-                  </span>
+                  <span className="request-number">Request #{request.id}</span>
                 </div>
 
-                <span className="request-number">Request #{request.id}</span>
+                <span
+                  className={`status-badge ${getStatusClass(request.status)}`}
+                >
+                  {request.status}
+                </span>
               </div>
+
+              {/* Main Information */}
 
               <div className="request-information">
                 <div className="info-item">
@@ -229,11 +308,6 @@ function MyRequests() {
                   <strong>{request.purpose}</strong>
                 </div>
 
-                <div className="info-item full">
-                  <span>Reason</span>
-                  <strong>{request.reason}</strong>
-                </div>
-
                 <div className="info-item">
                   <span>Departure</span>
                   <strong>{formatDateTime(request.departureAt)}</strong>
@@ -243,47 +317,27 @@ function MyRequests() {
                   <span>Return</span>
                   <strong>{formatDateTime(request.returnAt)}</strong>
                 </div>
-
-                <div className="info-item">
-                  <span>Submitted</span>
-                  <strong>{formatDateTime(request.submittedAt)}</strong>
-                </div>
               </div>
 
-              {(request.decidedByStaffName || request.decisionRemark) && (
-                <div className="decision-section">
-                  <h3>Staff Decision</h3>
+              {/* Actions */}
 
-                  {request.decidedByStaffName && (
-                    <p>
-                      <strong>Decided By:</strong> {request.decidedByStaffName}
-                    </p>
-                  )}
-
-                  {request.decisionRemark && (
-                    <p>
-                      <strong>Remark:</strong> {request.decisionRemark}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {request.status === "PENDING" && (
-                <div className="request-footer">
-                  <button
-                    className="cancel-button"
-                    onClick={() => handleCancel(request.id)}
-                  >
-                    Cancel Request
-                  </button>
-                </div>
-              )}
+              <div className="request-actions">
+                <button
+                  className="details-button"
+                  onClick={() => setSelectedRequest(request)}
+                >
+                  View Details
+                </button>
+              </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Pagination */}
+      {/* ================================
+          PAGINATION
+          ================================ */}
+
       {totalPages > 1 && (
         <div className="pagination">
           <button
@@ -315,6 +369,112 @@ function MyRequests() {
           >
             Next →
           </button>
+        </div>
+      )}
+
+      {/* ================================
+          DETAILS MODAL
+          ================================ */}
+
+      {selectedRequest && (
+        <div className="modal-overlay" onClick={() => setSelectedRequest(null)}>
+          <div
+            className="details-modal"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {/* Modal Header */}
+
+            <div className="modal-header">
+              <div>
+                <h2>{selectedRequest.passCode}</h2>
+
+                <span>Request #{selectedRequest.id}</span>
+              </div>
+
+              <button
+                className="close-button"
+                onClick={() => setSelectedRequest(null)}
+              >
+                ×
+              </button>
+            </div>
+
+            {/* Status */}
+
+            <div className="modal-status">
+              <span
+                className={`status-badge ${getStatusClass(
+                  selectedRequest.status,
+                )}`}
+              >
+                {selectedRequest.status}
+              </span>
+            </div>
+
+            {/* Details */}
+
+            <div className="modal-details">
+              <div>
+                <span>PLACE OF VISIT</span>
+                <strong>{selectedRequest.placeOfVisit}</strong>
+              </div>
+
+              <div>
+                <span>PURPOSE</span>
+                <strong>{selectedRequest.purpose}</strong>
+              </div>
+
+              <div className="modal-full">
+                <span>REASON</span>
+                <strong>{selectedRequest.reason || "—"}</strong>
+              </div>
+
+              <div>
+                <span>DEPARTURE</span>
+                <strong>{formatDateTime(selectedRequest.departureAt)}</strong>
+              </div>
+
+              <div>
+                <span>RETURN</span>
+                <strong>{formatDateTime(selectedRequest.returnAt)}</strong>
+              </div>
+
+              <div>
+                <span>SUBMITTED</span>
+                <strong>{formatDateTime(selectedRequest.submittedAt)}</strong>
+              </div>
+
+              <div>
+                <span>DECIDED BY</span>
+                <strong>{selectedRequest.decidedByStaffName || "—"}</strong>
+              </div>
+
+              <div className="modal-full">
+                <span>DECISION REMARK</span>
+                <strong>{selectedRequest.decisionRemark || "—"}</strong>
+              </div>
+            </div>
+
+            {/* Cancel */}
+
+            {selectedRequest.status === "PENDING" && (
+              <button
+                className="modal-cancel-button"
+                onClick={() => handleCancel(selectedRequest.id)}
+              >
+                Cancel Request
+              </button>
+            )}
+
+            {/* Close */}
+
+            <button
+              className="student-modal-close-button"
+              onClick={() => setSelectedRequest(null)}
+            >
+              Close
+            </button>
+          </div>
         </div>
       )}
     </div>
