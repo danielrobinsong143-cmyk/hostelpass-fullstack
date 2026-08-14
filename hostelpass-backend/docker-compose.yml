@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: hostelpass-mysql-dev
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: hostelpass_dev
+      MYSQL_USER: hostelpass_user
+      MYSQL_PASSWORD: hostelpass_pass
+      MYSQL_ROOT_PASSWORD: root_dev_only
+    ports:
+      - "3306:3306"
+    volumes:
+      - hostelpass_mysql_data:/var/lib/mysql
+
+volumes:
+  hostelpass_mysql_data:

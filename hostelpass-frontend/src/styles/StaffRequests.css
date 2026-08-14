@@ -1,0 +1,302 @@
+/* ================================
+   STAFF REQUESTS PAGE
+================================ */
+
+.staff-requests-page {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: #111827;
+}
+
+/* ================================
+   HEADER
+================================ */
+
+.staff-requests-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 35px;
+}
+
+.staff-requests-header h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.staff-requests-header p {
+  margin-top: 8px;
+  color: #6b7280;
+}
+
+/* ================================
+   REQUEST COUNT
+================================ */
+
+.request-count {
+  min-width: 90px;
+  padding: 14px 22px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+
+  text-align: center;
+  font-size: 28px;
+  font-weight: 700;
+
+  color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.request-count span {
+  display: block;
+  margin-top: 4px;
+
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+/* ================================
+   REQUEST LIST
+================================ */
+
+.staff-request-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ================================
+   REQUEST CARD
+================================ */
+
+.staff-request-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 28px;
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.staff-request-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+}
+
+/* ================================
+   CARD HEADER
+================================ */
+
+.request-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.request-card-header h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+}
+
+.request-card-header span {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* ================================
+   STATUS
+================================ */
+
+.pending-badge {
+  padding: 6px 12px;
+
+  border-radius: 999px;
+
+  background: #fef3c7;
+  color: #92400e !important;
+
+  font-size: 12px !important;
+  font-weight: 700;
+}
+
+/* ================================
+   DETAILS
+================================ */
+
+.request-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 24px 40px;
+
+  padding: 25px 0;
+}
+
+.request-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.request-detail span {
+  font-size: 12px;
+  font-weight: 600;
+
+  color: #94a3b8;
+
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+}
+
+.request-detail strong {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* ================================
+   ACTIONS
+================================ */
+
+.request-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.approve-button,
+.deny-button {
+  border: none;
+
+  padding: 12px 22px;
+
+  border-radius: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.approve-button {
+  background: #16a34a;
+  color: white;
+}
+
+.approve-button:hover {
+  background: #15803d;
+}
+
+.deny-button {
+  background: #dc2626;
+  color: white;
+}
+
+.deny-button:hover {
+  background: #b91c1c;
+}
+
+/* ================================
+   MESSAGES
+================================ */
+
+.request-message {
+  padding: 50px 30px;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+
+  border-radius: 16px;
+
+  text-align: center;
+
+  color: #6b7280;
+}
+
+.request-message h2 {
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+.request-message p {
+  margin: 0;
+}
+
+.request-message.error {
+  color: #dc2626;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.request-message button {
+  margin-top: 15px;
+
+  padding: 10px 18px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #4f46e5;
+  color: white;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 768px) {
+  .staff-requests-page {
+    padding: 24px 16px;
+  }
+
+  .staff-requests-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .request-count {
+    width: 100%;
+  }
+
+  .request-details {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .full-width {
+    grid-column: auto;
+  }
+
+  .request-actions {
+    flex-direction: column;
+  }
+
+  .approve-button,
+  .deny-button {
+    width: 100%;
+  }
+}

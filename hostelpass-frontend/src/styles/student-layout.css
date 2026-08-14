@@ -1,0 +1,80 @@
+.student-layout {
+  min-height: 100vh;
+  display: flex;
+  background: #f5f7fb;
+}
+
+.student-main {
+  flex: 1;
+  padding: 30px;
+  margin-left: 240px;
+}
+
+.student-sidebar {
+  width: 240px;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+
+  background: #111827;
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-logo {
+  padding: 25px 20px;
+  border-bottom: 1px solid #374151;
+}
+
+.sidebar-logo h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 12px;
+  gap: 8px;
+}
+
+.sidebar-nav a {
+  color: #d1d5db;
+  text-decoration: none;
+
+  padding: 13px 15px;
+  border-radius: 8px;
+
+  font-size: 15px;
+}
+
+.sidebar-nav a:hover {
+  background: #1f2937;
+  color: white;
+}
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 20px 12px;
+}
+
+.sidebar-bottom button {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #d1d5db;
+
+  padding: 13px 15px;
+  border-radius: 8px;
+
+  text-align: left;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.sidebar-bottom button:hover {
+  background: #1f2937;
+  color: white;
+}

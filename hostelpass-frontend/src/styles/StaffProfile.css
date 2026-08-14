@@ -1,0 +1,120 @@
+.staff-profile-page {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* =========================
+   HEADER
+   ========================= */
+
+.staff-profile-header {
+  margin-bottom: 32px;
+}
+
+.staff-profile-header > span {
+  display: block;
+  margin-bottom: 10px;
+
+  color: #4f46e5;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.staff-profile-header h1 {
+  margin: 0 0 8px;
+
+  color: #111827;
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.staff-profile-header p {
+  margin: 0;
+
+  color: #64748b;
+  font-size: 16px;
+}
+
+/* =========================
+   PROFILE CARD
+   ========================= */
+
+.staff-profile-card {
+  margin-bottom: 24px;
+  padding: 30px;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.staff-profile-card h2 {
+  margin: 0 0 24px;
+
+  color: #111827;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* =========================
+   GRID
+   ========================= */
+
+.staff-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.staff-profile-item {
+  padding: 18px;
+
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.staff-profile-item span {
+  display: block;
+  margin-bottom: 8px;
+
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.staff-profile-item strong {
+  display: block;
+
+  color: #111827;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 700px) {
+  .staff-profile-page {
+    padding: 0 16px;
+  }
+
+  .staff-profile-header h1 {
+    font-size: 30px;
+  }
+
+  .staff-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staff-profile-card {
+    padding: 20px;
+  }
+}

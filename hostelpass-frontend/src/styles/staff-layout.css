@@ -1,0 +1,209 @@
+/* =========================================
+   STAFF LAYOUT
+   ========================================= */
+
+.staff-layout {
+  min-height: 100vh;
+  display: flex;
+  background: #f5f7fb;
+}
+
+
+/* =========================================
+   MAIN CONTENT
+   ========================================= */
+
+.staff-main {
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  margin-left: 240px;
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   STAFF SIDEBAR
+   ========================================= */
+
+.staff-layout .staff-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 240px;
+  height: 100vh;
+
+  background: #111827;
+  color: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+
+/* =========================================
+   SIDEBAR BRAND
+   ========================================= */
+
+.staff-layout .staff-sidebar .sidebar-brand {
+  height: 78px;
+
+  display: flex;
+  align-items: center;
+
+  padding: 0 24px;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  color: #ffffff;
+
+  border-bottom: 1px solid #263244;
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   SIDEBAR NAVIGATION
+   ========================================= */
+
+.staff-layout .staff-sidebar .sidebar-nav {
+  display: flex;
+  flex-direction: column;
+
+  padding: 20px 12px;
+  gap: 6px;
+}
+
+
+/* =========================================
+   SIDEBAR LINKS
+   ========================================= */
+
+.staff-layout .staff-sidebar a {
+  display: flex;
+  align-items: center;
+
+  min-height: 46px;
+
+  padding: 0 18px;
+
+  border-radius: 8px;
+
+  text-decoration: none;
+
+  color: #cbd5e1;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.staff-layout .staff-sidebar a:hover {
+  background: #1e293b;
+  color: #ffffff;
+}
+
+
+/* =========================================
+   ACTIVE LINK
+   ========================================= */
+
+.staff-layout .staff-sidebar a.active {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+
+/* =========================================
+   LOGOUT
+   ========================================= */
+
+.staff-layout .staff-sidebar .sidebar-logout {
+  margin-top: auto;
+
+  padding: 20px 12px;
+
+  border-top: 1px solid #263244;
+}
+
+
+.staff-layout .staff-sidebar .sidebar-logout button {
+  width: 100%;
+  min-height: 46px;
+
+  padding: 0 18px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #cbd5e1;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+
+.staff-layout .staff-sidebar .sidebar-logout button:hover {
+  background: #1e293b;
+  color: #ffffff;
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 800px) {
+  .staff-layout .staff-sidebar {
+    width: 200px;
+  }
+
+  .staff-main {
+    margin-left: 200px;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .staff-layout .staff-sidebar {
+    position: relative;
+
+    width: 100%;
+    height: auto;
+  }
+
+  .staff-layout {
+    flex-direction: column;
+  }
+
+  .staff-main {
+    margin-left: 0;
+  }
+
+  .staff-layout .staff-sidebar .sidebar-nav {
+    padding-bottom: 10px;
+  }
+
+  .staff-layout .staff-sidebar .sidebar-logout {
+    margin-top: 0;
+  }
+}
