@@ -6,6 +6,7 @@ import {
 } from "../services/outpassService";
 
 import "../styles/StaffRequests.css";
+import Pagination from "../components/Pagination";
 
 function StaffRequests() {
   const [requests, setRequests] = useState([]);
@@ -235,7 +236,13 @@ function StaffRequests() {
         </div>
       )}
 
-      {/* Pagination */}
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
+
+      {/* Pagination
       {totalPages > 1 && (
         <div className="pagination">
           <button
@@ -268,7 +275,7 @@ function StaffRequests() {
             Next →
           </button>
         </div>
-      )}
+      )} */}
       {selectedRequest && (
         <div className="request-modal-overlay">
           <div className="request-modal">
