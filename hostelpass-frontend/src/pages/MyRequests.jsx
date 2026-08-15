@@ -20,6 +20,7 @@ function MyRequests() {
   const [status, setStatus] = useState("");
 
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [cancelRequestId, setCancelRequestId] = useState(null);
 
   const pageSize = 20;
 
@@ -76,34 +77,20 @@ function MyRequests() {
      ================================ */
 
   const handleCancel = async (id) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to cancel this outpass request?",
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
     try {
       await cancelOutpassRequest(id);
-
-      setSelectedRequest(null);
-
-      alert("Outpass request cancelled successfully.");
 
       if (requests.length === 1 && currentPage > 0) {
         setCurrentPage(currentPage - 1);
       } else {
         await loadRequests();
       }
-    } catch (error) {
-      console.error("Failed to cancel request:", error);
 
-      if (error.response?.data?.message) {
-        alert(error.response.data.message);
-      } else {
-        alert("Failed to cancel outpass request.");
-      }
+      setSelectedRequest(null);
+      setCancelRequestId(null);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to cancel outpass request.");
     }
   };
 
@@ -460,7 +447,7 @@ function MyRequests() {
             {selectedRequest.status === "PENDING" && (
               <button
                 className="modal-cancel-button"
-                onClick={() => handleCancel(selectedRequest.id)}
+                onClick={() => setCancelRequestId(selectedRequest.id)}
               >
                 Cancel Request
               </button>
@@ -474,6 +461,64 @@ function MyRequests() {
             >
               Close
             </button>
+          </div>
+        </div>
+      )}
+      {cancelRequestId && (
+        <div
+          className="cancel-modal-overlay"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setCancelRequestId(null);
+            }
+          }}
+        >
+          <div className="cancel-confirmation-modal">
+            <div className="cancel-modal-header">
+              <div>
+                <p className="cancel-modal-label">CANCEL REQUEST</p>
+                <h2>Cancel Outpass Request?</h2>
+              </div>
+
+              <button
+                className="cancel-modal-close"
+                onClick={() => setCancelRequestId(null)}
+                type="button"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="cancel-modal-body">
+              <p>Are you sure you want to cancel this outpass request?</p>
+
+              <p className="cancel-modal-warning">
+                This action cannot be undone.
+              </p>
+            </div>
+
+            <div className="cancel-modal-footer">
+              <button
+                className="cancel-modal-back"
+                onClick={() => setCancelRequestId(null)}
+                type="button"
+              >
+                Keep Request
+              </button>
+
+              <button
+                className="cancel-modal-confirm"
+                onClick={async () => {
+                  const id = cancelRequestId;
+                  setCancelRequestId(null);
+                  await handleCancel(id);
+                }}
+                type="button"
+              >
+                Cancel Request
+              </button>
+            </div>
           </div>
         </div>
       )}

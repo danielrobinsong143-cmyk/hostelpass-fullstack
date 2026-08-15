@@ -600,3 +600,154 @@
     grid-column: auto;
   }
 }
+
+/* =========================================
+   CANCEL CONFIRMATION MODAL
+   ========================================= */
+
+.cancel-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+.cancel-confirmation-modal {
+  width: min(480px, 100%);
+
+  background: #ffffff;
+  border-radius: 16px;
+
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.25);
+}
+
+.cancel-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  padding: 20px 24px;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.cancel-modal-label {
+  margin: 0 0 6px;
+
+  color: #dc3545;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.cancel-modal-header h2 {
+  margin: 0;
+
+  color: #111827;
+  font-size: 20px;
+}
+
+.cancel-modal-close {
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #f3f4f6;
+  color: #374151;
+
+  font-size: 24px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.cancel-modal-close:hover {
+  background: #e5e7eb;
+}
+
+.cancel-modal-body {
+  padding: 24px;
+}
+
+.cancel-modal-body p {
+  margin: 0;
+
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.cancel-modal-warning {
+  margin-top: 10px !important;
+
+  color: #dc3545 !important;
+  font-size: 13px !important;
+  font-weight: 600;
+}
+
+.cancel-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  padding: 18px 24px;
+
+  border-top: 1px solid #e5e7eb;
+  background: #fafafa;
+}
+
+.cancel-modal-back,
+.cancel-modal-confirm {
+  padding: 10px 18px;
+
+  border-radius: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.cancel-modal-back {
+  border: 1px solid #dbe1ea;
+  background: #ffffff;
+  color: #475569;
+}
+
+.cancel-modal-back:hover {
+  background: #f8fafc;
+}
+
+.cancel-modal-confirm {
+  border: none;
+  background: #dc3545;
+  color: #ffffff;
+}
+
+.cancel-modal-confirm:hover {
+  background: #bb2d3b;
+}
+
+@media (max-width: 600px) {
+  .cancel-modal-overlay {
+    padding: 12px;
+  }
+
+  .cancel-modal-footer {
+    flex-direction: column;
+  }
+
+  .cancel-modal-footer button {
+    width: 100%;
+  }
+}
