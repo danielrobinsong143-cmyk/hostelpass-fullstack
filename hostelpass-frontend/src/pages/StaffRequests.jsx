@@ -406,7 +406,7 @@ function StaffRequests() {
               </div>
 
               <button
-                className="modal-close-button"
+                className="staff-modal-close-button"
                 onClick={() => setSelectedRequest(null)}
                 aria-label="Close"
               >

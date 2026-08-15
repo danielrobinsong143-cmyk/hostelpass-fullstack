@@ -512,7 +512,7 @@
   background: #bb2d3b;
 }
 
-.student-modal-close-button {
+.student-layout .student-modal-close-button {
   width: 100%;
   margin-top: 12px;
   padding: 12px 18px;
@@ -529,9 +529,12 @@
 
   cursor: pointer;
   transition: 0.2s ease;
+
+  box-sizing: border-box;
+  appearance: none;
 }
 
-.student-modal-close-button:hover {
+.student-layout .student-modal-close-button:hover {
   background: #1f2937;
 }
 

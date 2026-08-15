@@ -275,7 +275,8 @@ function StudentDashboard() {
             </div>
 
             <button
-              className="modal-close-button"
+              type="button"
+              className="student-dashboard-modal-close-button"
               onClick={() => setSelectedRequest(null)}
             >
               Close

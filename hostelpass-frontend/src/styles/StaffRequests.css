@@ -759,7 +759,7 @@
   color: #94a3b8;
 }
 
-.modal-close-button {
+.staff-modal-close-button {
   width: 36px;
   height: 36px;
 
@@ -783,7 +783,7 @@
   cursor: pointer;
 }
 
-.modal-close-button:hover {
+.staff-modal-close-button:hover {
   background: #e2e8f0;
 }
 
