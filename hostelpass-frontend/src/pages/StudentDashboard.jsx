@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContextDefinition";
 import {
   getMyOutpassRequests,
@@ -8,6 +9,7 @@ import "../styles/StudentDashboard.css";
 
 function StudentDashboard() {
   const { principal } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [outpassRequests, setOutpassRequests] = useState([]);
   const [stats, setStats] = useState({
@@ -34,7 +36,6 @@ function StudentDashboard() {
 
         setOutpassRequests(requestsResponse.data.content || []);
         setStats(statsResponse.data);
-
       } catch (error) {
         console.error("Failed to fetch outpass requests:", error);
         setError("Failed to load outpass requests.");
@@ -129,6 +130,16 @@ function StudentDashboard() {
                 <h2>Recent Outpass Requests</h2>
                 <p>Track the status of your applications.</p>
               </div>
+
+              {outpassRequests.length > 0 && (
+                <button
+                  className="view-all-requests-button"
+                  onClick={() => navigate("/student/requests")}
+                  type="button"
+                >
+                  View All Requests
+                </button>
+              )}
             </div>
 
             {outpassRequests.length === 0 ? (
