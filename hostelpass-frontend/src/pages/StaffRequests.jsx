@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   getOutpassRequests,
   approveOutpassRequest,
@@ -14,8 +15,11 @@ function StaffRequests() {
   const [error, setError] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
 
+  const [searchParams] = useSearchParams();
+
   const [currentPage, setCurrentPage] = useState(0);
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(searchParams.get("status") || "");
+  
   const [search, setSearch] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);

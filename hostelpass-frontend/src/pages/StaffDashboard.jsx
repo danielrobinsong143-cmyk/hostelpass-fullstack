@@ -66,25 +66,41 @@ function StaffDashboard() {
       {!loading && !error && (
         <>
           <div className="staff-summary-grid">
-            <div className="staff-summary-card">
+            <button
+              className="staff-summary-card summary-card-button"
+              onClick={() => navigate("/staff/requests")}
+              type="button"
+            >
               <span className="summary-number">{stats.total}</span>
               <span className="summary-title">Total Requests</span>
-            </div>
+            </button>
 
-            <div className="staff-summary-card">
+            <button
+              className="staff-summary-card summary-card-button"
+              onClick={() => navigate("/staff/requests?status=PENDING")}
+              type="button"
+            >
               <span className="summary-number">{stats.pending}</span>
               <span className="summary-title">Pending</span>
-            </div>
+            </button>
 
-            <div className="staff-summary-card">
+            <button
+              className="staff-summary-card summary-card-button"
+              onClick={() => navigate("/staff/requests?status=APPROVED")}
+              type="button"
+            >
               <span className="summary-number">{stats.approved}</span>
               <span className="summary-title">Approved</span>
-            </div>
+            </button>
 
-            <div className="staff-summary-card">
+            <button
+              className="staff-summary-card summary-card-button"
+              onClick={() => navigate("/staff/requests?status=DENIED")}
+              type="button"
+            >
               <span className="summary-number">{stats.denied}</span>
               <span className="summary-title">Denied</span>
-            </div>
+            </button>
           </div>
 
           <div className="staff-overview-card">
