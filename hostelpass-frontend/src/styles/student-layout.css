@@ -78,3 +78,208 @@
   background: #1f2937;
   color: white;
 }
+
+/* =========================================
+   MOBILE NAVIGATION
+   ========================================= */
+
+.mobile-menu-button {
+  display: none;
+}
+
+.mobile-sidebar-overlay {
+  display: none;
+}
+
+.mobile-sidebar-close {
+  display: none;
+}
+
+/* =========================================
+   RESPONSIVE STUDENT LAYOUT
+   ========================================= */
+
+@media (max-width: 768px) {
+  .student-main {
+    margin-left: 0;
+    padding: 80px 20px 30px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .student-sidebar {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1100;
+
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .student-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .mobile-menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1000;
+
+    width: 44px;
+    height: 44px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #111827;
+    color: #ffffff;
+
+    font-size: 22px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .mobile-menu-button:hover {
+    background: #1f2937;
+  }
+
+  .mobile-sidebar-overlay {
+    display: block;
+
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+
+    width: 100%;
+    height: 100%;
+
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    cursor: pointer;
+  }
+
+  .mobile-sidebar-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+    color: #ffffff;
+
+    font-size: 28px;
+    line-height: 1;
+
+    cursor: pointer;
+  }
+
+  .mobile-sidebar-close:hover {
+    background: #1f2937;
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+   ========================================= */
+
+@media (max-width: 480px) {
+  .student-main {
+    padding: 76px 16px 24px;
+  }
+
+  .student-sidebar {
+    width: min(280px, 85vw);
+  }
+}
+
+/* =========================================
+   HIDE MOBILE MENU WHEN SIDEBAR IS OPEN
+   ========================================= */
+
+@media (max-width: 768px) {
+  .student-layout.sidebar-open .mobile-menu-button {
+    display: none !important;
+  }
+}
+
+/* =========================================
+   MODAL STACKING
+   ========================================= */
+
+/*
+   Modals must always appear above:
+   - hamburger button
+   - sidebar
+   - sidebar overlay
+   - page content
+*/
+
+.modal-overlay,
+.cancel-modal-overlay {
+  position: fixed !important;
+  inset: 0;
+}
+
+.modal-overlay {
+  z-index: 99999 !important;
+}
+
+.cancel-modal-overlay {
+  z-index: 100000 !important;
+}
+
+/*
+   Make sure the hamburger can NEVER
+   appear above a modal.
+*/
+
+.mobile-menu-button {
+  z-index: 100 !important;
+}
+
+.mobile-sidebar-overlay {
+  z-index: 1050 !important;
+}
+
+.student-sidebar {
+  z-index: 1100 !important;
+}
+
+/* =========================================
+   HIDE MOBILE MENU WHEN ANY MODAL IS OPEN
+   ========================================= */
+
+@media (max-width: 768px) {
+  .student-layout:has(.modal-overlay) .mobile-menu-button,
+  .student-layout:has(.cancel-modal-overlay) .mobile-menu-button {
+    display: none !important;
+  }
+}

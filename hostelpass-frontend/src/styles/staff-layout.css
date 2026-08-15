@@ -8,7 +8,6 @@
   background: #f5f7fb;
 }
 
-
 /* =========================================
    MAIN CONTENT
    ========================================= */
@@ -20,7 +19,6 @@
   margin-left: 240px;
   box-sizing: border-box;
 }
-
 
 /* =========================================
    STAFF SIDEBAR
@@ -44,7 +42,6 @@
   z-index: 1000;
 }
 
-
 /* =========================================
    SIDEBAR BRAND
    ========================================= */
@@ -66,7 +63,6 @@
   box-sizing: border-box;
 }
 
-
 /* =========================================
    SIDEBAR NAVIGATION
    ========================================= */
@@ -78,7 +74,6 @@
   padding: 20px 12px;
   gap: 6px;
 }
-
 
 /* =========================================
    SIDEBAR LINKS
@@ -106,12 +101,10 @@
     color 0.2s ease;
 }
 
-
 .staff-layout .staff-sidebar a:hover {
   background: #1e293b;
   color: #ffffff;
 }
-
 
 /* =========================================
    ACTIVE LINK
@@ -121,7 +114,6 @@
   background: #4f46e5;
   color: #ffffff;
 }
-
 
 /* =========================================
    LOGOUT
@@ -134,7 +126,6 @@
 
   border-top: 1px solid #263244;
 }
-
 
 .staff-layout .staff-sidebar .sidebar-logout button {
   width: 100%;
@@ -161,12 +152,10 @@
     color 0.2s ease;
 }
 
-
 .staff-layout .staff-sidebar .sidebar-logout button:hover {
   background: #1e293b;
   color: #ffffff;
 }
-
 
 /* =========================================
    RESPONSIVE
@@ -182,28 +171,171 @@
   }
 }
 
+/* =========================================
+   MOBILE NAVIGATION
+   ========================================= */
 
-@media (max-width: 600px) {
-  .staff-layout .staff-sidebar {
-    position: relative;
+.mobile-menu-button {
+  display: none;
+}
 
-    width: 100%;
-    height: auto;
-  }
+.mobile-sidebar-overlay {
+  display: none;
+}
 
-  .staff-layout {
-    flex-direction: column;
-  }
+.mobile-sidebar-close {
+  display: none;
+}
 
+/* =========================================
+   RESPONSIVE STAFF LAYOUT
+   ========================================= */
+
+@media (max-width: 768px) {
   .staff-main {
     margin-left: 0;
+    padding: 80px 20px 30px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .staff-layout .staff-sidebar .sidebar-nav {
-    padding-bottom: 10px;
+  .staff-sidebar {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1100;
+
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
   }
 
-  .staff-layout .staff-sidebar .sidebar-logout {
-    margin-top: 0;
+  .staff-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .mobile-menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1000;
+
+    width: 44px;
+    height: 44px;
+
+    border: none;
+    border-radius: 10px;
+
+    background: #111827;
+    color: #ffffff;
+
+    font-size: 22px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .mobile-menu-button:hover {
+    background: #1f2937;
+  }
+
+  .mobile-sidebar-overlay {
+    display: block;
+
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+
+    width: 100%;
+    height: 100%;
+
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    cursor: pointer;
+  }
+
+  .mobile-sidebar-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: transparent;
+    color: #ffffff;
+
+    font-size: 28px;
+    line-height: 1;
+
+    cursor: pointer;
+  }
+
+  .mobile-sidebar-close:hover {
+    background: #1f2937;
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+   ========================================= */
+
+@media (max-width: 480px) {
+  .staff-main {
+    padding: 76px 16px 24px;
+  }
+
+  .staff-sidebar {
+    width: min(280px, 85vw);
+  }
+}
+
+/* =========================================
+   FIX MOBILE SIDEBAR CLICK LAYER
+   ========================================= */
+
+@media (max-width: 768px) {
+  .mobile-sidebar-overlay {
+    z-index: 1050;
+  }
+
+  .staff-sidebar {
+    z-index: 1100;
+  }
+
+  .staff-sidebar.open {
+    z-index: 1100;
+  }
+
+  .mobile-menu-button {
+    z-index: 1200;
+  }
+}
+
+@media (max-width: 768px) {
+  .staff-layout.sidebar-open .mobile-menu-button {
+    display: none;
   }
 }
