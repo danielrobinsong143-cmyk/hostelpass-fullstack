@@ -10,6 +10,7 @@ function MyRequests() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -78,6 +79,9 @@ function MyRequests() {
 
   const handleCancel = async (id) => {
     try {
+      setError("");
+      setSuccessMessage("");
+
       await cancelOutpassRequest(id);
 
       if (requests.length === 1 && currentPage > 0) {
@@ -88,9 +92,11 @@ function MyRequests() {
 
       setSelectedRequest(null);
       setCancelRequestId(null);
+      setSuccessMessage("Outpass request cancelled successfully.");
     } catch (error) {
       console.error(error);
-      alert("Failed to cancel outpass request.");
+      setSuccessMessage("");
+      setError("Failed to cancel outpass request.");
     }
   };
 
@@ -195,6 +201,21 @@ function MyRequests() {
 
   return (
     <div className="my-requests-page">
+      {successMessage && (
+        <div className="success-message" role="status">
+          <span className="success-message-icon">✓</span>
+          <span>{successMessage}</span>
+
+          <button
+            type="button"
+            className="success-message-close"
+            onClick={() => setSuccessMessage("")}
+            aria-label="Dismiss success message"
+          >
+            ×
+          </button>
+        </div>
+      )}
       {/* ================================
           HEADER
           ================================ */}

@@ -13,7 +13,9 @@ function StaffRequests() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
+
   const [approveRequestId, setApproveRequestId] = useState(null);
   const [denyRequestId, setDenyRequestId] = useState(null);
   const [denyRemark, setDenyRemark] = useState("");
@@ -85,6 +87,9 @@ function StaffRequests() {
 
   const handleApprove = async (id) => {
     try {
+      setError("");
+      setSuccessMessage("");
+
       await approveOutpassRequest(id, "Approved by staff");
 
       if (requests.length === 1 && currentPage > 0) {
@@ -94,14 +99,19 @@ function StaffRequests() {
       }
 
       setSelectedRequest(null);
+      setSuccessMessage("Outpass request approved successfully.");
     } catch (error) {
       console.error(error);
-      alert("Failed to approve outpass request.");
+      setSuccessMessage("");
+      setError("Failed to approve outpass request.");
     }
   };
 
   const handleDeny = async (id, remark) => {
     try {
+      setError("");
+      setSuccessMessage("");
+
       await denyOutpassRequest(id, remark);
 
       if (requests.length === 1 && currentPage > 0) {
@@ -113,9 +123,11 @@ function StaffRequests() {
       setSelectedRequest(null);
       setDenyRequestId(null);
       setDenyRemark("");
+      setSuccessMessage("Outpass request denied successfully.");
     } catch (error) {
       console.error(error);
-      alert("Failed to deny outpass request.");
+      setSuccessMessage("");
+      setError("Failed to deny outpass request.");
     }
   };
 
@@ -169,6 +181,22 @@ function StaffRequests() {
           <span>{status ? `${status} Requests` : "All Requests"}</span>
         </div>
       </div>
+
+      {successMessage && (
+        <div className="success-message" role="status">
+          <span className="success-message-icon">✓</span>
+          <span>{successMessage}</span>
+
+          <button
+            type="button"
+            className="success-message-close"
+            onClick={() => setSuccessMessage("")}
+            aria-label="Dismiss success message"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* ================= SEARCH / FILTER ================= */}
       <div className="request-toolbar">
