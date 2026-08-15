@@ -14,7 +14,9 @@ function StaffRequests() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
-
+  const [approveRequestId, setApproveRequestId] = useState(null);
+  const [denyRequestId, setDenyRequestId] = useState(null);
+  const [denyRemark, setDenyRemark] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -98,14 +100,7 @@ function StaffRequests() {
     }
   };
 
-  const handleDeny = async (id) => {
-    const remark = window.prompt("Enter reason for denial:");
-
-    if (!remark || remark.trim().length < 5) {
-      alert("Denial reason must be at least 5 characters.");
-      return;
-    }
-
+  const handleDeny = async (id, remark) => {
     try {
       await denyOutpassRequest(id, remark);
 
@@ -116,6 +111,8 @@ function StaffRequests() {
       }
 
       setSelectedRequest(null);
+      setDenyRequestId(null);
+      setDenyRemark("");
     } catch (error) {
       console.error(error);
       alert("Failed to deny outpass request.");
@@ -325,14 +322,17 @@ function StaffRequests() {
                     <div className="request-actions">
                       <button
                         className="approve-button"
-                        onClick={() => handleApprove(request.id)}
+                        onClick={() => setApproveRequestId(request.id)}
                       >
                         ✓ Approve
                       </button>
 
                       <button
                         className="deny-button"
-                        onClick={() => handleDeny(request.id)}
+                        onClick={() => {
+                          setDenyRequestId(request.id);
+                          setDenyRemark("");
+                        }}
                       >
                         ✕ Deny
                       </button>
@@ -458,14 +458,17 @@ function StaffRequests() {
                 <div className="modal-action-group">
                   <button
                     className="approve-button"
-                    onClick={() => handleApprove(selectedRequest.id)}
+                    onClick={() => setApproveRequestId(selectedRequest.id)}
                   >
                     ✓ Approve
                   </button>
 
                   <button
                     className="deny-button"
-                    onClick={() => handleDeny(selectedRequest.id)}
+                    onClick={() => {
+                      setDenyRequestId(selectedRequest.id);
+                      setDenyRemark("");
+                    }}
                   >
                     ✕ Deny
                   </button>
@@ -477,6 +480,146 @@ function StaffRequests() {
                 onClick={() => setSelectedRequest(null)}
               >
                 Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {approveRequestId && (
+        <div
+          className="action-modal-overlay"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setApproveRequestId(null);
+            }
+          }}
+        >
+          <div className="action-modal">
+            <div className="action-modal-header">
+              <h2>Approve Outpass Request?</h2>
+
+              <button
+                className="action-modal-close"
+                onClick={() => setApproveRequestId(null)}
+                type="button"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="action-modal-body">
+              <p>Are you sure you want to approve this outpass request?</p>
+              <p className="action-modal-warning">
+                This action will change the request status to Approved.
+              </p>
+            </div>
+
+            <div className="action-modal-footer">
+              <button
+                className="action-cancel-button"
+                onClick={() => setApproveRequestId(null)}
+                type="button"
+              >
+                Cancel
+              </button>
+
+              <button
+                className="approve-button"
+                onClick={async () => {
+                  const id = approveRequestId;
+                  setApproveRequestId(null);
+                  await handleApprove(id);
+                }}
+                type="button"
+              >
+                ✓ Confirm Approval
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {denyRequestId && (
+        <div
+          className="action-modal-overlay"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setDenyRequestId(null);
+              setDenyRemark("");
+            }
+          }}
+        >
+          <div className="action-modal">
+            <div className="action-modal-header">
+              <h2>Deny Outpass Request?</h2>
+
+              <button
+                className="action-modal-close"
+                onClick={() => {
+                  setDenyRequestId(null);
+                  setDenyRemark("");
+                }}
+                type="button"
+                aria-label="Close"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="action-modal-body">
+              <p>Please provide a reason for denying this outpass request.</p>
+
+              <textarea
+                className="deny-reason-input"
+                value={denyRemark}
+                onChange={(event) => setDenyRemark(event.target.value)}
+                placeholder="Enter reason for denial..."
+                rows={4}
+                maxLength={500}
+              />
+
+              <div className="deny-reason-info">
+                {denyRemark.trim().length}/500 characters
+                {denyRemark.trim().length < 5 && (
+                  <span> Minimum 5 characters required.</span>
+                )}
+              </div>
+            </div>
+
+            <div className="action-modal-footer">
+              <button
+                className="action-cancel-button"
+                onClick={() => {
+                  setDenyRequestId(null);
+                  setDenyRemark("");
+                }}
+                type="button"
+              >
+                Cancel
+              </button>
+
+              <button
+                className="deny-button"
+                onClick={() => {
+                  const remark = denyRemark.trim();
+
+                  if (remark.length < 5) {
+                    return;
+                  }
+
+                  const id = denyRequestId;
+
+                  setDenyRequestId(null);
+                  setDenyRemark("");
+
+                  void handleDeny(id, remark);
+                }}
+                type="button"
+                disabled={denyRemark.trim().length < 5}
+              >
+                ✕ Confirm Denial
               </button>
             </div>
           </div>
