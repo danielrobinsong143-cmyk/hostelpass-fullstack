@@ -15,11 +15,11 @@ function StaffRequests() {
   const [error, setError] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [currentPage, setCurrentPage] = useState(0);
   const [status, setStatus] = useState(searchParams.get("status") || "");
-  
+
   const [search, setSearch] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
@@ -141,8 +141,16 @@ function StaffRequests() {
   };
 
   const handleStatusChange = (event) => {
-    setStatus(event.target.value);
+    const newStatus = event.target.value;
+
+    setStatus(newStatus);
     setCurrentPage(0);
+
+    if (newStatus) {
+      setSearchParams({ status: newStatus });
+    } else {
+      setSearchParams({});
+    }
   };
 
   return (
