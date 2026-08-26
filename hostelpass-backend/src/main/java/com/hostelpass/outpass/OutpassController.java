@@ -1,13 +1,5 @@
 package com.hostelpass.outpass;
 
-import com.hostelpass.common.PageResponse;
-import com.hostelpass.outpass.dto.OutpassCreateRequest;
-import com.hostelpass.outpass.dto.OutpassDecisionRequest;
-import com.hostelpass.outpass.dto.OutpassResponse;
-import com.hostelpass.outpass.dto.OutpassStatsResponse;
-import com.hostelpass.security.UserPrincipal;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -21,9 +13,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.web.bind.annotation.RequestParam;
+import com.hostelpass.common.PageResponse;
+import com.hostelpass.outpass.dto.OutpassCreateRequest;
+import com.hostelpass.outpass.dto.OutpassDecisionRequest;
+import com.hostelpass.outpass.dto.OutpassResponse;
+import com.hostelpass.outpass.dto.OutpassStatsResponse;
+import com.hostelpass.security.UserPrincipal;
+
+import jakarta.validation.Valid;
 
 /**
  * Student-facing outpass endpoints — exactly the four in SDD Section 7.2:
@@ -44,10 +44,13 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @RestController
 @RequestMapping("/outpass-requests")
-@RequiredArgsConstructor
 public class OutpassController {
 
         private final OutpassService outpassService;
+
+        public OutpassController(OutpassService outpassService) {
+                this.outpassService = outpassService;
+        }
 
         @PostMapping
         @PreAuthorize("hasRole('STUDENT')")
