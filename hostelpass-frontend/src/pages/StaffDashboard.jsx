@@ -121,7 +121,7 @@ function StaffDashboard() {
             {stats.pending > 0 && (
               <button
                 className="view-requests-button"
-                onClick={() => navigate("/staff/requests")}
+                onClick={() => navigate("/staff/requests?status=PENDING")}
               >
                 View Pending Requests
               </button>

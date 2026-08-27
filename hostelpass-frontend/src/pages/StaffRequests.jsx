@@ -21,15 +21,29 @@ function StaffRequests() {
   const [denyRemark, setDenyRemark] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(
+    Number(searchParams.get("page")) || 0,
+  );
+
   const [status, setStatus] = useState(searchParams.get("status") || "");
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
 
   // Smaller page size makes pagination visible and keeps the page compact.
   const pageSize = 6;
+
+  useEffect(() => {
+    const urlStatus = searchParams.get("status") || "";
+    const urlSearch = searchParams.get("search") || "";
+    const urlPage = Number(searchParams.get("page")) || 0;
+
+    setStatus(urlStatus);
+    setSearch(urlSearch);
+    setCurrentPage(urlPage);
+  }, [searchParams]);
 
   const loadRequests = useCallback(async () => {
     try {
