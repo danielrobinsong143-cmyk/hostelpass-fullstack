@@ -271,15 +271,26 @@ public class OutpassService {
                 return new OutpassResponse(
                                 r.getId(),
                                 r.getPassCode(),
+
+                                // Student details
                                 r.getStudent().getId(),
                                 r.getStudent().getFullName(),
                                 r.getStudent().getRollNumber(),
+                                r.getStudent().getRoomNumber(),
+                                r.getStudent().getBranch(),
+                                r.getStudent().getDepartment(),
+                                r.getStudent().getYearOfStudy(),
+                                r.getStudent().getMobileNumber(),
+
+                                // Outpass details
                                 r.getPlaceOfVisit(),
                                 r.getPurpose(),
                                 r.getReason(),
                                 r.getDepartureAt(),
                                 r.getReturnAt(),
                                 r.getStatus(),
+
+                                // Decision details
                                 decidedBy != null ? decidedBy.getFullName() : null,
                                 r.getDecisionRemark(),
                                 r.getSubmittedAt(),

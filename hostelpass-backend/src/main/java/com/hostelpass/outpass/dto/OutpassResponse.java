@@ -7,27 +7,32 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-/**
- * Outbound representation of an OutpassRequest, flattening the Student/Staff
- * relationships into plain fields (studentName, rollNumber, decidedByStaffName)
- * so the frontend never has to make follow-up calls just to display a request card
- * — matches the fields rendered in the original app's request/status cards.
- */
 @Getter
 @AllArgsConstructor
 public class OutpassResponse {
 
     private Long id;
     private String passCode;
+
+    // Student details
     private Long studentId;
     private String studentName;
     private String rollNumber;
+    private String roomNumber;
+    private String branch;
+    private String department;
+    private String yearOfStudy;
+    private String mobileNumber;
+
+    // Outpass details
     private String placeOfVisit;
     private OutpassPurpose purpose;
     private String reason;
     private LocalDateTime departureAt;
     private LocalDateTime returnAt;
     private OutpassStatus status;
+
+    // Decision details
     private String decidedByStaffName;
     private String decisionRemark;
     private LocalDateTime submittedAt;

@@ -825,6 +825,23 @@
   padding: 26px;
 }
 
+.modal-section-title {
+  grid-column: 1 / -1;
+
+  margin-top: 4px;
+  padding-bottom: 8px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+
+  color: #4f46e5;
+}
+
 .modal-detail {
   display: flex;
   flex-direction: column;

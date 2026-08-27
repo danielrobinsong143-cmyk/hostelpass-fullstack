@@ -424,15 +424,56 @@ function StaffRequests() {
             </div>
 
             {/* MODAL DETAILS */}
+            {/* ================= MODAL DETAILS ================= */}
             <div className="request-modal-details">
+              {/* STUDENT INFORMATION */}
+              <div className="modal-section-title full-width">
+                Student Information
+              </div>
+
               <div className="modal-detail">
-                <span>Student</span>
+                <span>Name</span>
                 <strong>{selectedRequest.studentName}</strong>
               </div>
 
               <div className="modal-detail">
                 <span>Roll Number</span>
                 <strong>{selectedRequest.rollNumber}</strong>
+              </div>
+
+              <div className="modal-detail">
+                <span>Department</span>
+                <strong>{selectedRequest.department || "—"}</strong>
+              </div>
+
+              <div className="modal-detail">
+                <span>Year</span>
+                <strong>{selectedRequest.yearOfStudy || "—"}</strong>
+              </div>
+
+              <div className="modal-detail">
+                <span>Branch</span>
+                <strong>{selectedRequest.branch || "—"}</strong>
+              </div>
+
+              <div className="modal-detail">
+                <span>Room Number</span>
+                <strong>{selectedRequest.roomNumber || "—"}</strong>
+              </div>
+
+              <div className="modal-detail">
+                <span>Mobile Number</span>
+                <strong>{selectedRequest.mobileNumber || "—"}</strong>
+              </div>
+
+              {/* OUTPASS INFORMATION */}
+              <div className="modal-section-title full-width">
+                Outpass Information
+              </div>
+
+              <div className="modal-detail">
+                <span>Pass Code</span>
+                <strong>{selectedRequest.passCode}</strong>
               </div>
 
               <div className="modal-detail">
@@ -465,18 +506,33 @@ function StaffRequests() {
                 <strong>{formatDateTime(selectedRequest.submittedAt)}</strong>
               </div>
 
-              {selectedRequest.decidedByStaffName && (
-                <div className="modal-detail">
-                  <span>Decided By</span>
-                  <strong>{selectedRequest.decidedByStaffName}</strong>
-                </div>
-              )}
+              <div className="modal-detail">
+                <span>Status</span>
+                <strong>{selectedRequest.status}</strong>
+              </div>
 
-              {selectedRequest.decisionRemark && (
-                <div className="modal-detail full-width">
-                  <span>Decision Remark</span>
-                  <strong>{selectedRequest.decisionRemark}</strong>
-                </div>
+              {/* DECISION INFORMATION */}
+              {(selectedRequest.decidedByStaffName ||
+                selectedRequest.decisionRemark) && (
+                <>
+                  <div className="modal-section-title full-width">
+                    Decision Information
+                  </div>
+
+                  {selectedRequest.decidedByStaffName && (
+                    <div className="modal-detail">
+                      <span>Decided By</span>
+                      <strong>{selectedRequest.decidedByStaffName}</strong>
+                    </div>
+                  )}
+
+                  {selectedRequest.decisionRemark && (
+                    <div className="modal-detail full-width">
+                      <span>Decision Remark</span>
+                      <strong>{selectedRequest.decisionRemark}</strong>
+                    </div>
+                  )}
+                </>
               )}
             </div>
 
