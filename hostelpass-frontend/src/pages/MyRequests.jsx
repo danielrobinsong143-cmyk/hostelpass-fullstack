@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   getMyOutpassRequests,
   cancelOutpassRequest,
@@ -7,18 +8,22 @@ import {
 import "../styles/MyRequests.css";
 
 function MyRequests() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(
+    Number(searchParams.get("page")) || 0,
+  );
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(searchParams.get("status") || "");
 
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [cancelRequestId, setCancelRequestId] = useState(null);
@@ -32,10 +37,22 @@ function MyRequests() {
   useEffect(() => {
     const timer = window.setTimeout(() => {
       setDebouncedSearch(search);
+
+      const params = {};
+
+      if (search.trim()) {
+        params.search = search.trim();
+      }
+
+      if (status) {
+        params.status = status;
+      }
+
+      setSearchParams(params);
     }, 350);
 
     return () => window.clearTimeout(timer);
-  }, [search]);
+  }, [search, status, setSearchParams]);
 
   /* ================================
      LOAD REQUESTS
@@ -150,6 +167,23 @@ function MyRequests() {
     }
 
     setCurrentPage(page);
+
+    const params = {};
+
+    if (search.trim()) {
+      params.search = search.trim();
+    }
+
+    if (status) {
+      params.status = status;
+    }
+
+    if (page > 0) {
+      params.page = page;
+    }
+
+    setSearchParams(params);
+
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -258,8 +292,16 @@ function MyRequests() {
         <select
           value={status}
           onChange={(event) => {
-            setStatus(event.target.value);
+            const newStatus = event.target.value;
+
+            setStatus(newStatus);
             setCurrentPage(0);
+
+            if (newStatus) {
+              setSearchParams({ status: newStatus });
+            } else {
+              setSearchParams({});
+            }
           }}
         >
           <option value="">All Statuses</option>
