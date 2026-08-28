@@ -84,6 +84,7 @@ function Login() {
         <div className="toggle-buttons">
           <button
             type="button"
+            className={userType === "student" ? "active" : ""}
             onClick={() => {
               setUserType("student");
               setFormData({
@@ -98,6 +99,7 @@ function Login() {
 
           <button
             type="button"
+            className={userType === "staff" ? "active" : ""}
             onClick={() => {
               setUserType("staff");
               setFormData({
