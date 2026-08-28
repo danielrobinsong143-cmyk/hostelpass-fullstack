@@ -1,0 +1,167 @@
+/* ==========================================================
+   THEME TOGGLE — fixed top-right switch, visible on every route
+   (rendered once in App.jsx, above the Login page and every
+   authenticated layout, so it never needs to live inside a
+   sidebar/header component).
+   ========================================================== */
+
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1200;
+
+  width: 64px;
+  height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-pill, 9999px);
+  cursor: pointer;
+  overflow: hidden;
+
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+  transition: background var(--transition-slow, 0.3s ease);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+/* ---- Sky / night background ---- */
+.theme-toggle-sky {
+  position: absolute;
+  inset: 0;
+  transition: background var(--transition-slow, 0.3s ease);
+}
+
+.theme-toggle.is-light .theme-toggle-sky {
+  background: linear-gradient(135deg, #7ec8f2 0%, #a5ddf7 100%);
+}
+
+.theme-toggle.is-dark .theme-toggle-sky {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+/* ---- Clouds (light mode) ---- */
+.theme-toggle-cloud {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  transition: opacity var(--transition-normal, 0.2s ease);
+}
+
+.theme-toggle.is-light .theme-toggle-cloud {
+  opacity: 1;
+}
+
+.theme-toggle-cloud-1 {
+  width: 14px;
+  height: 7px;
+  top: 8px;
+  left: 8px;
+}
+
+.theme-toggle-cloud-2 {
+  width: 10px;
+  height: 5px;
+  bottom: 7px;
+  left: 13px;
+}
+
+/* ---- Stars (dark mode) ---- */
+.theme-toggle-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #ffffff;
+  opacity: 0;
+  transition: opacity var(--transition-normal, 0.2s ease);
+}
+
+.theme-toggle.is-dark .theme-toggle-star {
+  opacity: 0.9;
+}
+
+.theme-toggle-star-1 {
+  top: 9px;
+  left: 10px;
+}
+
+.theme-toggle-star-2 {
+  top: 16px;
+  left: 18px;
+  width: 3px;
+  height: 3px;
+}
+
+.theme-toggle-star-3 {
+  bottom: 8px;
+  left: 9px;
+}
+
+/* ---- Sliding knob ---- */
+.theme-toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25);
+  transition:
+    transform var(--transition-slow, 0.3s ease),
+    background var(--transition-slow, 0.3s ease);
+}
+
+.theme-toggle.is-dark .theme-toggle-knob {
+  transform: translateX(30px);
+  background: #1e293b;
+}
+
+/* ---- Sun / moon icon crossfade ---- */
+.theme-toggle-icon {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  transition:
+    opacity var(--transition-normal, 0.2s ease),
+    transform var(--transition-normal, 0.2s ease);
+}
+
+.theme-toggle-icon-sun {
+  color: #f59e0b;
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.theme-toggle-icon-moon {
+  color: #cbd5e1;
+  opacity: 0;
+  transform: scale(0.4) rotate(-90deg);
+}
+
+.theme-toggle.is-dark .theme-toggle-icon-sun {
+  opacity: 0;
+  transform: scale(0.4) rotate(90deg);
+}
+
+.theme-toggle.is-dark .theme-toggle-icon-moon {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+@media (max-width: 480px) {
+  .theme-toggle {
+    top: 12px;
+    right: 12px;
+  }
+}

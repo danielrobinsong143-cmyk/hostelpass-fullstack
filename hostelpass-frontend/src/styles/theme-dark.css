@@ -1,0 +1,612 @@
+/* ==========================================================
+   HOSTELPASS — DARK THEME
+   ==========================================================
+   Centralized dark-theme overrides.
+
+   Light theme:
+   - Completely untouched.
+
+   Dark theme:
+   - Page backgrounds
+   - Cards and surfaces
+   - Borders
+   - Primary/secondary text
+   - Forms and inputs
+   - Modals
+   - Request pages
+   - Profile pages
+   - Dashboard pages
+
+   Status colors such as APPROVED, PENDING, DENIED and
+   CANCELLED intentionally keep their existing accent colors.
+   ========================================================== */
+
+/* ==========================================================
+   1. GLOBAL LAYOUT
+   ========================================================== */
+
+[data-theme="dark"] .staff-layout,
+[data-theme="dark"] .student-layout,
+[data-theme="dark"] .staff-dashboard,
+[data-theme="dark"] .my-requests-page,
+[data-theme="dark"] .staff-requests-page,
+[data-theme="dark"] .dashboard {
+  background: var(--color-bg);
+}
+
+/* ==========================================================
+   2. GLOBAL TEXT
+   ========================================================== */
+
+/* Main headings and important text */
+
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4 {
+  color: var(--color-text);
+}
+
+/* Secondary / descriptive text */
+
+[data-theme="dark"] p {
+  color: var(--color-text-secondary);
+}
+
+/* Links */
+
+[data-theme="dark"] a {
+  color: var(--color-text);
+}
+
+/* ==========================================================
+   3. SIDEBARS / NAVIGATION
+   ========================================================== */
+
+[data-theme="dark"] .staff-layout,
+[data-theme="dark"] .student-layout {
+  background: var(--color-bg);
+}
+
+[data-theme="dark"] .staff-layout *,
+[data-theme="dark"] .student-layout * {
+  border-color: var(--color-border);
+}
+
+/* ==========================================================
+   4. STUDENT DASHBOARD
+   ========================================================== */
+
+[data-theme="dark"] .dashboard {
+  background: var(--color-bg);
+}
+
+[data-theme="dark"] .dashboard-header h1,
+[data-theme="dark"] .student-info strong,
+[data-theme="dark"] .summary-number,
+[data-theme="dark"] .section-header h2,
+[data-theme="dark"] .request-top h3,
+[data-theme="dark"] .request-details strong {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .dashboard-subtitle,
+[data-theme="dark"] .student-info span,
+[data-theme="dark"] .summary-title,
+[data-theme="dark"] .section-header p,
+[data-theme="dark"] .request-id,
+[data-theme="dark"] .detail-label,
+[data-theme="dark"] .loading,
+[data-theme="dark"] .empty-state p {
+  color: var(--color-text-secondary);
+}
+
+/* Summary cards */
+
+[data-theme="dark"] .summary-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Request cards */
+
+[data-theme="dark"] .request-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .request-top {
+  border-bottom-color: var(--color-border);
+}
+
+/* Empty state */
+
+[data-theme="dark"] .empty-state {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Dashboard buttons */
+
+[data-theme="dark"] .view-all-requests-button,
+[data-theme="dark"] .details-button {
+  color: #ffffff;
+}
+
+/* ==========================================================
+   5. STAFF DASHBOARD
+   ========================================================== */
+
+[data-theme="dark"] .staff-dashboard {
+  background: var(--color-bg);
+}
+
+[data-theme="dark"] .staff-header h1,
+[data-theme="dark"] .dashboard-label {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .staff-header p {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .staff-summary-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* ==========================================================
+   6. STUDENT REQUESTS
+   ========================================================== */
+
+[data-theme="dark"] .my-requests-page {
+  background: var(--color-bg);
+}
+
+[data-theme="dark"] .requests-header h1,
+[data-theme="dark"] .requests-header h2,
+[data-theme="dark"] .requests-header h3 {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .requests-header p {
+  color: var(--color-text-secondary);
+}
+
+/* Request count */
+
+[data-theme="dark"] .request-count {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Request cards */
+
+[data-theme="dark"] .my-request-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Request headings */
+
+[data-theme="dark"] .my-request-card h1,
+[data-theme="dark"] .my-request-card h2,
+[data-theme="dark"] .my-request-card h3,
+[data-theme="dark"] .my-request-card h4 {
+  color: var(--color-text);
+}
+
+/* Important request information */
+
+[data-theme="dark"] .my-request-card strong,
+[data-theme="dark"] .my-request-card b {
+  color: var(--color-text);
+}
+
+/* Supporting request information */
+
+[data-theme="dark"] .my-request-card p {
+  color: var(--color-text-secondary);
+}
+
+/* Request identifiers */
+
+[data-theme="dark"] .my-request-card .request-id {
+  color: var(--color-text-secondary);
+}
+
+/* Search */
+
+[data-theme="dark"] .search-wrapper input {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .search-wrapper input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+/* Filters */
+
+[data-theme="dark"] .request-filters select {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Pagination */
+
+[data-theme="dark"] .pagination-button {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* ==========================================================
+   7. STAFF REQUESTS
+   ========================================================== */
+
+[data-theme="dark"] .staff-requests-page {
+  background: var(--color-bg);
+}
+
+[data-theme="dark"] .staff-requests-header h1,
+[data-theme="dark"] .staff-requests-header h2,
+[data-theme="dark"] .staff-requests-header h3 {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .page-description {
+  color: var(--color-text-secondary);
+}
+
+/* Request count */
+
+[data-theme="dark"] .request-count {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Staff request cards */
+
+[data-theme="dark"] .staff-request-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Headings */
+
+[data-theme="dark"] .staff-request-card h1,
+[data-theme="dark"] .staff-request-card h2,
+[data-theme="dark"] .staff-request-card h3,
+[data-theme="dark"] .staff-request-card h4 {
+  color: var(--color-text);
+}
+
+/* Important information */
+
+[data-theme="dark"] .staff-request-card strong,
+[data-theme="dark"] .staff-request-card b {
+  color: var(--color-text);
+}
+
+/* Supporting information */
+
+[data-theme="dark"] .staff-request-card p {
+  color: var(--color-text-secondary);
+}
+
+/* Search */
+
+[data-theme="dark"] .filter-wrapper select,
+[data-theme="dark"] .staff-requests-page .search-wrapper input {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* ==========================================================
+   8. PROFILE PAGES
+   ========================================================== */
+
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .staff-profile-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Profile headings */
+
+[data-theme="dark"] .profile-card h1,
+[data-theme="dark"] .profile-card h2,
+[data-theme="dark"] .profile-card h3,
+[data-theme="dark"] .profile-card h4,
+[data-theme="dark"] .staff-profile-card h1,
+[data-theme="dark"] .staff-profile-card h2,
+[data-theme="dark"] .staff-profile-card h3,
+[data-theme="dark"] .staff-profile-card h4 {
+  color: var(--color-text);
+}
+
+/* Profile items */
+
+[data-theme="dark"] .profile-item,
+[data-theme="dark"] .staff-profile-item {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+}
+
+/* Profile important values */
+
+[data-theme="dark"] .profile-card strong,
+[data-theme="dark"] .staff-profile-card strong {
+  color: var(--color-text);
+}
+
+/* Profile descriptions */
+
+[data-theme="dark"] .profile-header p,
+[data-theme="dark"] .staff-profile-header p {
+  color: var(--color-text-secondary);
+}
+
+/* ==========================================================
+   9. APPLY OUTPASS
+   ========================================================== */
+
+[data-theme="dark"] .outpass-form {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .apply-header h1,
+[data-theme="dark"] .apply-header h2 {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .apply-header p {
+  color: var(--color-text-secondary);
+}
+
+/* Form controls */
+
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .form-group textarea {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .form-group input::placeholder,
+[data-theme="dark"] .form-group textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+/* Form labels */
+
+[data-theme="dark"] .form-group label {
+  color: var(--color-text);
+}
+
+/* ==========================================================
+   10. LOGIN PAGE
+   ========================================================== */
+
+[data-theme="dark"] .login-container {
+  background: var(--color-bg);
+}
+
+[data-theme="dark"] .login-card {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .login-card h1 {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .login-card p {
+  color: var(--color-text-secondary);
+}
+
+/* Student / Staff toggle */
+
+[data-theme="dark"] .toggle-buttons button:not(.active) {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+/* Login inputs */
+
+[data-theme="dark"] .login-card form input {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .login-card form input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+/* ==========================================================
+   11. MODALS
+   ========================================================== */
+
+[data-theme="dark"] .details-modal,
+[data-theme="dark"] .request-modal,
+[data-theme="dark"] .cancel-confirmation-modal {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Modal headings */
+
+[data-theme="dark"] .modal-header h2 {
+  color: var(--color-text);
+}
+
+/* Modal supporting text */
+
+[data-theme="dark"] .modal-header span,
+[data-theme="dark"] .modal-details span {
+  color: var(--color-text-secondary);
+}
+
+/* Modal important values */
+
+[data-theme="dark"] .modal-details strong {
+  color: var(--color-text);
+}
+
+/* Modal borders */
+
+[data-theme="dark"] .modal-header {
+  border-bottom-color: var(--color-border);
+}
+
+/* Close buttons */
+
+[data-theme="dark"] .close-button,
+[data-theme="dark"] .cancel-modal-close {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+
+/* Modal footer */
+
+[data-theme="dark"] .cancel-modal-footer {
+  background: var(--color-bg);
+}
+
+/* ==========================================================
+   12. ERROR / LOADING STATES
+   ========================================================== */
+
+[data-theme="dark"] .loading {
+  color: var(--color-text-secondary);
+}
+
+/* Keep error meaning/colors */
+
+[data-theme="dark"] .error {
+  color: #fecaca;
+  background: #451a1a;
+}
+
+/* ==========================================================
+   13. STATUS BADGES
+   ==========================================================
+   Intentionally preserve status colors.
+   ========================================================== */
+
+[data-theme="dark"] .status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+[data-theme="dark"] .status.approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+[data-theme="dark"] .status.denied {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+[data-theme="dark"] .status.cancelled {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* ==========================================================
+   14. BUTTON TEXT
+   ========================================================== */
+
+[data-theme="dark"] button {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Primary buttons remain white */
+
+[data-theme="dark"] .view-all-requests-button,
+[data-theme="dark"] .details-button,
+[data-theme="dark"] .student-dashboard-modal-close-button {
+  color: #ffffff;
+}
+
+/* ==========================================================
+   15. BORDERS
+   ========================================================== */
+
+[data-theme="dark"] .request-top,
+[data-theme="dark"] .modal-header {
+  border-color: var(--color-border);
+}
+
+/* ==========================================================
+   16. DARK MODE SCROLLBARS
+   ========================================================== */
+
+[data-theme="dark"] {
+  scrollbar-color: #475569 var(--color-bg);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 10px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 10px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* ==========================================================
+   17. SMOOTH THEME TRANSITION
+   ========================================================== */
+
+[data-theme="dark"],
+[data-theme="dark"] body,
+[data-theme="dark"] .staff-layout,
+[data-theme="dark"] .student-layout,
+[data-theme="dark"] .dashboard,
+[data-theme="dark"] .summary-card,
+[data-theme="dark"] .request-card,
+[data-theme="dark"] .my-request-card,
+[data-theme="dark"] .staff-request-card,
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .staff-profile-card,
+[data-theme="dark"] .outpass-form,
+[data-theme="dark"] .login-card,
+[data-theme="dark"] .details-modal,
+[data-theme="dark"] .request-modal {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
+}

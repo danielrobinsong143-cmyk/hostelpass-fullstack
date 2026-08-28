@@ -1,2 +1,3 @@
 /* Import the design system — all pages inherit these tokens */
 @import './styles/design-system.css';
+@import './styles/theme-dark.css';

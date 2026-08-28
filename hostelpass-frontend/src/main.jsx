@@ -5,11 +5,14 @@ import App from "./App";
 import "./index.css";
 
 import AuthProvider from "./context/AuthContext";
+import ThemeProvider from "./context/ThemeContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>,
 );
