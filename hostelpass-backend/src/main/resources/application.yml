@@ -22,7 +22,7 @@ spring:
     locations: classpath:db/migration
 
 server:
-  port: 8081
+  port: ${PORT:8081}
   servlet:
     # Implements SDD Section 7's "Base path: /api/v1" for every endpoint.
     # Applied here globally rather than per-controller so no future controller
