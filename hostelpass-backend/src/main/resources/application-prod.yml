@@ -16,3 +16,4 @@ logging:
 app:
   jwt:
     refresh-cookie-secure: true
+    refresh-cookie-samesite: None

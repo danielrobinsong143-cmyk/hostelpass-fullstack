@@ -44,6 +44,9 @@ public class AuthController {
     @Value("${app.jwt.refresh-cookie-secure:false}")
     private boolean refreshCookieSecure;
 
+    @Value("${app.jwt.refresh-cookie-samesite:Strict}")
+private String refreshCookieSameSite;
+
     @PostMapping("/student/login")
     public ResponseEntity<AuthResponse<StudentResponse>> loginStudent(@Valid @RequestBody StudentLoginRequest request) {
         AuthService.LoginResult<StudentResponse> result = authService.loginStudent(request);
@@ -91,7 +94,7 @@ public class AuthController {
         return ResponseCookie.from(REFRESH_COOKIE_NAME, rawRefreshToken)
                 .httpOnly(true)
                 .secure(refreshCookieSecure)
-                .sameSite("Strict")
+                .sameSite(refreshCookieSameSite)
                 .path(REFRESH_COOKIE_PATH)
                 .maxAge(Duration.ofMillis(jwtProperties.getRefreshTokenExpiryMs()))
                 .build();
@@ -101,7 +104,7 @@ public class AuthController {
         return ResponseCookie.from(REFRESH_COOKIE_NAME, "")
                 .httpOnly(true)
                 .secure(refreshCookieSecure)
-                .sameSite("Strict")
+                .sameSite(refreshCookieSameSite)
                 .path(REFRESH_COOKIE_PATH)
                 .maxAge(Duration.ZERO)
                 .build();
