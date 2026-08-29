@@ -1,285 +1,375 @@
-.student-layout {
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap");
+
+.app-layout {
+  --shell-navy: #0c1c31;
+  --shell-navy-2: #122b4b;
+  --shell-ink: #17243a;
+  --shell-muted: #7b879b;
+  --shell-line: rgba(25, 55, 91, 0.12);
+
   min-height: 100vh;
   display: flex;
-  background: #f5f7fb;
+  color: var(--shell-ink);
+  background: #0b1c31;
+
+  position: relative;
+  overflow-x: hidden;
 }
 
-.student-main {
-  flex: 1;
-  padding: 30px;
-  margin-left: 240px;
-}
-
-.student-sidebar {
-  width: 240px;
-  height: 100vh;
+.app-layout::before {
+  content: "";
   position: fixed;
-  left: 0;
-  top: 0;
-
-  background: #111827;
-  color: white;
-
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar-logo {
-  padding: 25px 20px;
-  border-bottom: 1px solid #374151;
-}
-
-.sidebar-logo h2 {
-  margin: 0;
-  font-size: 24px;
-}
-
-.sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  padding: 20px 12px;
-  gap: 8px;
-}
-
-.sidebar-nav a {
-  color: #d1d5db;
-  text-decoration: none;
-
-  padding: 13px 15px;
-  border-radius: 8px;
-
-  font-size: 15px;
-}
-
-.sidebar-nav a:hover {
-  background: #1f2937;
-  color: white;
-}
-.sidebar-bottom {
-  margin-top: auto;
-  padding: 20px 12px;
-}
-
-.sidebar-bottom button {
-  width: 100%;
-  border: none;
+  inset: 0;
+  pointer-events: none;
   background: transparent;
-  color: #d1d5db;
-
-  padding: 13px 15px;
-  border-radius: 8px;
-
-  text-align: left;
-  font-size: 15px;
-  cursor: pointer;
 }
 
-.sidebar-bottom button:hover {
-  background: #1f2937;
-  color: white;
+.app-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 20;
+  width: 246px;
+  display: flex;
+  flex-direction: column;
+  padding: 26px 15px 17px;
+  color: #dce8f6;
+  background: linear-gradient(180deg, #0b1c31 0%, #0d2037 55%, #0a192b 100%);
+  box-shadow: 16px 0 38px rgba(12, 28, 49, 0.12);
 }
-
-/* =========================================
-   MOBILE NAVIGATION
-   ========================================= */
-
-.mobile-menu-button {
-  display: none;
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 0 8px 25px;
 }
-
-.mobile-sidebar-overlay {
-  display: none;
+.sidebar-brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  color: #fff;
+  border-radius: 11px 11px 13px 13px;
+  background: linear-gradient(155deg, #4f9cff, #1d4b9b);
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.3),
+    0 5px 13px rgba(28, 91, 178, 0.26);
 }
-
+.sidebar-brand-text {
+  color: #f3f8ff;
+  font:
+    700 20px/1 "Plus Jakarta Sans",
+    sans-serif;
+  letter-spacing: -0.6px;
+}
 .mobile-sidebar-close {
   display: none;
+  margin-left: auto;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.sidebar-nav {
+  flex: 1;
+  min-height: 0;
+}
+.sidebar-section-label {
+  margin: 22px 10px 8px;
+  color: rgba(210, 225, 242, 0.5);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 42px;
+  margin: 3px 0;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: #b5c7dc;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    color 0.18s ease,
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+.sidebar-nav a:hover {
+  color: #fff;
+  background: rgba(111, 166, 229, 0.13);
+  transform: translateX(2px);
+}
+.sidebar-nav a.active {
+  color: #eaf3ff;
+  background: linear-gradient(
+    100deg,
+    rgba(48, 111, 207, 0.63),
+    rgba(53, 106, 191, 0.31)
+  );
+  box-shadow:
+    inset 3px 0 #7bb5ff,
+    0 8px 18px rgba(4, 15, 30, 0.18);
+}
+.sidebar-nav a.active .ui-icon {
+  color: #80b8ff;
+}
+.sidebar-nav .ui-icon {
+  flex: 0 0 auto;
+  color: #9db3ce;
+}
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.sidebar-logout {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  color: #a8bcd4;
+  font: 600 13px/1.2 inherit;
+  text-align: left;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    color 0.18s ease,
+    background 0.18s ease;
+}
+.sidebar-logout:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+.sidebar-profile {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 58px;
+  padding: 8px 9px;
+  border: 1px solid rgba(179, 211, 244, 0.08);
+  border-radius: 10px;
+  background: rgba(93, 132, 180, 0.15);
+}
+.sidebar-profile-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #16345b;
+  background: linear-gradient(145deg, #e9f4ff, #c4dbf5);
+  font:
+    700 13px/1 "Plus Jakarta Sans",
+    sans-serif;
+}
+.sidebar-profile-avatar-staff {
+  color: #5b2d80;
+  background: linear-gradient(145deg, #f2e3ff, #dcc3f4);
+}
+.sidebar-profile > span:nth-child(2) {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 3px;
+}
+.sidebar-profile strong {
+  overflow: hidden;
+  color: #edf5ff;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sidebar-profile small {
+  overflow: hidden;
+  color: #9bb2cf;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+.sidebar-profile-chevron {
+  margin-left: auto;
+  color: #a9c0db;
+  font-size: 17px;
+  line-height: 1;
+}
+.app-main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  margin-left: 246px;
+  padding: 39px clamp(28px, 4vw, 61px) 48px;
+  background: transparent;
 }
 
-/* =========================================
-   RESPONSIVE STUDENT LAYOUT
-   ========================================= */
-
-@media (max-width: 768px) {
-  .student-main {
-    margin-left: 0;
-    padding: 80px 20px 30px;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  .student-sidebar {
-    width: 280px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1100;
-
-    transform: translateX(-100%);
-    transition: transform 0.25s ease;
-
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
-  }
-
-  .student-sidebar.open {
-    transform: translateX(0);
-  }
-
-  .mobile-menu-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    position: fixed;
-    top: 16px;
-    left: 16px;
-    z-index: 1000;
-
-    width: 44px;
-    height: 44px;
-
-    border: none;
-    border-radius: 10px;
-
-    background: #111827;
-    color: #ffffff;
-
-    font-size: 22px;
-    line-height: 1;
-
-    cursor: pointer;
-
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-
-  .mobile-menu-button:hover {
-    background: #1f2937;
-  }
-
-  .mobile-sidebar-overlay {
-    display: block;
-
-    position: fixed;
-    inset: 0;
-    z-index: 1050;
-
-    width: 100%;
-    height: 100%;
-
-    border: none;
-    padding: 0;
-    margin: 0;
-
-    background: rgba(0, 0, 0, 0.45);
-
-    cursor: pointer;
-  }
-
-  .mobile-sidebar-close {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 36px;
-    height: 36px;
-
-    border: none;
-    border-radius: 8px;
-
-    background: transparent;
-    color: #ffffff;
-
-    font-size: 28px;
-    line-height: 1;
-
-    cursor: pointer;
-  }
-
-  .mobile-sidebar-close:hover {
-    background: #1f2937;
-  }
-
-  .sidebar-logo {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+.app-main::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 246px;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(244, 247, 252, 0.85), rgba(238, 243, 250, 0.89)),
+    url("/assets/logo-light.png");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
-/* =========================================
-   SMALL MOBILE
-   ========================================= */
-
-@media (max-width: 480px) {
-  .student-main {
-    padding: 76px 16px 24px;
-  }
-
-  .student-sidebar {
-    width: min(280px, 85vw);
-  }
+.app-main > div,
+.app-main .dashboard-page,
+.app-main .staff-dashboard-page,
+.app-main .staff-dashboard,
+.app-main .dashboard,
+.app-main .my-requests-page,
+.app-main .staff-requests-page,
+.app-main .apply-outpass-page,
+.app-main .profile-page,
+.app-main .staff-profile-page,
+.app-main .profile-container,
+.app-main .staff-profile-container {
+  background: transparent !important;
+  background-color: transparent !important;
 }
-
-/* =========================================
-   HIDE MOBILE MENU WHEN SIDEBAR IS OPEN
-   ========================================= */
-
-@media (max-width: 768px) {
-  .student-layout.sidebar-open .mobile-menu-button {
-    display: none !important;
-  }
-}
-
-/* =========================================
-   MODAL STACKING
-   ========================================= */
-
-/*
-   Modals must always appear above:
-   - hamburger button
-   - sidebar
-   - sidebar overlay
-   - page content
-*/
-
-.modal-overlay,
-.cancel-modal-overlay {
-  position: fixed !important;
-  inset: 0;
-}
-
-.modal-overlay {
-  z-index: 99999 !important;
-}
-
-.cancel-modal-overlay {
-  z-index: 100000 !important;
-}
-
-/*
-   Make sure the hamburger can NEVER
-   appear above a modal.
-*/
 
 .mobile-menu-button {
-  z-index: 100 !important;
+  display: none;
 }
-
 .mobile-sidebar-overlay {
-  z-index: 1050 !important;
+  display: none;
+}
+[data-theme="dark"] .app-layout {
+  --shell-ink: #eef5ff;
+  --shell-muted: #9eb0c7;
+  --shell-line: rgba(176, 203, 235, 0.12);
+
+  color: var(--shell-ink);
+  background: #071222;
 }
 
-.student-sidebar {
-  z-index: 1100 !important;
+[data-theme="dark"] .app-main {
+  background: transparent;
 }
 
-/* =========================================
-   HIDE MOBILE MENU WHEN ANY MODAL IS OPEN
-   ========================================= */
+[data-theme="dark"] .app-main::before {
+  background-image:
+    linear-gradient(rgba(7, 18, 33, 0.84), rgba(9, 23, 41, 0.88)),
+    url("/assets/logo-dark.jpg");
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
 
-@media (max-width: 768px) {
-  .student-layout:has(.modal-overlay) .mobile-menu-button,
-  .student-layout:has(.cancel-modal-overlay) .mobile-menu-button {
-    display: none !important;
+[data-theme="dark"] .app-main > div,
+[data-theme="dark"] .app-main .dashboard-page,
+[data-theme="dark"] .app-main .staff-dashboard-page,
+[data-theme="dark"] .app-main .staff-dashboard,
+[data-theme="dark"] .app-main .dashboard,
+[data-theme="dark"] .app-main .my-requests-page,
+[data-theme="dark"] .app-main .staff-requests-page,
+[data-theme="dark"] .app-main .apply-outpass-page,
+[data-theme="dark"] .app-main .profile-page,
+[data-theme="dark"] .app-main .staff-profile-page,
+[data-theme="dark"] .app-main .profile-container,
+[data-theme="dark"] .app-main .staff-profile-container {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+[data-theme="dark"] .app-sidebar {
+  background: linear-gradient(180deg, #071222 0%, #09182a 100%);
+}
+[data-theme="dark"] .sidebar-profile {
+  background: rgba(93, 132, 180, 0.11);
+}
+@media (max-width: 920px) {
+  .app-main {
+    margin-left: 0;
+    padding: 84px 28px 42px;
   }
+  .app-main::before {
+    left: 0;
+  }
+  .app-sidebar {
+    transform: translateX(-102%);
+    transition: transform 0.22s cubic-bezier(0.23, 1, 0.32, 1);
+    box-shadow: 20px 0 48px rgba(2, 14, 29, 0.3);
+  }
+  .app-sidebar.open {
+    transform: translateX(0);
+  }
+  .mobile-menu-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 12;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border: 1px solid var(--shell-line);
+    border-radius: 12px;
+    color: #244260;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: 0 8px 22px rgba(40, 76, 113, 0.12);
+    cursor: pointer;
+  }
+  .mobile-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 19;
+    display: block;
+    border: 0;
+    background: rgba(4, 15, 28, 0.46);
+    cursor: pointer;
+  }
+  .mobile-sidebar-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+  }
+  [data-theme="dark"] .mobile-menu-button {
+    color: #eff7ff;
+    background: rgba(24, 49, 75, 0.82);
+  }
+}
+@media (max-width: 560px) {
+  .app-main {
+    padding: 78px 16px 32px;
+  }
+  .app-sidebar {
+    width: min(87vw, 300px);
+  }
+}
+@media (max-width: 920px) {
+  .app-layout.sidebar-open .mobile-menu-button {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+.modal-overlay,
+.cancel-modal-overlay {
+  z-index: 100000 !important;
 }
