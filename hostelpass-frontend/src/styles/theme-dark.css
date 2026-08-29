@@ -9,28 +9,34 @@
    Dark theme:
    - Page backgrounds
    - Cards and surfaces
-   - Borders
-   - Primary/secondary text
-   - Forms and inputs
-   - Modals
-   - Request pages
+   - Borders (targeted, non-wildcard)
+   - Primary/secondary/muted text
+   - Forms, inputs & datetime pickers
+   - Modals & Action Confirmation dialogs
+   - Request pages & toolbars
    - Profile pages
    - Dashboard pages
+   - Status badges & banners
 
    Status colors such as APPROVED, PENDING, DENIED and
-   CANCELLED intentionally keep their existing accent colors.
+   CANCELLED preserve their clear, accessible status accents.
    ========================================================== */
 
 /* ==========================================================
-   1. GLOBAL LAYOUT
+   1. GLOBAL LAYOUT & ROOT
    ========================================================== */
+
+[data-theme="dark"] {
+  color-scheme: dark;
+}
 
 [data-theme="dark"] .staff-layout,
 [data-theme="dark"] .student-layout,
 [data-theme="dark"] .staff-dashboard,
 [data-theme="dark"] .my-requests-page,
 [data-theme="dark"] .staff-requests-page,
-[data-theme="dark"] .dashboard {
+[data-theme="dark"] .dashboard,
+[data-theme="dark"] .login-container {
   background: var(--color-bg);
 }
 
@@ -39,7 +45,6 @@
    ========================================================== */
 
 /* Main headings and important text */
-
 [data-theme="dark"] h1,
 [data-theme="dark"] h2,
 [data-theme="dark"] h3,
@@ -48,38 +53,68 @@
 }
 
 /* Secondary / descriptive text */
-
 [data-theme="dark"] p {
   color: var(--color-text-secondary);
 }
 
 /* Links */
-
 [data-theme="dark"] a {
   color: var(--color-text);
 }
 
 /* ==========================================================
-   3. SIDEBARS / NAVIGATION
+   3. TARGETED BORDERS (REPLACES DESTRUCTIVE WILDCARD)
    ========================================================== */
 
-[data-theme="dark"] .staff-layout,
-[data-theme="dark"] .student-layout {
-  background: var(--color-bg);
-}
-
-[data-theme="dark"] .staff-layout *,
-[data-theme="dark"] .student-layout * {
+[data-theme="dark"] .staff-layout .staff-sidebar,
+[data-theme="dark"] .student-layout .student-sidebar,
+[data-theme="dark"] .sidebar-brand,
+[data-theme="dark"] .sidebar-logo,
+[data-theme="dark"] .sidebar-logout,
+[data-theme="dark"] .staff-request-card,
+[data-theme="dark"] .my-request-card,
+[data-theme="dark"] .summary-card,
+[data-theme="dark"] .staff-summary-card,
+[data-theme="dark"] .staff-overview-card,
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .staff-profile-card,
+[data-theme="dark"] .outpass-form,
+[data-theme="dark"] .request-toolbar,
+[data-theme="dark"] .request-count,
+[data-theme="dark"] .details-modal,
+[data-theme="dark"] .request-modal,
+[data-theme="dark"] .action-modal,
+[data-theme="dark"] .cancel-confirmation-modal,
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .request-modal-header,
+[data-theme="dark"] .action-modal-header,
+[data-theme="dark"] .cancel-modal-header,
+[data-theme="dark"] .request-modal-footer,
+[data-theme="dark"] .action-modal-footer,
+[data-theme="dark"] .cancel-modal-footer,
+[data-theme="dark"] .modal-status-row,
+[data-theme="dark"] .request-card-header,
+[data-theme="dark"] .request-card-footer,
+[data-theme="dark"] .my-request-header,
+[data-theme="dark"] .request-top,
+[data-theme="dark"] .form-actions,
+[data-theme="dark"] .profile-item,
+[data-theme="dark"] .staff-profile-item,
+[data-theme="dark"] .empty-state,
+[data-theme="dark"] .empty-requests,
+[data-theme="dark"] .request-message,
+[data-theme="dark"] .message,
+[data-theme="dark"] .hp-card,
+[data-theme="dark"] .hp-input,
+[data-theme="dark"] .hp-select,
+[data-theme="dark"] .hp-textarea,
+[data-theme="dark"] .hp-divider {
   border-color: var(--color-border);
 }
 
 /* ==========================================================
    4. STUDENT DASHBOARD
    ========================================================== */
-
-[data-theme="dark"] .dashboard {
-  background: var(--color-bg);
-}
 
 [data-theme="dark"] .dashboard-header h1,
 [data-theme="dark"] .student-info strong,
@@ -102,7 +137,6 @@
 }
 
 /* Summary cards */
-
 [data-theme="dark"] .summary-card {
   background: var(--color-surface);
   border-color: var(--color-border);
@@ -110,7 +144,6 @@
 }
 
 /* Request cards */
-
 [data-theme="dark"] .request-card {
   background: var(--color-surface);
   border-color: var(--color-border);
@@ -122,7 +155,6 @@
 }
 
 /* Empty state */
-
 [data-theme="dark"] .empty-state {
   background: var(--color-surface);
   border-color: var(--color-border);
@@ -130,19 +162,25 @@
 }
 
 /* Dashboard buttons */
-
 [data-theme="dark"] .view-all-requests-button,
 [data-theme="dark"] .details-button {
   color: #ffffff;
 }
 
+[data-theme="dark"] .student-dashboard-modal-close-button,
+[data-theme="dark"] .student-layout .student-modal-close-button {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .student-dashboard-modal-close-button:hover,
+[data-theme="dark"] .student-layout .student-modal-close-button:hover {
+  background: var(--color-primary-hover);
+}
+
 /* ==========================================================
    5. STAFF DASHBOARD
    ========================================================== */
-
-[data-theme="dark"] .staff-dashboard {
-  background: var(--color-bg);
-}
 
 [data-theme="dark"] .staff-header h1,
 [data-theme="dark"] .dashboard-label {
@@ -159,13 +197,44 @@
   color: var(--color-text);
 }
 
-/* ==========================================================
-   6. STUDENT REQUESTS
-   ========================================================== */
-
-[data-theme="dark"] .my-requests-page {
-  background: var(--color-bg);
+[data-theme="dark"] .summary-card-button {
+  border-color: var(--color-border);
 }
+
+[data-theme="dark"] .summary-card-button:hover {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+}
+
+[data-theme="dark"] .staff-overview-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .staff-overview-card h2 {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .staff-overview-card p {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .message {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .message.error {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.35);
+  color: #fca5a5;
+}
+
+/* ==========================================================
+   6. STUDENT REQUESTS (MY REQUESTS)
+   ========================================================== */
 
 [data-theme="dark"] .requests-header h1,
 [data-theme="dark"] .requests-header h2,
@@ -178,22 +247,30 @@
 }
 
 /* Request count */
-
 [data-theme="dark"] .request-count {
   background: var(--color-surface);
   border-color: var(--color-border);
   color: var(--color-text);
 }
 
-/* Request cards */
+[data-theme="dark"] .request-count strong {
+  color: var(--color-primary-dark);
+}
 
+[data-theme="dark"] .request-count span {
+  color: var(--color-text-secondary);
+}
+
+/* Request cards */
 [data-theme="dark"] .my-request-card {
   background: var(--color-surface);
   border-color: var(--color-border);
   color: var(--color-text);
 }
 
-/* Request headings */
+[data-theme="dark"] .my-request-header {
+  border-bottom-color: var(--color-border);
+}
 
 [data-theme="dark"] .my-request-card h1,
 [data-theme="dark"] .my-request-card h2,
@@ -202,27 +279,26 @@
   color: var(--color-text);
 }
 
-/* Important request information */
-
 [data-theme="dark"] .my-request-card strong,
-[data-theme="dark"] .my-request-card b {
+[data-theme="dark"] .my-request-card b,
+[data-theme="dark"] .info-item strong {
   color: var(--color-text);
 }
-
-/* Supporting request information */
 
 [data-theme="dark"] .my-request-card p {
   color: var(--color-text-secondary);
 }
 
-/* Request identifiers */
+[data-theme="dark"] .my-request-card .request-id,
+[data-theme="dark"] .info-item span {
+  color: var(--color-text-muted);
+}
 
-[data-theme="dark"] .my-request-card .request-id {
-  color: var(--color-text-secondary);
+[data-theme="dark"] .request-actions {
+  border-top-color: var(--color-border);
 }
 
 /* Search */
-
 [data-theme="dark"] .search-wrapper input {
   background: var(--color-bg);
   border-color: var(--color-border);
@@ -230,32 +306,54 @@
 }
 
 [data-theme="dark"] .search-wrapper input::placeholder {
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .search-wrapper input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
 /* Filters */
-
 [data-theme="dark"] .request-filters select {
   background: var(--color-bg);
   border-color: var(--color-border);
   color: var(--color-text);
 }
 
-/* Pagination */
+[data-theme="dark"] .request-filters select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
 
+/* Pagination */
 [data-theme="dark"] .pagination-button {
   background: var(--color-surface);
   border-color: var(--color-border);
   color: var(--color-text);
 }
 
-/* ==========================================================
-   7. STAFF REQUESTS
-   ========================================================== */
-
-[data-theme="dark"] .staff-requests-page {
-  background: var(--color-bg);
+[data-theme="dark"] .pagination-button:hover:not(:disabled):not(.active) {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: #ffffff;
 }
+
+[data-theme="dark"] .pagination-button.active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .pagination-button:disabled {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================
+   7. STAFF REQUESTS PAGE
+   ========================================================== */
 
 [data-theme="dark"] .staff-requests-header h1,
 [data-theme="dark"] .staff-requests-header h2,
@@ -267,51 +365,113 @@
   color: var(--color-text-secondary);
 }
 
-/* Request count */
-
-[data-theme="dark"] .request-count {
+/* Toolbar */
+[data-theme="dark"] .request-toolbar {
   background: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .filter-label {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .filter-wrapper select {
+  background: var(--color-bg);
   border-color: var(--color-border);
   color: var(--color-text);
 }
 
-/* Staff request cards */
+[data-theme="dark"] .filter-wrapper select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
 
+[data-theme="dark"] .clear-search {
+  background: var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .clear-search:hover {
+  background: var(--color-primary-light);
+  color: var(--color-text);
+}
+
+/* Results info & card content */
+[data-theme="dark"] .results-info {
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .results-info strong {
+  color: var(--color-text);
+}
+
+/* Staff request cards */
 [data-theme="dark"] .staff-request-card {
   background: var(--color-surface);
   border-color: var(--color-border);
   color: var(--color-text);
 }
 
-/* Headings */
+[data-theme="dark"] .staff-request-card:hover {
+  border-color: var(--color-primary);
+}
 
-[data-theme="dark"] .staff-request-card h1,
-[data-theme="dark"] .staff-request-card h2,
-[data-theme="dark"] .staff-request-card h3,
-[data-theme="dark"] .staff-request-card h4 {
+[data-theme="dark"] .request-card-header,
+[data-theme="dark"] .request-card-footer {
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .pass-code {
   color: var(--color-text);
 }
 
-/* Important information */
+[data-theme="dark"] .request-number {
+  color: var(--color-text-muted);
+}
 
-[data-theme="dark"] .staff-request-card strong,
-[data-theme="dark"] .staff-request-card b {
+[data-theme="dark"] .summary-item strong {
   color: var(--color-text);
 }
 
-/* Supporting information */
+[data-theme="dark"] .summary-item span {
+  color: var(--color-text-muted);
+}
 
-[data-theme="dark"] .staff-request-card p {
+[data-theme="dark"] .view-details-button {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .view-details-button:hover {
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+/* Request Messages (Empty / Loading / Error) */
+[data-theme="dark"] .request-message,
+[data-theme="dark"] .empty-requests,
+[data-theme="dark"] .requests-message {
+  background: var(--color-surface);
+  border-color: var(--color-border);
   color: var(--color-text-secondary);
 }
 
-/* Search */
-
-[data-theme="dark"] .filter-wrapper select,
-[data-theme="dark"] .staff-requests-page .search-wrapper input {
-  background: var(--color-bg);
-  border-color: var(--color-border);
+[data-theme="dark"] .request-message h2,
+[data-theme="dark"] .request-message h3,
+[data-theme="dark"] .empty-requests h2 {
   color: var(--color-text);
+}
+
+[data-theme="dark"] .request-message.error,
+[data-theme="dark"] .requests-error {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.35);
+  color: #fca5a5;
+}
+
+[data-theme="dark"] .request-message.error h3 {
+  color: #fca5a5;
 }
 
 /* ==========================================================
@@ -325,8 +485,6 @@
   color: var(--color-text);
 }
 
-/* Profile headings */
-
 [data-theme="dark"] .profile-card h1,
 [data-theme="dark"] .profile-card h2,
 [data-theme="dark"] .profile-card h3,
@@ -339,21 +497,21 @@
 }
 
 /* Profile items */
-
 [data-theme="dark"] .profile-item,
 [data-theme="dark"] .staff-profile-item {
   background: var(--color-bg);
   border-color: var(--color-border);
 }
 
-/* Profile important values */
-
-[data-theme="dark"] .profile-card strong,
-[data-theme="dark"] .staff-profile-card strong {
+[data-theme="dark"] .profile-item strong,
+[data-theme="dark"] .staff-profile-item strong {
   color: var(--color-text);
 }
 
-/* Profile descriptions */
+[data-theme="dark"] .profile-item span,
+[data-theme="dark"] .staff-profile-item span {
+  color: var(--color-text-muted);
+}
 
 [data-theme="dark"] .profile-header p,
 [data-theme="dark"] .staff-profile-header p {
@@ -380,7 +538,6 @@
 }
 
 /* Form controls */
-
 [data-theme="dark"] .form-group input,
 [data-theme="dark"] .form-group select,
 [data-theme="dark"] .form-group textarea {
@@ -389,15 +546,54 @@
   color: var(--color-text);
 }
 
-[data-theme="dark"] .form-group input::placeholder,
-[data-theme="dark"] .form-group textarea::placeholder {
-  color: var(--color-text-secondary);
+[data-theme="dark"] .form-group input:focus,
+[data-theme="dark"] .form-group select:focus,
+[data-theme="dark"] .form-group textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
 }
 
-/* Form labels */
+[data-theme="dark"] .form-group input::placeholder,
+[data-theme="dark"] .form-group textarea::placeholder {
+  color: var(--color-text-muted);
+}
 
 [data-theme="dark"] .form-group label {
   color: var(--color-text);
+}
+
+[data-theme="dark"] .form-group small {
+  color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .form-actions {
+  border-top-color: var(--color-border);
+}
+
+[data-theme="dark"] input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+/* Apply Outpass message banners */
+[data-theme="dark"] .apply-error {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.35);
+  color: #fca5a5;
+}
+
+[data-theme="dark"] .apply-success {
+  background: rgba(22, 163, 74, 0.12);
+  border-color: rgba(22, 163, 74, 0.35);
+  color: #86efac;
+}
+
+[data-theme="dark"] .apply-success button {
+  background: var(--color-approve);
+  color: #ffffff;
+}
+
+[data-theme="dark"] .apply-success button:hover {
+  background: var(--color-approve-hover);
 }
 
 /* ==========================================================
@@ -410,6 +606,7 @@
 
 [data-theme="dark"] .login-card {
   background: var(--color-surface);
+  border: 1px solid var(--color-border);
   color: var(--color-text);
 }
 
@@ -422,15 +619,19 @@
 }
 
 /* Student / Staff toggle */
-
 [data-theme="dark"] .toggle-buttons button:not(.active) {
   background: var(--color-bg);
   border-color: var(--color-border);
   color: var(--color-text-secondary);
 }
 
-/* Login inputs */
+[data-theme="dark"] .toggle-buttons button:not(.active):hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary-dark);
+  background: var(--color-surface);
+}
 
+/* Login inputs */
 [data-theme="dark"] .login-card form input {
   background: var(--color-bg);
   border-color: var(--color-border);
@@ -438,103 +639,218 @@
 }
 
 [data-theme="dark"] .login-card form input::placeholder {
-  color: var(--color-text-secondary);
+  color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .login-card form input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* Login error alert */
+[data-theme="dark"] .login-error {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.35);
+  color: #fca5a5;
 }
 
 /* ==========================================================
-   11. MODALS
+   11. MODALS & CONFIRMATION DIALOGS
    ========================================================== */
 
+/* Base Modal Container */
 [data-theme="dark"] .details-modal,
 [data-theme="dark"] .request-modal,
-[data-theme="dark"] .cancel-confirmation-modal {
+[data-theme="dark"] .action-modal,
+[data-theme="dark"] .cancel-confirmation-modal,
+[data-theme="dark"] .hp-modal {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  box-shadow: var(--shadow-xl);
+}
+
+/* Modal Headers */
+[data-theme="dark"] .modal-header,
+[data-theme="dark"] .request-modal-header,
+[data-theme="dark"] .action-modal-header,
+[data-theme="dark"] .cancel-modal-header,
+[data-theme="dark"] .hp-modal-header {
+  border-bottom-color: var(--color-border);
+}
+
+[data-theme="dark"] .modal-header h2,
+[data-theme="dark"] .request-modal-header h2,
+[data-theme="dark"] .action-modal-header h2,
+[data-theme="dark"] .cancel-modal-header h2,
+[data-theme="dark"] .hp-modal-title {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .modal-header span,
+[data-theme="dark"] .request-modal-header span,
+[data-theme="dark"] .hp-modal-subtitle {
+  color: var(--color-text-muted);
+}
+
+/* Modal Close Buttons */
+[data-theme="dark"] .close-button,
+[data-theme="dark"] .cancel-modal-close,
+[data-theme="dark"] .action-modal-close,
+[data-theme="dark"] .staff-modal-close-button,
+[data-theme="dark"] .hp-modal-close {
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+}
+
+[data-theme="dark"] .close-button:hover,
+[data-theme="dark"] .cancel-modal-close:hover,
+[data-theme="dark"] .action-modal-close:hover,
+[data-theme="dark"] .staff-modal-close-button:hover,
+[data-theme="dark"] .hp-modal-close:hover {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Modal Details & Content */
+[data-theme="dark"] .modal-details strong,
+[data-theme="dark"] .request-modal-details .modal-detail strong,
+[data-theme="dark"] .modal-detail strong {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .modal-details span,
+[data-theme="dark"] .request-modal-details .modal-detail span,
+[data-theme="dark"] .modal-detail span {
+  color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .modal-section-title {
+  border-bottom-color: var(--color-border);
+  color: var(--color-primary-dark);
+}
+
+[data-theme="dark"] .modal-status-row {
+  background: var(--color-bg);
+  border-bottom-color: var(--color-border);
+}
+
+[data-theme="dark"] .modal-status-row > span:first-child {
+  color: var(--color-text-secondary);
+}
+
+/* Modal Footers */
+[data-theme="dark"] .request-modal-footer,
+[data-theme="dark"] .action-modal-footer,
+[data-theme="dark"] .cancel-modal-footer,
+[data-theme="dark"] .hp-modal-footer {
+  background: var(--color-bg);
+  border-top-color: var(--color-border);
+}
+
+[data-theme="dark"] .modal-close-action,
+[data-theme="dark"] .action-cancel-button,
+[data-theme="dark"] .cancel-modal-back {
   background: var(--color-surface);
   border-color: var(--color-border);
   color: var(--color-text);
 }
 
-/* Modal headings */
+[data-theme="dark"] .modal-close-action:hover,
+[data-theme="dark"] .action-cancel-button:hover,
+[data-theme="dark"] .cancel-modal-back:hover {
+  background: var(--color-border);
+}
 
-[data-theme="dark"] .modal-header h2 {
+/* Action & Cancel Modal Body */
+[data-theme="dark"] .action-modal-body p,
+[data-theme="dark"] .cancel-modal-body p {
   color: var(--color-text);
 }
 
-/* Modal supporting text */
-
-[data-theme="dark"] .modal-header span,
-[data-theme="dark"] .modal-details span {
-  color: var(--color-text-secondary);
+[data-theme="dark"] .action-modal-warning {
+  color: var(--color-text-muted) !important;
 }
 
-/* Modal important values */
-
-[data-theme="dark"] .modal-details strong {
-  color: var(--color-text);
-}
-
-/* Modal borders */
-
-[data-theme="dark"] .modal-header {
-  border-bottom-color: var(--color-border);
-}
-
-/* Close buttons */
-
-[data-theme="dark"] .close-button,
-[data-theme="dark"] .cancel-modal-close {
-  background: transparent;
-  color: var(--color-text-secondary);
-}
-
-/* Modal footer */
-
-[data-theme="dark"] .cancel-modal-footer {
+[data-theme="dark"] .deny-reason-input {
   background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .deny-reason-input:focus {
+  border-color: var(--color-danger);
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+}
+
+[data-theme="dark"] .deny-reason-info {
+  color: var(--color-text-secondary);
 }
 
 /* ==========================================================
-   12. ERROR / LOADING STATES
+   12. SUCCESS / ERROR / LOADING STATES
    ========================================================== */
 
-[data-theme="dark"] .loading {
+[data-theme="dark"] .loading,
+[data-theme="dark"] .loading-spinner-text {
   color: var(--color-text-secondary);
 }
 
-/* Keep error meaning/colors */
-
 [data-theme="dark"] .error {
-  color: #fecaca;
-  background: #451a1a;
+  color: #fca5a5;
+  background: rgba(220, 38, 38, 0.15);
+  border-color: rgba(220, 38, 38, 0.35);
+}
+
+/* Success message banner */
+[data-theme="dark"] .success-message {
+  background: rgba(22, 163, 74, 0.12);
+  border-color: rgba(22, 163, 74, 0.35);
+  color: #86efac;
+}
+
+[data-theme="dark"] .success-message-close {
+  color: #86efac;
+}
+
+[data-theme="dark"] .success-message-close:hover {
+  color: #bbf7d0;
 }
 
 /* ==========================================================
    13. STATUS BADGES
-   ==========================================================
-   Intentionally preserve status colors.
    ========================================================== */
 
-[data-theme="dark"] .status.pending {
+[data-theme="dark"] .status-badge.status-pending,
+[data-theme="dark"] .status.pending,
+[data-theme="dark"] .hp-badge-pending {
   background: #fef3c7;
   color: #92400e;
 }
 
-[data-theme="dark"] .status.approved {
+[data-theme="dark"] .status-badge.status-approved,
+[data-theme="dark"] .status.approved,
+[data-theme="dark"] .hp-badge-approved {
   background: #dcfce7;
   color: #166534;
 }
 
-[data-theme="dark"] .status.denied {
+[data-theme="dark"] .status-badge.status-denied,
+[data-theme="dark"] .status.denied,
+[data-theme="dark"] .hp-badge-denied {
   background: #fee2e2;
   color: #991b1b;
 }
 
-[data-theme="dark"] .status.cancelled {
-  background: #e5e7eb;
-  color: #374151;
+[data-theme="dark"] .status-badge.status-cancelled,
+[data-theme="dark"] .status.cancelled,
+[data-theme="dark"] .hp-badge-cancelled {
+  background: #334155;
+  color: #cbd5e1;
 }
 
 /* ==========================================================
-   14. BUTTON TEXT
+   14. BUTTON TRANSITIONS & STYLES
    ========================================================== */
 
 [data-theme="dark"] button {
@@ -544,25 +860,8 @@
     border-color 0.2s ease;
 }
 
-/* Primary buttons remain white */
-
-[data-theme="dark"] .view-all-requests-button,
-[data-theme="dark"] .details-button,
-[data-theme="dark"] .student-dashboard-modal-close-button {
-  color: #ffffff;
-}
-
 /* ==========================================================
-   15. BORDERS
-   ========================================================== */
-
-[data-theme="dark"] .request-top,
-[data-theme="dark"] .modal-header {
-  border-color: var(--color-border);
-}
-
-/* ==========================================================
-   16. DARK MODE SCROLLBARS
+   15. DARK MODE SCROLLBARS
    ========================================================== */
 
 [data-theme="dark"] {
@@ -587,7 +886,7 @@
 }
 
 /* ==========================================================
-   17. SMOOTH THEME TRANSITION
+   16. SMOOTH THEME TRANSITION
    ========================================================== */
 
 [data-theme="dark"],
@@ -604,7 +903,10 @@
 [data-theme="dark"] .outpass-form,
 [data-theme="dark"] .login-card,
 [data-theme="dark"] .details-modal,
-[data-theme="dark"] .request-modal {
+[data-theme="dark"] .request-modal,
+[data-theme="dark"] .action-modal,
+[data-theme="dark"] .cancel-confirmation-modal,
+[data-theme="dark"] .hp-modal {
   transition:
     background-color 0.25s ease,
     border-color 0.25s ease,

@@ -17,10 +17,15 @@ function Login() {
     password: "",
   });
 
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
+
+    if (error) {
+      setError("");
+    }
 
     setFormData((previousData) => ({
       ...previousData,
@@ -30,6 +35,7 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setError("");
 
     try {
       setLoading(true);
@@ -66,9 +72,12 @@ function Login() {
       } else {
         navigate("/staff/dashboard");
       }
-    } catch (error) {
-      console.error(error);
-      alert("Invalid Credentials");
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.message ||
+          "Invalid credentials. Please check your details and try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -87,6 +96,7 @@ function Login() {
             className={userType === "student" ? "active" : ""}
             onClick={() => {
               setUserType("student");
+              setError("");
               setFormData({
                 rollNumber: "",
                 username: "",
@@ -102,6 +112,7 @@ function Login() {
             className={userType === "staff" ? "active" : ""}
             onClick={() => {
               setUserType("staff");
+              setError("");
               setFormData({
                 rollNumber: "",
                 username: "",
@@ -112,6 +123,13 @@ function Login() {
             Staff
           </button>
         </div>
+
+        {error && (
+          <div className="login-error" role="alert">
+            <span className="login-error-icon">!</span>
+            <span>{error}</span>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           {userType === "student" ? (

@@ -32,7 +32,7 @@
   width: 240px;
   height: 100vh;
 
-  background: #111827;
+  background: var(--color-sidebar-bg, #111827);
   color: #ffffff;
 
   display: flex;
@@ -59,7 +59,7 @@
 
   color: #ffffff;
 
-  border-bottom: 1px solid #263244;
+  border-bottom: 1px solid var(--color-sidebar-border, #263244);
   box-sizing: border-box;
 }
 
@@ -91,7 +91,7 @@
 
   text-decoration: none;
 
-  color: #cbd5e1;
+  color: var(--color-sidebar-text, #cbd5e1);
 
   font-size: 15px;
   font-weight: 500;
@@ -102,7 +102,7 @@
 }
 
 .staff-layout .staff-sidebar a:hover {
-  background: #1e293b;
+  background: var(--color-sidebar-hover, #1e293b);
   color: #ffffff;
 }
 
@@ -111,7 +111,7 @@
    ========================================= */
 
 .staff-layout .staff-sidebar a.active {
-  background: #4f46e5;
+  background: var(--color-primary, #4f46e5);
   color: #ffffff;
 }
 
@@ -124,7 +124,7 @@
 
   padding: 20px 12px;
 
-  border-top: 1px solid #263244;
+  border-top: 1px solid var(--color-sidebar-border, #263244);
 }
 
 .staff-layout .staff-sidebar .sidebar-logout button {
@@ -138,7 +138,7 @@
 
   background: transparent;
 
-  color: #cbd5e1;
+  color: var(--color-sidebar-text, #cbd5e1);
 
   font-size: 15px;
   font-weight: 500;
@@ -153,7 +153,7 @@
 }
 
 .staff-layout .staff-sidebar .sidebar-logout button:hover {
-  background: #1e293b;
+  background: var(--color-sidebar-hover, #1e293b);
   color: #ffffff;
 }
 
