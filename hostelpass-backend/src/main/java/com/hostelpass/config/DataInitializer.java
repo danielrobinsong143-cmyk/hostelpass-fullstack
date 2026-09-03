@@ -81,7 +81,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         staffRepository.save(buildStaff(
-                "warden1", "Suresh Kumar", "warden@hostelpass.edu", "Warden@123", StaffRole.WARDEN));
+                "warden1", "Balaji", "warden@hostelpass.edu", "Warden@123", StaffRole.WARDEN));
 
         staffRepository.save(buildStaff(
                 "principal1", "Dr. Meena Iyer", "principal@hostelpass.edu", "Principal@123", StaffRole.PRINCIPAL));
