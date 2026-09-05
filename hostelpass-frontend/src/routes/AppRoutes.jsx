@@ -18,6 +18,7 @@ import StaffLayout from "../layouts/StaffLayout";
 
 import StaffProfile from "../pages/StaffProfile";
 import AdminStudents from "../pages/AdminStudents";
+import AdminStaff from "../pages/AdminStaff";
 
 function AppRoutes() {
   return (
@@ -137,6 +138,19 @@ function AppRoutes() {
               <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
                 <StaffLayout>
                   <AdminStudents />
+                </StaffLayout>
+              </RoleProtectedRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/staff"
+          element={
+            <ProtectedRoute>
+              <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+                <StaffLayout>
+                  <AdminStaff />
                 </StaffLayout>
               </RoleProtectedRoute>
             </ProtectedRoute>
