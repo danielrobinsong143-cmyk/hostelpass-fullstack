@@ -4,6 +4,7 @@ import Pagination from "../components/Pagination";
 import Modal from "../components/Modal";
 import {
   getAdminStudents,
+  getAdminStudentById,
   createAdminStudent,
   updateAdminStudent,
   deactivateAdminStudent,
@@ -37,6 +38,12 @@ function AdminStudents() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const pageSize = 10;
+
+  // View Modal
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [viewingStudent, setViewingStudent] = useState(null);
+  const [loadingView, setLoadingView] = useState(false);
+  const [viewError, setViewError] = useState("");
 
   // Create Modal
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -201,6 +208,28 @@ function AdminStudents() {
     }
 
     return errors;
+  };
+
+  // ==================== VIEW STUDENT ====================
+
+  const handleOpenViewModal = async (student) => {
+    setShowViewModal(true);
+    setLoadingView(true);
+    setViewError("");
+    setViewingStudent(student);
+
+    try {
+      const response = await getAdminStudentById(student.id);
+      setViewingStudent(response.data);
+    } catch (err) {
+      console.error("Failed to load student details:", err);
+      setViewError(
+        err.response?.data?.message ||
+          "Could not refresh latest details from server; displaying cached data."
+      );
+    } finally {
+      setLoadingView(false);
+    }
   };
 
   // ==================== CREATE STUDENT ====================
@@ -604,6 +633,16 @@ function AdminStudents() {
                       <div className="table-actions">
                         <button
                           type="button"
+                          className="btn-table-view"
+                          onClick={() => handleOpenViewModal(s)}
+                          title="View student profile"
+                        >
+                          <UiIcon name="eye" size={14} />
+                          <span>View</span>
+                        </button>
+
+                        <button
+                          type="button"
                           className="btn-table-edit"
                           onClick={() => handleOpenEditModal(s)}
                           title="Edit student profile"
@@ -649,6 +688,104 @@ function AdminStudents() {
           onPageChange={handlePageChange}
         />
       )}
+
+      {/* ================= VIEW STUDENT MODAL ================= */}
+      <Modal
+        open={showViewModal}
+        onClose={() => setShowViewModal(false)}
+        title="Student Details"
+        subtitle={viewingStudent ? `Roll No: ${viewingStudent.rollNumber}` : ""}
+        footer={
+          <button
+            type="button"
+            className="hp-btn hp-btn-secondary"
+            onClick={() => setShowViewModal(false)}
+          >
+            Close
+          </button>
+        }
+      >
+        {loadingView ? (
+          <div className="admin-loading-container" style={{ padding: "32px 0" }}>
+            <div className="admin-loading-spinner" />
+            <p>Loading student details...</p>
+          </div>
+        ) : viewingStudent ? (
+          <div className="student-view-card">
+            {viewError && (
+              <div className="form-server-error" role="alert" style={{ marginBottom: "var(--space-3)" }}>
+                ⚠️ {viewError}
+              </div>
+            )}
+            <div className="student-view-header">
+              <div className="student-view-avatar">
+                {viewingStudent.fullName ? viewingStudent.fullName.charAt(0).toUpperCase() : "S"}
+              </div>
+              <div className="student-view-title">
+                <h3 className="student-view-name">{viewingStudent.fullName}</h3>
+                <div className="student-view-badges">
+                  <span className="room-pill">{viewingStudent.roomNumber || "—"}</span>
+                  <span
+                    className={`student-status-badge ${viewingStudent.active ? "active" : "inactive"}`}
+                  >
+                    <span className="status-dot" />
+                    {viewingStudent.active ? "Active" : "Inactive"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="student-view-grid">
+              <div className="student-view-item">
+                <span className="student-view-label">Full Name</span>
+                <span className="student-view-val">{viewingStudent.fullName}</span>
+              </div>
+
+              <div className="student-view-item">
+                <span className="student-view-label">Roll Number</span>
+                <span className="student-view-val mono">{viewingStudent.rollNumber}</span>
+              </div>
+
+              <div className="student-view-item">
+                <span className="student-view-label">Email Address</span>
+                <span className="student-view-val">{viewingStudent.email}</span>
+              </div>
+
+              <div className="student-view-item">
+                <span className="student-view-label">Mobile Number</span>
+                <span className="student-view-val mono">{viewingStudent.mobileNumber || "—"}</span>
+              </div>
+
+              <div className="student-view-item">
+                <span className="student-view-label">Department</span>
+                <span className="student-view-val">{viewingStudent.department || "—"}</span>
+              </div>
+
+              <div className="student-view-item">
+                <span className="student-view-label">Branch</span>
+                <span className="student-view-val">{viewingStudent.branch || "—"}</span>
+              </div>
+
+              <div className="student-view-item">
+                <span className="student-view-label">Year of Study</span>
+                <span className="student-view-val">{viewingStudent.yearOfStudy || "—"}</span>
+              </div>
+
+              <div className="student-view-item">
+                <span className="student-view-label">Room Number</span>
+                <span className="student-view-val mono">{viewingStudent.roomNumber || "—"}</span>
+              </div>
+
+              <div className="student-view-item">
+                <span className="student-view-label">Account Status</span>
+                <span className="student-view-val">
+                  {viewingStudent.active ? "Active (Access Enabled)" : "Inactive (Access Suspended)"}
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : null}
+      </Modal>
 
       {/* ================= CREATE STUDENT MODAL ================= */}
       <Modal
