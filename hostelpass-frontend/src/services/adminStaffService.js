@@ -36,3 +36,8 @@ export const deactivateAdminStaff = async (id) => {
 export const activateAdminStaff = async (id) => {
   return api.patch(`/admin/staff/${id}/activate`);
 };
+
+export const resetStaffPassword = async (id, passwordData) => {
+  return api.post(`/admin/staff/${id}/reset-password`, passwordData);
+};
+

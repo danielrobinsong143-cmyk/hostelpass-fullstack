@@ -1,8 +1,12 @@
 package com.hostelpass.admin;
 
+import com.hostelpass.admin.dto.AdminResetPasswordRequest;
 import com.hostelpass.admin.dto.StudentAdminCreateRequest;
 import com.hostelpass.admin.dto.StudentAdminResponse;
 import com.hostelpass.admin.dto.StudentAdminUpdateRequest;
+import com.hostelpass.auth.RefreshToken;
+import com.hostelpass.auth.RefreshTokenRepository;
+import com.hostelpass.auth.UserType;
 import com.hostelpass.common.PageResponse;
 import com.hostelpass.exception.ConflictException;
 import com.hostelpass.exception.ResourceNotFoundException;
@@ -14,11 +18,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminStudentService {
 
     private final StudentRepository studentRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
@@ -87,10 +94,6 @@ public class AdminStudentService {
             student.setFullName(request.getFullName().trim());
         }
 
-        if (request.getPassword() != null && !request.getPassword().isBlank()) {
-            student.setPasswordHash(passwordEncoder.encode(request.getPassword()));
-        }
-
         if (request.getRoomNumber() != null && !request.getRoomNumber().isBlank()) {
             student.setRoomNumber(request.getRoomNumber().trim());
         }
@@ -115,10 +118,34 @@ public class AdminStudentService {
     }
 
     @Transactional
+    public void resetStudentPassword(Long studentId, AdminResetPasswordRequest request) {
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new ConflictException("New password and confirmation password do not match");
+        }
+
+        Student student = findStudent(studentId);
+        student.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        studentRepository.save(student);
+
+        revokeUserRefreshTokens(UserType.STUDENT, studentId);
+    }
+
+    @Transactional
     public StudentAdminResponse setActive(Long id, boolean active) {
         Student student = findStudent(id);
         student.setActive(active);
         return toResponse(studentRepository.save(student));
+    }
+
+    private void revokeUserRefreshTokens(UserType userType, Long userId) {
+        List<RefreshToken> tokens = refreshTokenRepository.findByUserTypeAndUserId(userType, userId);
+        List<RefreshToken> activeTokens = tokens.stream()
+                .filter(t -> !t.isRevoked())
+                .toList();
+        if (!activeTokens.isEmpty()) {
+            activeTokens.forEach(t -> t.setRevoked(true));
+            refreshTokenRepository.saveAll(activeTokens);
+        }
     }
 
     private Student findStudent(Long id) {

@@ -58,6 +58,14 @@ public class AdminStaffController {
         return ResponseEntity.ok(adminStaffService.setStaffActive(id, false));
     }
 
+    @PostMapping("/{id}/reset-password")
+    public ResponseEntity<java.util.Map<String, String>> resetPassword(
+            @PathVariable Long id,
+            @Valid @RequestBody com.hostelpass.admin.dto.AdminResetPasswordRequest request) {
+        adminStaffService.resetStaffPassword(id, request);
+        return ResponseEntity.ok(java.util.Map.of("message", "Staff password reset successfully"));
+    }
+
     @PatchMapping("/{id}/activate")
     public ResponseEntity<StaffAdminResponse> activate(@PathVariable Long id) {
         return ResponseEntity.ok(adminStaffService.setStaffActive(id, true));

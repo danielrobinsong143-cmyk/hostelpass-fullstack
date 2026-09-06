@@ -9,6 +9,7 @@ import {
   updateAdminStudent,
   deactivateAdminStudent,
   activateAdminStudent,
+  resetStudentPassword,
 } from "../services/adminStudentService";
 import "../styles/AdminStudents.css";
 
@@ -24,6 +25,22 @@ const INITIAL_CREATE_FORM = {
   department: "",
   yearOfStudy: "1st Year",
   mobileNumber: "",
+};
+
+const INITIAL_EDIT_FORM = {
+  rollNumber: "",
+  fullName: "",
+  email: "",
+  roomNumber: "",
+  branch: "",
+  department: "",
+  yearOfStudy: "1st Year",
+  mobileNumber: "",
+};
+
+const INITIAL_RESET_PASSWORD = {
+  newPassword: "",
+  confirmPassword: "",
 };
 
 function AdminStudents() {
@@ -56,11 +73,20 @@ function AdminStudents() {
   // Edit Modal
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
-  const [editForm, setEditForm] = useState(INITIAL_CREATE_FORM);
+  const [editForm, setEditForm] = useState(INITIAL_EDIT_FORM);
   const [editErrors, setEditErrors] = useState({});
   const [editServerError, setEditServerError] = useState("");
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
-  const [showPasswordEdit, setShowPasswordEdit] = useState(false);
+
+  // Reset Password Modal
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+  const [resettingStudent, setResettingStudent] = useState(null);
+  const [resetPasswordForm, setResetPasswordForm] = useState(INITIAL_RESET_PASSWORD);
+  const [resetPasswordErrors, setResetPasswordErrors] = useState({});
+  const [resetPasswordServerError, setResetPasswordServerError] = useState("");
+  const [isSubmittingResetPassword, setIsSubmittingResetPassword] = useState(false);
+  const [showResetNewPassword, setShowResetNewPassword] = useState(false);
+  const [showResetConfirmPassword, setShowResetConfirmPassword] = useState(false);
 
   // Activate / Deactivate Confirmation Dialog
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -176,15 +202,6 @@ function AdminStudents() {
       errors.email = "Please enter a valid email address";
     }
 
-    // Password is optional for edit
-    if (form.password && form.password.trim().length > 0) {
-      if (form.password.length < 8) {
-        errors.password = "Password must be at least 8 characters";
-      } else if (!/^(?=.*[A-Za-z])(?=.*\d).+$/.test(form.password)) {
-        errors.password = "Password must contain at least one letter and one number";
-      }
-    }
-
     if (!form.roomNumber.trim()) {
       errors.roomNumber = "Room number is required";
     }
@@ -287,7 +304,6 @@ function AdminStudents() {
       rollNumber: student.rollNumber || "",
       fullName: student.fullName || "",
       email: student.email || "",
-      password: "", // blank indicates keep existing
       roomNumber: student.roomNumber || "",
       branch: student.branch || "",
       department: student.department || "",
@@ -296,7 +312,6 @@ function AdminStudents() {
     });
     setEditErrors({});
     setEditServerError("");
-    setShowPasswordEdit(false);
     setShowEditModal(true);
   };
 
@@ -324,10 +339,6 @@ function AdminStudents() {
         mobileNumber: editForm.mobileNumber.trim(),
       };
 
-      if (editForm.password && editForm.password.trim().length > 0) {
-        payload.password = editForm.password;
-      }
-
       await updateAdminStudent(editingStudent.id, payload);
 
       setShowEditModal(false);
@@ -340,6 +351,66 @@ function AdminStudents() {
       );
     } finally {
       setIsSubmittingEdit(false);
+    }
+  };
+
+  // ==================== RESET STUDENT PASSWORD ====================
+
+  const handleOpenResetPasswordModal = (student) => {
+    setResettingStudent(student);
+    setResetPasswordForm(INITIAL_RESET_PASSWORD);
+    setResetPasswordErrors({});
+    setResetPasswordServerError("");
+    setShowResetNewPassword(false);
+    setShowResetConfirmPassword(false);
+    setShowResetPasswordModal(true);
+  };
+
+  const validateResetPassword = (form) => {
+    const errors = {};
+    if (!form.newPassword) {
+      errors.newPassword = "New password is required";
+    } else if (form.newPassword.length < 8) {
+      errors.newPassword = "Password must be at least 8 characters";
+    } else if (!/^(?=.*[A-Za-z])(?=.*\d).+$/.test(form.newPassword)) {
+      errors.newPassword = "Password must contain at least one letter and one number";
+    }
+
+    if (!form.confirmPassword) {
+      errors.confirmPassword = "Password confirmation is required";
+    } else if (form.newPassword && form.newPassword !== form.confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+    return errors;
+  };
+
+  const handleResetPasswordSubmit = async (e) => {
+    e.preventDefault();
+    if (!resettingStudent) return;
+    setResetPasswordServerError("");
+
+    const errors = validateResetPassword(resetPasswordForm);
+    if (Object.keys(errors).length > 0) {
+      setResetPasswordErrors(errors);
+      return;
+    }
+
+    try {
+      setIsSubmittingResetPassword(true);
+      await resetStudentPassword(resettingStudent.id, {
+        newPassword: resetPasswordForm.newPassword,
+        confirmPassword: resetPasswordForm.confirmPassword,
+      });
+
+      setShowResetPasswordModal(false);
+      setSuccessMessage(`Password for student "${resettingStudent.fullName}" (${resettingStudent.rollNumber}) was reset successfully. Active sessions revoked.`);
+    } catch (err) {
+      console.error("Reset student password error:", err);
+      setResetPasswordServerError(
+        err.response?.data?.message || "Failed to reset student password. Please try again."
+      );
+    } finally {
+      setIsSubmittingResetPassword(false);
     }
   };
 
@@ -649,6 +720,16 @@ function AdminStudents() {
                         >
                           <UiIcon name="edit" size={14} />
                           <span>Edit</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn-table-reset"
+                          onClick={() => handleOpenResetPasswordModal(s)}
+                          title="Reset student password"
+                        >
+                          <UiIcon name="lock" size={14} />
+                          <span>Password</span>
                         </button>
 
                         {s.active ? (
@@ -1114,38 +1195,6 @@ function AdminStudents() {
               )}
             </div>
 
-            {/* Password Reset (Optional) */}
-            <div className="admin-form-group">
-              <label className="admin-form-label" htmlFor="edit-password">
-                Reset Password <span style={{ fontWeight: "normal", color: "var(--color-text-muted)" }}>(optional)</span>
-              </label>
-              <div className="password-input-wrapper">
-                <input
-                  id="edit-password"
-                  type={showPasswordEdit ? "text" : "password"}
-                  className={`admin-form-input ${editErrors.password ? "has-error" : ""}`}
-                  placeholder="Leave blank to keep unchanged"
-                  value={editForm.password}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, password: e.target.value })
-                  }
-                />
-                <button
-                  type="button"
-                  className="password-toggle-btn"
-                  onClick={() => setShowPasswordEdit(!showPasswordEdit)}
-                  title={showPasswordEdit ? "Hide password" : "Show password"}
-                >
-                  <UiIcon name="eye" size={16} />
-                </button>
-              </div>
-              {editErrors.password ? (
-                <span className="admin-field-error">{editErrors.password}</span>
-              ) : (
-                <span className="admin-field-hint">Leave blank to keep current password</span>
-              )}
-            </div>
-
             {/* Room Number */}
             <div className="admin-form-group">
               <label className="admin-form-label" htmlFor="edit-roomNumber">
@@ -1298,6 +1347,112 @@ function AdminStudents() {
             </div>
           )}
         </div>
+      </Modal>
+
+      {/* ================= RESET STUDENT PASSWORD MODAL ================= */}
+      <Modal
+        open={showResetPasswordModal}
+        onClose={() => !isSubmittingResetPassword && setShowResetPasswordModal(false)}
+        title="Reset Student Password"
+        subtitle={resettingStudent ? `Set a new password for ${resettingStudent.fullName} (${resettingStudent.rollNumber})` : ""}
+        footer={
+          <>
+            <button
+              type="button"
+              className="hp-btn hp-btn-secondary"
+              onClick={() => setShowResetPasswordModal(false)}
+              disabled={isSubmittingResetPassword}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="reset-student-password-form"
+              className="hp-btn hp-btn-primary"
+              disabled={isSubmittingResetPassword}
+            >
+              {isSubmittingResetPassword ? "Resetting..." : "Reset Password"}
+            </button>
+          </>
+        }
+      >
+        <form id="reset-student-password-form" onSubmit={handleResetPasswordSubmit} noValidate>
+          {resetPasswordServerError && (
+            <div className="form-server-error" role="alert">
+              ⚠️ {resetPasswordServerError}
+            </div>
+          )}
+
+          <div style={{ marginBottom: "var(--space-4)", fontSize: "var(--text-xs)", color: "var(--color-text-secondary)", background: "rgba(79, 70, 229, 0.06)", padding: "10px 14px", borderRadius: "var(--radius-md)", border: "1px solid rgba(79, 70, 229, 0.18)" }}>
+            ℹ️ Resetting this student's password will immediately invalidate and revoke all of their active refresh sessions.
+          </div>
+
+          <div className="admin-form-group" style={{ marginBottom: "var(--space-4)" }}>
+            <label className="admin-form-label" htmlFor="reset-student-new-password">
+              New Password <span className="required-star">*</span>
+            </label>
+            <div className="password-input-wrapper">
+              <input
+                id="reset-student-new-password"
+                type={showResetNewPassword ? "text" : "password"}
+                className={`admin-form-input ${resetPasswordErrors.newPassword ? "has-error" : ""}`}
+                placeholder="Enter new password (min. 8 characters with 1 letter & 1 number)"
+                value={resetPasswordForm.newPassword}
+                onChange={(e) => {
+                  setResetPasswordForm({ ...resetPasswordForm, newPassword: e.target.value });
+                  if (resetPasswordErrors.newPassword) {
+                    setResetPasswordErrors({ ...resetPasswordErrors, newPassword: "" });
+                  }
+                }}
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowResetNewPassword(!showResetNewPassword)}
+                title={showResetNewPassword ? "Hide password" : "Show password"}
+              >
+                <UiIcon name="eye" size={16} />
+              </button>
+            </div>
+            {resetPasswordErrors.newPassword ? (
+              <span className="admin-field-error">{resetPasswordErrors.newPassword}</span>
+            ) : (
+              <span className="admin-field-hint">Must be at least 8 characters with 1 letter & 1 number</span>
+            )}
+          </div>
+
+          <div className="admin-form-group">
+            <label className="admin-form-label" htmlFor="reset-student-confirm-password">
+              Confirm New Password <span className="required-star">*</span>
+            </label>
+            <div className="password-input-wrapper">
+              <input
+                id="reset-student-confirm-password"
+                type={showResetConfirmPassword ? "text" : "password"}
+                className={`admin-form-input ${resetPasswordErrors.confirmPassword ? "has-error" : ""}`}
+                placeholder="Re-enter new password"
+                value={resetPasswordForm.confirmPassword}
+                onChange={(e) => {
+                  setResetPasswordForm({ ...resetPasswordForm, confirmPassword: e.target.value });
+                  if (resetPasswordErrors.confirmPassword) {
+                    setResetPasswordErrors({ ...resetPasswordErrors, confirmPassword: "" });
+                  }
+                }}
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowResetConfirmPassword(!showResetConfirmPassword)}
+                title={showResetConfirmPassword ? "Hide password" : "Show password"}
+              >
+                <UiIcon name="eye" size={16} />
+              </button>
+            </div>
+            {resetPasswordErrors.confirmPassword && (
+              <span className="admin-field-error">{resetPasswordErrors.confirmPassword}</span>
+            )}
+          </div>
+        </form>
       </Modal>
     </div>
   );

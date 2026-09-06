@@ -21,10 +21,6 @@ public class StudentAdminUpdateRequest {
     @Size(max = 120)
     private String email;
 
-    @Pattern(regexp = "^$|^(?=.*[A-Za-z])(?=.*\\d).{8,100}$",
-            message = "Password must be at least 8 characters and contain at least one letter and one number")
-    private String password;
-
     @Size(max = 20)
     private String roomNumber;
 

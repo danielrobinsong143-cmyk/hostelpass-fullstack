@@ -46,7 +46,14 @@ function StaffSidebar({ isOpen, onClose }) {
           </>
         )}
         <p className="sidebar-section-label">Account</p>
-        <NavLink to="/staff/profile" onClick={handleNavigation} className={({ isActive }) => isActive ? "active" : ""}><UiIcon name="profile" size={18} /><span>Profile</span></NavLink>
+        <NavLink
+          to={principal?.role === "SUPER_ADMIN" ? "/admin/profile" : "/staff/profile"}
+          onClick={handleNavigation}
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          <UiIcon name="profile" size={18} />
+          <span>Profile</span>
+        </NavLink>
       </nav>
 
       <div className="sidebar-bottom">

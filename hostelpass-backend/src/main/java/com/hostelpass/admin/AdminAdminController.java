@@ -58,6 +58,14 @@ public class AdminAdminController {
         return ResponseEntity.ok(adminStaffService.setAdminActive(id, false, principal.getId()));
     }
 
+    @PostMapping("/change-password")
+    public ResponseEntity<java.util.Map<String, String>> changeOwnPassword(
+            @Valid @RequestBody com.hostelpass.admin.dto.AdminChangePasswordRequest request,
+            @AuthenticationPrincipal UserPrincipal principal) {
+        adminStaffService.changeAdminOwnPassword(principal.getId(), request);
+        return ResponseEntity.ok(java.util.Map.of("message", "Password changed successfully"));
+    }
+
     @PatchMapping("/{id}/activate")
     public ResponseEntity<StaffAdminResponse> activate(
             @PathVariable Long id,

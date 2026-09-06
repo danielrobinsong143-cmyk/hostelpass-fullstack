@@ -35,3 +35,8 @@ export const deactivateAdminStudent = async (id) => {
 export const activateAdminStudent = async (id) => {
   return api.patch(`/admin/students/${id}/activate`);
 };
+
+export const resetStudentPassword = async (id, passwordData) => {
+  return api.post(`/admin/students/${id}/reset-password`, passwordData);
+};
+

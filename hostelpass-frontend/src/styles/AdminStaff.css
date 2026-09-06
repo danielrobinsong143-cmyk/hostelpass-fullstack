@@ -464,7 +464,8 @@
 }
 
 .btn-table-view,
-.btn-table-edit {
+.btn-table-edit,
+.btn-table-reset {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -479,13 +480,9 @@
   transition: all var(--transition-fast);
 }
 
-.btn-table-view:hover {
-  background: var(--color-surface);
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.btn-table-edit:hover {
+.btn-table-view:hover,
+.btn-table-edit:hover,
+.btn-table-reset:hover {
   background: var(--color-surface);
   color: var(--color-primary);
   border-color: var(--color-primary);

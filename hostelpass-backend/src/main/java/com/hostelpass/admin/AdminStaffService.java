@@ -1,10 +1,15 @@
 package com.hostelpass.admin;
 
+import com.hostelpass.admin.dto.AdminChangePasswordRequest;
 import com.hostelpass.admin.dto.AdminCreateRequest;
+import com.hostelpass.admin.dto.AdminResetPasswordRequest;
 import com.hostelpass.admin.dto.AdminUpdateRequest;
 import com.hostelpass.admin.dto.StaffAdminCreateRequest;
 import com.hostelpass.admin.dto.StaffAdminResponse;
 import com.hostelpass.admin.dto.StaffAdminUpdateRequest;
+import com.hostelpass.auth.RefreshToken;
+import com.hostelpass.auth.RefreshTokenRepository;
+import com.hostelpass.auth.UserType;
 import com.hostelpass.common.PageResponse;
 import com.hostelpass.exception.ConflictException;
 import com.hostelpass.exception.ResourceNotFoundException;
@@ -17,11 +22,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AdminStaffService {
 
     private final StaffRepository staffRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
     // ==========================================
@@ -108,12 +116,24 @@ public class AdminStaffService {
             staff.setRole(request.getRole());
         }
 
-        // Password reset (optional)
-        if (request.getPassword() != null && !request.getPassword().isBlank()) {
-            staff.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        return toResponse(staffRepository.save(staff));
+    }
+
+    @Transactional
+    public void resetStaffPassword(Long staffId, AdminResetPasswordRequest request) {
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new ConflictException("New password and confirmation password do not match");
         }
 
-        return toResponse(staffRepository.save(staff));
+        Staff staff = findStaff(staffId);
+        if (staff.getRole() == StaffRole.SUPER_ADMIN) {
+            throw new ResourceNotFoundException("Staff not found with id: " + staffId);
+        }
+
+        staff.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        staffRepository.save(staff);
+
+        revokeUserRefreshTokens(UserType.STAFF, staffId);
     }
 
     @Transactional
@@ -196,6 +216,31 @@ public class AdminStaffService {
     }
 
     @Transactional
+    public void changeAdminOwnPassword(Long adminId, AdminChangePasswordRequest request) {
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new ConflictException("New password and confirmation password do not match");
+        }
+
+        Staff admin = findStaff(adminId);
+        if (admin.getRole() != StaffRole.SUPER_ADMIN) {
+            throw new ResourceNotFoundException("Admin not found with id: " + adminId);
+        }
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), admin.getPasswordHash())) {
+            throw new ConflictException("Current password is incorrect");
+        }
+
+        if (passwordEncoder.matches(request.getNewPassword(), admin.getPasswordHash())) {
+            throw new ConflictException("New password cannot be the same as the current password");
+        }
+
+        admin.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        staffRepository.save(admin);
+
+        revokeUserRefreshTokens(UserType.STAFF, adminId);
+    }
+
+    @Transactional
     public StaffAdminResponse setAdminActive(Long id, boolean active, Long currentUserId) {
         Staff admin = findStaff(id);
         if (admin.getRole() != StaffRole.SUPER_ADMIN) {
@@ -222,6 +267,17 @@ public class AdminStaffService {
     // ==========================================
     // SHARED PRIVATE HELPERS
     // ==========================================
+
+    private void revokeUserRefreshTokens(UserType userType, Long userId) {
+        List<RefreshToken> tokens = refreshTokenRepository.findByUserTypeAndUserId(userType, userId);
+        List<RefreshToken> activeTokens = tokens.stream()
+                .filter(t -> !t.isRevoked())
+                .toList();
+        if (!activeTokens.isEmpty()) {
+            activeTokens.forEach(t -> t.setRevoked(true));
+            refreshTokenRepository.saveAll(activeTokens);
+        }
+    }
 
     private void validateUniqueUsername(String username, Long excludeId) {
         boolean inUse = (excludeId == null)
