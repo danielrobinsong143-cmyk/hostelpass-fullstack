@@ -14,8 +14,11 @@ import {
 import "../styles/AdminStaff.css";
 
 const ROLE_OPTIONS = [
-  { value: "WARDEN", label: "Warden" },
+  { value: "VC", label: "Vice Chairman" },
   { value: "PRINCIPAL", label: "Principal" },
+  { value: "VICE_PRINCIPAL", label: "Vice Principal" },
+  { value: "DEAN", label: "Dean" },
+  { value: "WARDEN", label: "Warden" },
 ];
 
 const INITIAL_CREATE_FORM = {
@@ -42,10 +45,16 @@ function formatRoleLabel(role) {
   switch (role) {
     case "SUPER_ADMIN":
       return "Super Admin";
-    case "WARDEN":
-      return "Warden";
+    case "VC":
+      return "Vice Chairman";
     case "PRINCIPAL":
       return "Principal";
+    case "VICE_PRINCIPAL":
+      return "Vice Principal";
+    case "DEAN":
+      return "Dean";
+    case "WARDEN":
+      return "Warden";
     default:
       return role || "Staff";
   }
@@ -55,10 +64,16 @@ function getRoleBadgeClass(role) {
   switch (role) {
     case "SUPER_ADMIN":
       return "staff-role-super-admin";
-    case "WARDEN":
-      return "staff-role-warden";
+    case "VC":
+      return "staff-role-vc";
     case "PRINCIPAL":
       return "staff-role-principal";
+    case "VICE_PRINCIPAL":
+      return "staff-role-vice-principal";
+    case "DEAN":
+      return "staff-role-dean";
+    case "WARDEN":
+      return "staff-role-warden";
     default:
       return "";
   }
@@ -193,7 +208,7 @@ function AdminStaff() {
 
     if (!form.role) {
       errors.role = "Role is required";
-    } else if (!["WARDEN", "PRINCIPAL"].includes(form.role)) {
+    } else if (!["VC", "PRINCIPAL", "VICE_PRINCIPAL", "DEAN", "WARDEN"].includes(form.role)) {
       errors.role = "Invalid role selected";
     }
 
@@ -229,7 +244,7 @@ function AdminStaff() {
 
     if (!form.role) {
       errors.role = "Role is required";
-    } else if (!["WARDEN", "PRINCIPAL"].includes(form.role)) {
+    } else if (!["VC", "PRINCIPAL", "VICE_PRINCIPAL", "DEAN", "WARDEN"].includes(form.role)) {
       errors.role = "Invalid role selected";
     }
 
@@ -561,13 +576,13 @@ function AdminStaff() {
           </button>
           <button
             type="button"
-            className={`admin-filter-pill ${roleFilter === "WARDEN" ? "active" : ""}`}
+            className={`admin-filter-pill ${roleFilter === "VC" ? "active" : ""}`}
             onClick={() => {
-              setRoleFilter("WARDEN");
+              setRoleFilter("VC");
               setCurrentPage(0);
             }}
           >
-            Wardens
+            Vice Chairmen
           </button>
           <button
             type="button"
@@ -578,6 +593,36 @@ function AdminStaff() {
             }}
           >
             Principals
+          </button>
+          <button
+            type="button"
+            className={`admin-filter-pill ${roleFilter === "VICE_PRINCIPAL" ? "active" : ""}`}
+            onClick={() => {
+              setRoleFilter("VICE_PRINCIPAL");
+              setCurrentPage(0);
+            }}
+          >
+            Vice Principals
+          </button>
+          <button
+            type="button"
+            className={`admin-filter-pill ${roleFilter === "DEAN" ? "active" : ""}`}
+            onClick={() => {
+              setRoleFilter("DEAN");
+              setCurrentPage(0);
+            }}
+          >
+            Deans
+          </button>
+          <button
+            type="button"
+            className={`admin-filter-pill ${roleFilter === "WARDEN" ? "active" : ""}`}
+            onClick={() => {
+              setRoleFilter("WARDEN");
+              setCurrentPage(0);
+            }}
+          >
+            Wardens
           </button>
 
           <div className="admin-filter-divider" />

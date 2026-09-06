@@ -86,7 +86,7 @@ public class OutpassController {
         }
 
         @GetMapping("/stats")
-        @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
+        @PreAuthorize("hasAnyRole('VC', 'PRINCIPAL', 'VICE_PRINCIPAL', 'DEAN', 'WARDEN', 'SUPER_ADMIN')")
         public ResponseEntity<OutpassStatsResponse> getStats() {
 
                 return ResponseEntity.ok(
@@ -94,7 +94,7 @@ public class OutpassController {
         }
 
         @GetMapping
-        @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
+        @PreAuthorize("hasAnyRole('VC', 'PRINCIPAL', 'VICE_PRINCIPAL', 'DEAN', 'WARDEN', 'SUPER_ADMIN')")
         public ResponseEntity<PageResponse<OutpassResponse>> getRequests(
                         @RequestParam(required = false) String search,
                         @RequestParam(required = false) OutpassStatus status,
@@ -105,7 +105,7 @@ public class OutpassController {
         }
 
         @PatchMapping("/{id}/approve")
-        @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
+        @PreAuthorize("hasAnyRole('VC', 'PRINCIPAL', 'VICE_PRINCIPAL', 'DEAN', 'WARDEN', 'SUPER_ADMIN')")
         public ResponseEntity<OutpassResponse> approve(
                         @AuthenticationPrincipal UserPrincipal principal,
                         @PathVariable Long id,
@@ -119,7 +119,7 @@ public class OutpassController {
         }
 
         @PatchMapping("/{id}/deny")
-        @PreAuthorize("hasAnyRole('WARDEN', 'PRINCIPAL', 'SUPER_ADMIN')")
+        @PreAuthorize("hasAnyRole('VC', 'PRINCIPAL', 'VICE_PRINCIPAL', 'DEAN', 'WARDEN', 'SUPER_ADMIN')")
         public ResponseEntity<OutpassResponse> deny(
                         @AuthenticationPrincipal UserPrincipal principal,
                         @PathVariable Long id,

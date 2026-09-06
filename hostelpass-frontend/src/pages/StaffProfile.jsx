@@ -1,5 +1,24 @@
 import "../styles/StaffProfile.css";
 
+function formatStaffRole(role) {
+  switch (role) {
+    case "VC":
+      return "Vice Chairman";
+    case "PRINCIPAL":
+      return "Principal";
+    case "VICE_PRINCIPAL":
+      return "Vice Principal";
+    case "DEAN":
+      return "Dean";
+    case "WARDEN":
+      return "Warden";
+    case "SUPER_ADMIN":
+      return "Super Admin";
+    default:
+      return role || "—";
+  }
+}
+
 function StaffProfile() {
   const principal = JSON.parse(localStorage.getItem("principal"));
 
@@ -62,7 +81,7 @@ function StaffProfile() {
 
           <div className="staff-profile-item">
             <span>Role</span>
-            <strong>{principal.role || "—"}</strong>
+            <strong>{formatStaffRole(principal.role)}</strong>
           </div>
 
           <div className="staff-profile-item">

@@ -7,7 +7,10 @@ package com.hostelpass.staff;
  * order changes later.
  */
 public enum StaffRole {
-    WARDEN,
+    VC,
     PRINCIPAL,
+    VICE_PRINCIPAL,
+    DEAN,
+    WARDEN,
     SUPER_ADMIN
 }

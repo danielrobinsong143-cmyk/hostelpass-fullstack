@@ -93,7 +93,7 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <RoleProtectedRoute
-                allowedRoles={["WARDEN", "PRINCIPAL", "SUPER_ADMIN"]}
+                allowedRoles={["VC", "PRINCIPAL", "VICE_PRINCIPAL", "DEAN", "WARDEN", "SUPER_ADMIN"]}
               >
                 <StaffLayout>
                   <StaffDashboard />
@@ -108,7 +108,7 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <RoleProtectedRoute
-                allowedRoles={["WARDEN", "PRINCIPAL", "SUPER_ADMIN"]}
+                allowedRoles={["VC", "PRINCIPAL", "VICE_PRINCIPAL", "DEAN", "WARDEN", "SUPER_ADMIN"]}
               >
                 <StaffLayout>
                   <StaffRequests />
@@ -123,7 +123,7 @@ function AppRoutes() {
           element={
             <ProtectedRoute>
               <RoleProtectedRoute
-                allowedRoles={["WARDEN", "PRINCIPAL", "SUPER_ADMIN"]}
+                allowedRoles={["VC", "PRINCIPAL", "VICE_PRINCIPAL", "DEAN", "WARDEN", "SUPER_ADMIN"]}
               >
                 <StaffLayout>
                   <StaffProfile />
