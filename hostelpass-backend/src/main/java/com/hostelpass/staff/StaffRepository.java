@@ -47,4 +47,15 @@ public interface StaffRepository extends JpaRepository<Staff, Long> {
               AND (:role IS NULL OR s.role = :role)
             """)
     Page<Staff> searchAndFilter(@Param("search") String search, @Param("role") StaffRole role, Pageable pageable);
+
+    @Query("""
+            SELECT s FROM Staff s
+            WHERE (:search IS NULL OR :search = ''
+                   OR LOWER(s.username) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(s.fullName) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(s.email) LIKE LOWER(CONCAT('%', :search, '%')))
+              AND s.role != com.hostelpass.staff.StaffRole.SUPER_ADMIN
+              AND (:role IS NULL OR s.role = :role)
+            """)
+    Page<Staff> searchStaffExcludingSuperAdmin(@Param("search") String search, @Param("role") StaffRole role, Pageable pageable);
 }

@@ -54,16 +54,12 @@ public class AdminStaffController {
     }
 
     @PatchMapping("/{id}/deactivate")
-    public ResponseEntity<StaffAdminResponse> deactivate(
-            @PathVariable Long id,
-            @AuthenticationPrincipal UserPrincipal principal) {
-        return ResponseEntity.ok(adminStaffService.setActive(id, false, principal.getId()));
+    public ResponseEntity<StaffAdminResponse> deactivate(@PathVariable Long id) {
+        return ResponseEntity.ok(adminStaffService.setStaffActive(id, false));
     }
 
     @PatchMapping("/{id}/activate")
-    public ResponseEntity<StaffAdminResponse> activate(
-            @PathVariable Long id,
-            @AuthenticationPrincipal UserPrincipal principal) {
-        return ResponseEntity.ok(adminStaffService.setActive(id, true, principal.getId()));
+    public ResponseEntity<StaffAdminResponse> activate(@PathVariable Long id) {
+        return ResponseEntity.ok(adminStaffService.setStaffActive(id, true));
     }
 }

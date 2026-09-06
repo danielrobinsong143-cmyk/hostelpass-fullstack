@@ -42,6 +42,7 @@ function StaffSidebar({ isOpen, onClose }) {
             <p className="sidebar-section-label">Administration</p>
             <NavLink to="/admin/students" onClick={handleNavigation} className={({ isActive }) => isActive ? "active" : ""}><UiIcon name="users" size={18} /><span>Students</span></NavLink>
             <NavLink to="/admin/staff" onClick={handleNavigation} className={({ isActive }) => isActive ? "active" : ""}><UiIcon name="shield" size={18} /><span>Staff</span></NavLink>
+            <NavLink to="/admin/admins" onClick={handleNavigation} className={({ isActive }) => isActive ? "active" : ""}><UiIcon name="lock" size={18} /><span>Admins</span></NavLink>
           </>
         )}
         <p className="sidebar-section-label">Account</p>

@@ -4,63 +4,36 @@ import Pagination from "../components/Pagination";
 import Modal from "../components/Modal";
 import { AuthContext } from "../context/authContextDefinition";
 import {
-  getAdminStaff,
-  createAdminStaff,
-  updateAdminStaff,
-  deactivateAdminStaff,
-  activateAdminStaff,
-} from "../services/adminStaffService";
+  getAdminAdmins,
+  createAdminAdmin,
+  updateAdminAdmin,
+  deactivateAdminAdmin,
+  activateAdminAdmin,
+} from "../services/adminAdminService";
 import "../styles/AdminStaff.css";
-
-const ROLE_OPTIONS = [
-  { value: "WARDEN", label: "Warden" },
-  { value: "PRINCIPAL", label: "Principal" },
-];
 
 const INITIAL_CREATE_FORM = {
   username: "",
   fullName: "",
   email: "",
   password: "",
-  role: "WARDEN",
 };
 
-function formatRoleLabel(role) {
-  switch (role) {
-    case "SUPER_ADMIN":
-      return "Super Admin";
-    case "WARDEN":
-      return "Warden";
-    case "PRINCIPAL":
-      return "Principal";
-    default:
-      return role || "Staff";
-  }
-}
+const INITIAL_EDIT_FORM = {
+  username: "",
+  fullName: "",
+  email: "",
+};
 
-function getRoleBadgeClass(role) {
-  switch (role) {
-    case "SUPER_ADMIN":
-      return "staff-role-super-admin";
-    case "WARDEN":
-      return "staff-role-warden";
-    case "PRINCIPAL":
-      return "staff-role-principal";
-    default:
-      return "";
-  }
-}
-
-function AdminStaff() {
+function AdminAdmins() {
   const { principal } = useContext(AuthContext);
 
-  const [staffList, setStaffList] = useState([]);
+  const [adminList, setAdminList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("ALL");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -68,7 +41,7 @@ function AdminStaff() {
   const pageSize = 10;
 
   // View Modal
-  const [viewingStaff, setViewingStaff] = useState(null);
+  const [viewingAdmin, setViewingAdmin] = useState(null);
   const [showViewModal, setShowViewModal] = useState(false);
 
   // Create Modal
@@ -81,56 +54,50 @@ function AdminStaff() {
 
   // Edit Modal
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editingStaff, setEditingStaff] = useState(null);
-  const [editForm, setEditForm] = useState(INITIAL_CREATE_FORM);
+  const [editingAdmin, setEditingAdmin] = useState(null);
+  const [editForm, setEditForm] = useState(INITIAL_EDIT_FORM);
   const [editErrors, setEditErrors] = useState({});
   const [editServerError, setEditServerError] = useState("");
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false);
-  const [showPasswordEdit, setShowPasswordEdit] = useState(false);
 
   // Activate / Deactivate Confirmation Dialog
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [targetStaff, setTargetStaff] = useState(null);
+  const [targetAdmin, setTargetAdmin] = useState(null);
   const [confirmAction, setConfirmAction] = useState("deactivate"); // "deactivate" | "activate"
   const [isSubmittingConfirm, setIsSubmittingConfirm] = useState(false);
 
-  // ==================== LOAD STAFF ====================
+  // ==================== LOAD ADMINS ====================
 
-  const loadStaff = useCallback(async () => {
+  const loadAdmins = useCallback(async () => {
     try {
       setLoading(true);
       setError("");
 
-      const response = await getAdminStaff(
-        currentPage,
-        pageSize,
-        search,
-        roleFilter
-      );
+      const response = await getAdminAdmins(currentPage, pageSize, search);
       const data = response.data;
 
-      setStaffList(data.content || []);
+      setAdminList(data.content || []);
       setTotalPages(data.totalPages || 0);
       setTotalElements(data.totalElements || 0);
     } catch (err) {
-      console.error("Failed to load staff list:", err);
+      console.error("Failed to load admins list:", err);
       setError(
         err.response?.data?.message ||
-          "Unable to load staff directory. Please check your network and try again."
+          "Unable to load administrators directory. Please check your network and try again."
       );
     } finally {
       setLoading(false);
     }
-  }, [currentPage, pageSize, search, roleFilter]);
+  }, [currentPage, pageSize, search]);
 
   // Debounce search input by 300ms
   useEffect(() => {
     const timer = setTimeout(() => {
-      void loadStaff();
+      void loadAdmins();
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [loadStaff]);
+  }, [loadAdmins]);
 
   // ==================== VALIDATION HELPERS ====================
 
@@ -169,12 +136,6 @@ function AdminStaff() {
       errors.password = "Password must contain at least one letter and one number";
     }
 
-    if (!form.role) {
-      errors.role = "Role is required";
-    } else if (!["WARDEN", "PRINCIPAL"].includes(form.role)) {
-      errors.role = "Invalid role selected";
-    }
-
     return errors;
   };
 
@@ -205,32 +166,17 @@ function AdminStaff() {
       errors.email = "Please enter a valid email address";
     }
 
-    // Password is optional for edit; if provided, enforce criteria
-    if (form.password && form.password.trim().length > 0) {
-      if (form.password.length < 8) {
-        errors.password = "Password must be at least 8 characters";
-      } else if (!/^(?=.*[A-Za-z])(?=.*\d).+$/.test(form.password)) {
-        errors.password = "Password must contain at least one letter and one number";
-      }
-    }
-
-    if (!form.role) {
-      errors.role = "Role is required";
-    } else if (!["WARDEN", "PRINCIPAL"].includes(form.role)) {
-      errors.role = "Invalid role selected";
-    }
-
     return errors;
   };
 
-  // ==================== VIEW STAFF ====================
+  // ==================== VIEW ADMIN ====================
 
-  const handleOpenViewModal = (staff) => {
-    setViewingStaff(staff);
+  const handleOpenViewModal = (admin) => {
+    setViewingAdmin(admin);
     setShowViewModal(true);
   };
 
-  // ==================== CREATE STAFF ====================
+  // ==================== CREATE ADMIN ====================
 
   const handleOpenCreateModal = () => {
     setCreateForm(INITIAL_CREATE_FORM);
@@ -252,47 +198,43 @@ function AdminStaff() {
 
     try {
       setIsSubmittingCreate(true);
-      await createAdminStaff({
+      await createAdminAdmin({
         username: createForm.username.trim(),
         fullName: createForm.fullName.trim(),
         email: createForm.email.trim(),
         password: createForm.password,
-        role: createForm.role,
       });
 
       setShowCreateModal(false);
-      setSuccessMessage(`Staff member "${createForm.fullName.trim()}" created successfully.`);
-      await loadStaff();
+      setSuccessMessage(`Administrator "${createForm.fullName.trim()}" created successfully.`);
+      await loadAdmins();
     } catch (err) {
-      console.error("Create staff error:", err);
+      console.error("Create admin error:", err);
       setCreateServerError(
-        err.response?.data?.message || "Failed to create staff account. Please try again."
+        err.response?.data?.message || "Failed to create administrator account. Please try again."
       );
     } finally {
       setIsSubmittingCreate(false);
     }
   };
 
-  // ==================== EDIT STAFF ====================
+  // ==================== EDIT ADMIN ====================
 
-  const handleOpenEditModal = (staff) => {
-    setEditingStaff(staff);
+  const handleOpenEditModal = (admin) => {
+    setEditingAdmin(admin);
     setEditForm({
-      username: staff.username || "",
-      fullName: staff.fullName || "",
-      email: staff.email || "",
-      password: "", // blank indicates keep existing password
-      role: staff.role || "WARDEN",
+      username: admin.username || "",
+      fullName: admin.fullName || "",
+      email: admin.email || "",
     });
     setEditErrors({});
     setEditServerError("");
-    setShowPasswordEdit(false);
     setShowEditModal(true);
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    if (!editingStaff) return;
+    if (!editingAdmin) return;
     setEditServerError("");
 
     const errors = validateEdit(editForm);
@@ -303,27 +245,19 @@ function AdminStaff() {
 
     try {
       setIsSubmittingEdit(true);
-      const payload = {
+      await updateAdminAdmin(editingAdmin.id, {
         username: editForm.username.trim(),
         fullName: editForm.fullName.trim(),
         email: editForm.email.trim(),
-        role: editForm.role,
-      };
-
-      // Only include password if a new password was entered
-      if (editForm.password && editForm.password.trim().length > 0) {
-        payload.password = editForm.password;
-      }
-
-      await updateAdminStaff(editingStaff.id, payload);
+      });
 
       setShowEditModal(false);
-      setSuccessMessage(`Staff member "${editForm.fullName.trim()}" updated successfully.`);
-      await loadStaff();
+      setSuccessMessage(`Administrator "${editForm.fullName.trim()}" updated successfully.`);
+      await loadAdmins();
     } catch (err) {
-      console.error("Edit staff error:", err);
+      console.error("Edit admin error:", err);
       setEditServerError(
-        err.response?.data?.message || "Failed to update staff account. Please try again."
+        err.response?.data?.message || "Failed to update administrator account. Please try again."
       );
     } finally {
       setIsSubmittingEdit(false);
@@ -332,33 +266,33 @@ function AdminStaff() {
 
   // ==================== ACTIVATE / DEACTIVATE ====================
 
-  const handlePromptToggleStatus = (staff, action) => {
-    setTargetStaff(staff);
+  const handlePromptToggleStatus = (admin, action) => {
+    setTargetAdmin(admin);
     setConfirmAction(action);
     setShowConfirmModal(true);
   };
 
   const handleConfirmToggleStatus = async () => {
-    if (!targetStaff) return;
+    if (!targetAdmin) return;
 
     try {
       setIsSubmittingConfirm(true);
       if (confirmAction === "deactivate") {
-        await deactivateAdminStaff(targetStaff.id);
-        setSuccessMessage(`Staff member "${targetStaff.fullName}" has been deactivated.`);
+        await deactivateAdminAdmin(targetAdmin.id);
+        setSuccessMessage(`Administrator "${targetAdmin.fullName}" has been deactivated.`);
       } else {
-        await activateAdminStaff(targetStaff.id);
-        setSuccessMessage(`Staff member "${targetStaff.fullName}" has been activated.`);
+        await activateAdminAdmin(targetAdmin.id);
+        setSuccessMessage(`Administrator "${targetAdmin.fullName}" has been activated.`);
       }
 
       setShowConfirmModal(false);
-      setTargetStaff(null);
-      await loadStaff();
+      setTargetAdmin(null);
+      await loadAdmins();
     } catch (err) {
       console.error("Status toggle error:", err);
       setError(
         err.response?.data?.message ||
-          `Failed to ${confirmAction} staff member. Please try again.`
+          `Failed to ${confirmAction} administrator. Please try again.`
       );
       setShowConfirmModal(false);
     } finally {
@@ -368,9 +302,9 @@ function AdminStaff() {
 
   // ==================== FILTERING & PAGINATION ====================
 
-  const displayedStaff = staffList.filter((s) => {
-    if (statusFilter === "ACTIVE") return s.active === true;
-    if (statusFilter === "INACTIVE") return s.active === false;
+  const displayedAdmins = adminList.filter((a) => {
+    if (statusFilter === "ACTIVE") return a.active === true;
+    if (statusFilter === "INACTIVE") return a.active === false;
     return true;
   });
 
@@ -379,9 +313,9 @@ function AdminStaff() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const isCurrentUser = (staff) => {
-    if (!principal || !staff) return false;
-    return principal.id === staff.id || principal.username === staff.username;
+  const isCurrentUser = (admin) => {
+    if (!principal || !admin) return false;
+    return principal.id === admin.id || principal.username === admin.username;
   };
 
   return (
@@ -390,16 +324,16 @@ function AdminStaff() {
       <header className="admin-page-header">
         <div>
           <p className="admin-page-kicker">ADMINISTRATION</p>
-          <h1 className="admin-page-title">Staff Management</h1>
+          <h1 className="admin-page-title">Admin Management</h1>
           <p className="admin-page-subtitle">
-            Manage hostel staff accounts (Warden, Principal), update profile details, and manage system access.
+            Manage Super Admin accounts with system-wide privileges, configure security profiles, and manage administrative access.
           </p>
         </div>
 
         <div className="admin-header-actions">
           <div className="admin-stat-chip">
             <strong>{totalElements}</strong>
-            <small>Total Staff</small>
+            <small>Total Admins</small>
           </div>
           <button
             type="button"
@@ -407,7 +341,7 @@ function AdminStaff() {
             onClick={handleOpenCreateModal}
           >
             <UiIcon name="plus" size={18} />
-            <span>Add Staff</span>
+            <span>Add Admin</span>
           </button>
         </div>
       </header>
@@ -482,40 +416,6 @@ function AdminStaff() {
 
         {/* Filters */}
         <div className="admin-filter-group">
-          {/* Role Filters */}
-          <button
-            type="button"
-            className={`admin-filter-pill ${roleFilter === "ALL" ? "active" : ""}`}
-            onClick={() => {
-              setRoleFilter("ALL");
-              setCurrentPage(0);
-            }}
-          >
-            All Roles
-          </button>
-          <button
-            type="button"
-            className={`admin-filter-pill ${roleFilter === "WARDEN" ? "active" : ""}`}
-            onClick={() => {
-              setRoleFilter("WARDEN");
-              setCurrentPage(0);
-            }}
-          >
-            Wardens
-          </button>
-          <button
-            type="button"
-            className={`admin-filter-pill ${roleFilter === "PRINCIPAL" ? "active" : ""}`}
-            onClick={() => {
-              setRoleFilter("PRINCIPAL");
-              setCurrentPage(0);
-            }}
-          >
-            Principals
-          </button>
-
-          <div className="admin-filter-divider" />
-
           {/* Status Filters */}
           <button
             type="button"
@@ -542,8 +442,8 @@ function AdminStaff() {
           <button
             type="button"
             className="admin-btn-refresh"
-            onClick={loadStaff}
-            title="Reload staff directory"
+            onClick={loadAdmins}
+            title="Reload administrator directory"
           >
             <UiIcon name="refresh" size={15} />
             <span>Refresh</span>
@@ -554,7 +454,7 @@ function AdminStaff() {
       {/* ================= RESULTS INFO ================= */}
       {!loading && totalElements > 0 && (
         <div className="admin-results-info">
-          Showing <strong>{currentPage * pageSize + 1}–{Math.min(currentPage * pageSize + displayedStaff.length, totalElements)}</strong> of <strong>{totalElements}</strong> staff members
+          Showing <strong>{currentPage * pageSize + 1}–{Math.min(currentPage * pageSize + displayedAdmins.length, totalElements)}</strong> of <strong>{totalElements}</strong> administrators
         </div>
       )}
 
@@ -563,28 +463,27 @@ function AdminStaff() {
         <div className="admin-table-card">
           <div className="admin-loading-container">
             <div className="admin-loading-spinner" />
-            <p>Loading staff directory...</p>
+            <p>Loading administrator directory...</p>
           </div>
         </div>
       )}
 
-      {!loading && displayedStaff.length === 0 && (
+      {!loading && displayedAdmins.length === 0 && (
         <div className="admin-table-card">
           <div className="admin-empty-container">
             <div className="admin-empty-icon">🛡️</div>
-            <h3>No Staff Members Found</h3>
+            <h3>No Administrators Found</h3>
             <p>
-              {search || roleFilter !== "ALL" || statusFilter !== "ALL"
-                ? "No staff member matches your search query or filter criteria."
-                : "No staff members are currently registered in the system."}
+              {search || statusFilter !== "ALL"
+                ? "No administrator matches your search query or filter criteria."
+                : "No administrator accounts found."}
             </p>
-            {(search || roleFilter !== "ALL" || statusFilter !== "ALL") && (
+            {(search || statusFilter !== "ALL") && (
               <button
                 type="button"
                 className="hp-btn hp-btn-secondary"
                 onClick={() => {
                   setSearch("");
-                  setRoleFilter("ALL");
                   setStatusFilter("ALL");
                   setCurrentPage(0);
                 }}
@@ -596,13 +495,13 @@ function AdminStaff() {
         </div>
       )}
 
-      {!loading && displayedStaff.length > 0 && (
+      {!loading && displayedAdmins.length > 0 && (
         <div className="admin-table-card">
           <div className="admin-table-container">
             <table className="admin-staff-table">
               <thead>
                 <tr>
-                  <th>Staff Member</th>
+                  <th>Administrator</th>
                   <th>Email</th>
                   <th>Role</th>
                   <th>Status</th>
@@ -610,45 +509,45 @@ function AdminStaff() {
                 </tr>
               </thead>
               <tbody>
-                {displayedStaff.map((s) => {
-                  const isCurrent = isCurrentUser(s);
+                {displayedAdmins.map((a) => {
+                  const isCurrent = isCurrentUser(a);
                   return (
-                    <tr key={s.id}>
+                    <tr key={a.id}>
                       {/* Identity */}
                       <td>
                         <div className="staff-identity">
                           <div className="staff-avatar">
-                            {s.fullName ? s.fullName.charAt(0).toUpperCase() : "S"}
+                            {a.fullName ? a.fullName.charAt(0).toUpperCase() : "A"}
                           </div>
                           <div className="staff-identity-text">
                             <div className="staff-name-wrap">
-                              <span className="staff-name">{s.fullName}</span>
+                              <span className="staff-name">{a.fullName}</span>
                               {isCurrent && <span className="you-pill">You</span>}
                             </div>
-                            <span className="staff-username">@{s.username}</span>
+                            <span className="staff-username">@{a.username}</span>
                           </div>
                         </div>
                       </td>
 
                       {/* Email */}
                       <td>
-                        <span className="staff-email">{s.email}</span>
+                        <span className="staff-email">{a.email}</span>
                       </td>
 
                       {/* Role */}
                       <td>
-                        <span className={`staff-role-badge ${getRoleBadgeClass(s.role)}`}>
-                          {formatRoleLabel(s.role)}
+                        <span className="staff-role-badge staff-role-super-admin">
+                          Super Admin
                         </span>
                       </td>
 
                       {/* Status */}
                       <td>
                         <span
-                          className={`staff-status-badge ${s.active ? "active" : "inactive"}`}
+                          className={`staff-status-badge ${a.active ? "active" : "inactive"}`}
                         >
                           <span className="status-dot" />
-                          {s.active ? "Active" : "Inactive"}
+                          {a.active ? "Active" : "Inactive"}
                         </span>
                       </td>
 
@@ -658,8 +557,8 @@ function AdminStaff() {
                           <button
                             type="button"
                             className="btn-table-view"
-                            onClick={() => handleOpenViewModal(s)}
-                            title="View staff details"
+                            onClick={() => handleOpenViewModal(a)}
+                            title="View administrator details"
                           >
                             <UiIcon name="eye" size={14} />
                             <span>View</span>
@@ -668,19 +567,21 @@ function AdminStaff() {
                           <button
                             type="button"
                             className="btn-table-edit"
-                            onClick={() => handleOpenEditModal(s)}
-                            title="Edit staff profile"
+                            onClick={() => handleOpenEditModal(a)}
+                            title="Edit administrator profile"
                           >
                             <UiIcon name="edit" size={14} />
                             <span>Edit</span>
                           </button>
 
-                          {s.active ? (
+                          {a.active ? (
                             <button
                               type="button"
                               className="btn-table-deactivate"
-                              onClick={() => handlePromptToggleStatus(s, "deactivate")}
-                              title="Deactivate staff account"
+                              onClick={() => handlePromptToggleStatus(a, "deactivate")}
+                              title={isCurrent ? "You cannot deactivate your own account" : "Deactivate admin account"}
+                              disabled={isCurrent}
+                              style={isCurrent ? { opacity: 0.5, cursor: "not-allowed" } : undefined}
                             >
                               Deactivate
                             </button>
@@ -688,8 +589,8 @@ function AdminStaff() {
                             <button
                               type="button"
                               className="btn-table-activate"
-                              onClick={() => handlePromptToggleStatus(s, "activate")}
-                              title="Activate staff account"
+                              onClick={() => handlePromptToggleStatus(a, "activate")}
+                              title="Activate admin account"
                             >
                               Activate
                             </button>
@@ -714,12 +615,12 @@ function AdminStaff() {
         />
       )}
 
-      {/* ================= VIEW STAFF MODAL ================= */}
+      {/* ================= VIEW ADMIN MODAL ================= */}
       <Modal
         open={showViewModal}
         onClose={() => setShowViewModal(false)}
-        title="Staff Account Details"
-        subtitle={viewingStaff ? `@${viewingStaff.username}` : ""}
+        title="Admin Account Details"
+        subtitle={viewingAdmin ? `@${viewingAdmin.username}` : ""}
         footer={
           <button
             type="button"
@@ -730,30 +631,30 @@ function AdminStaff() {
           </button>
         }
       >
-        {viewingStaff && (
+        {viewingAdmin && (
           <div className="staff-view-card">
             <div className="staff-view-header">
               <div className="staff-view-avatar">
-                {viewingStaff.fullName ? viewingStaff.fullName.charAt(0).toUpperCase() : "S"}
+                {viewingAdmin.fullName ? viewingAdmin.fullName.charAt(0).toUpperCase() : "A"}
               </div>
               <div className="staff-view-title">
-                <h3 className="staff-view-name">{viewingStaff.fullName}</h3>
+                <h3 className="staff-view-name">{viewingAdmin.fullName}</h3>
                 <div className="staff-view-badges">
-                  <span className={`staff-role-badge ${getRoleBadgeClass(viewingStaff.role)}`}>
-                    {formatRoleLabel(viewingStaff.role)}
+                  <span className="staff-role-badge staff-role-super-admin">
+                    Super Admin
                   </span>
                   <span
-                    className={`staff-status-badge ${viewingStaff.active ? "active" : "inactive"}`}
+                    className={`staff-status-badge ${viewingAdmin.active ? "active" : "inactive"}`}
                   >
                     <span className="status-dot" />
-                    {viewingStaff.active ? "Active" : "Inactive"}
+                    {viewingAdmin.active ? "Active" : "Inactive"}
                   </span>
-                  {isCurrentUser(viewingStaff) && <span className="you-pill">You</span>}
+                  {isCurrentUser(viewingAdmin) && <span className="you-pill">You</span>}
                 </div>
               </div>
             </div>
 
-            {isCurrentUser(viewingStaff) && (
+            {isCurrentUser(viewingAdmin) && (
               <div className="staff-view-self-note">
                 <UiIcon name="shield" size={16} />
                 <span>You are currently signed in with this administrative account.</span>
@@ -763,46 +664,46 @@ function AdminStaff() {
             <div className="staff-view-grid">
               <div className="staff-view-item">
                 <span className="staff-view-label">Username</span>
-                <span className="staff-view-val mono">@{viewingStaff.username}</span>
+                <span className="staff-view-val mono">@{viewingAdmin.username}</span>
               </div>
 
               <div className="staff-view-item">
                 <span className="staff-view-label">Full Name</span>
-                <span className="staff-view-val">{viewingStaff.fullName}</span>
+                <span className="staff-view-val">{viewingAdmin.fullName}</span>
               </div>
 
               <div className="staff-view-item">
                 <span className="staff-view-label">Email Address</span>
-                <span className="staff-view-val">{viewingStaff.email}</span>
+                <span className="staff-view-val">{viewingAdmin.email}</span>
               </div>
 
               <div className="staff-view-item">
                 <span className="staff-view-label">Administrative Role</span>
-                <span className="staff-view-val">{formatRoleLabel(viewingStaff.role)}</span>
+                <span className="staff-view-val">Super Admin (System Administrator)</span>
               </div>
 
               <div className="staff-view-item">
                 <span className="staff-view-label">Account Status</span>
                 <span className="staff-view-val">
-                  {viewingStaff.active ? "Active (Access Enabled)" : "Inactive (Access Suspended)"}
+                  {viewingAdmin.active ? "Active (Full Access)" : "Inactive (Access Suspended)"}
                 </span>
               </div>
 
               <div className="staff-view-item">
-                <span className="staff-view-label">Staff Record ID</span>
-                <span className="staff-view-val mono">#{viewingStaff.id}</span>
+                <span className="staff-view-label">Admin Record ID</span>
+                <span className="staff-view-val mono">#{viewingAdmin.id}</span>
               </div>
             </div>
           </div>
         )}
       </Modal>
 
-      {/* ================= CREATE STAFF MODAL ================= */}
+      {/* ================= CREATE ADMIN MODAL ================= */}
       <Modal
         open={showCreateModal}
         onClose={() => !isSubmittingCreate && setShowCreateModal(false)}
-        title="Add Staff Member"
-        subtitle="Provide credentials and assign an administrative role"
+        title="Add Administrator"
+        subtitle="Create a new Super Admin account with platform-wide privileges"
         footer={
           <>
             <button
@@ -815,16 +716,16 @@ function AdminStaff() {
             </button>
             <button
               type="submit"
-              form="create-staff-form"
+              form="create-admin-form"
               className="hp-btn hp-btn-primary"
               disabled={isSubmittingCreate}
             >
-              {isSubmittingCreate ? "Creating..." : "Create Staff"}
+              {isSubmittingCreate ? "Creating..." : "Create Admin"}
             </button>
           </>
         }
       >
-        <form id="create-staff-form" onSubmit={handleCreateSubmit} noValidate>
+        <form id="create-admin-form" onSubmit={handleCreateSubmit} noValidate>
           {createServerError && (
             <div className="form-server-error" role="alert">
               ⚠️ {createServerError}
@@ -834,14 +735,14 @@ function AdminStaff() {
           <div className="admin-form-grid">
             {/* Username */}
             <div className="admin-form-group">
-              <label className="admin-form-label" htmlFor="create-staff-username">
+              <label className="admin-form-label" htmlFor="create-admin-username">
                 Username <span className="required-star">*</span>
               </label>
               <input
-                id="create-staff-username"
+                id="create-admin-username"
                 type="text"
                 className={`admin-form-input ${createErrors.username ? "has-error" : ""}`}
-                placeholder="e.g. warden_north"
+                placeholder="e.g. sysadmin2"
                 value={createForm.username}
                 onChange={(e) =>
                   setCreateForm({ ...createForm, username: e.target.value })
@@ -856,14 +757,14 @@ function AdminStaff() {
 
             {/* Full Name */}
             <div className="admin-form-group">
-              <label className="admin-form-label" htmlFor="create-staff-fullName">
+              <label className="admin-form-label" htmlFor="create-admin-fullName">
                 Full Name <span className="required-star">*</span>
               </label>
               <input
-                id="create-staff-fullName"
+                id="create-admin-fullName"
                 type="text"
                 className={`admin-form-input ${createErrors.fullName ? "has-error" : ""}`}
-                placeholder="e.g. Kavitha Raman"
+                placeholder="e.g. Ramesh Chandra"
                 value={createForm.fullName}
                 onChange={(e) =>
                   setCreateForm({ ...createForm, fullName: e.target.value })
@@ -876,14 +777,14 @@ function AdminStaff() {
 
             {/* Email */}
             <div className="admin-form-group">
-              <label className="admin-form-label" htmlFor="create-staff-email">
+              <label className="admin-form-label" htmlFor="create-admin-email">
                 Email Address <span className="required-star">*</span>
               </label>
               <input
-                id="create-staff-email"
+                id="create-admin-email"
                 type="email"
                 className={`admin-form-input ${createErrors.email ? "has-error" : ""}`}
-                placeholder="e.g. kavitha@hostelpass.com"
+                placeholder="e.g. ramesh@hostelpass.edu"
                 value={createForm.email}
                 onChange={(e) =>
                   setCreateForm({ ...createForm, email: e.target.value })
@@ -894,38 +795,27 @@ function AdminStaff() {
               )}
             </div>
 
-            {/* Role */}
+            {/* Role (Read-only / informational) */}
             <div className="admin-form-group">
-              <label className="admin-form-label" htmlFor="create-staff-role">
-                Administrative Role <span className="required-star">*</span>
+              <label className="admin-form-label">
+                Assigned Role
               </label>
-              <select
-                id="create-staff-role"
-                className={`admin-form-select ${createErrors.role ? "has-error" : ""}`}
-                value={createForm.role}
-                onChange={(e) =>
-                  setCreateForm({ ...createForm, role: e.target.value })
-                }
-              >
-                {ROLE_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              {createErrors.role && (
-                <span className="admin-field-error">{createErrors.role}</span>
-              )}
+              <div style={{ display: "flex", alignItems: "center", height: "42px" }}>
+                <span className="staff-role-badge staff-role-super-admin" style={{ fontSize: "13px", padding: "6px 14px" }}>
+                  Super Admin
+                </span>
+              </div>
+              <span className="admin-field-hint">Fixed to Super Admin role</span>
             </div>
 
             {/* Password */}
             <div className="admin-form-group full-width">
-              <label className="admin-form-label" htmlFor="create-staff-password">
+              <label className="admin-form-label" htmlFor="create-admin-password">
                 Password <span className="required-star">*</span>
               </label>
               <div className="password-input-wrapper">
                 <input
-                  id="create-staff-password"
+                  id="create-admin-password"
                   type={showPasswordCreate ? "text" : "password"}
                   className={`admin-form-input ${createErrors.password ? "has-error" : ""}`}
                   placeholder="Min 8 characters with at least 1 letter and 1 number"
@@ -953,12 +843,12 @@ function AdminStaff() {
         </form>
       </Modal>
 
-      {/* ================= EDIT STAFF MODAL ================= */}
+      {/* ================= EDIT ADMIN MODAL ================= */}
       <Modal
         open={showEditModal}
         onClose={() => !isSubmittingEdit && setShowEditModal(false)}
-        title="Edit Staff Profile"
-        subtitle={editingStaff ? `Updating ${editingStaff.fullName} (@${editingStaff.username})` : ""}
+        title="Edit Administrator Profile"
+        subtitle={editingAdmin ? `Updating ${editingAdmin.fullName} (@${editingAdmin.username})` : ""}
         footer={
           <>
             <button
@@ -971,7 +861,7 @@ function AdminStaff() {
             </button>
             <button
               type="submit"
-              form="edit-staff-form"
+              form="edit-admin-form"
               className="hp-btn hp-btn-primary"
               disabled={isSubmittingEdit}
             >
@@ -980,7 +870,7 @@ function AdminStaff() {
           </>
         }
       >
-        <form id="edit-staff-form" onSubmit={handleEditSubmit} noValidate>
+        <form id="edit-admin-form" onSubmit={handleEditSubmit} noValidate>
           {editServerError && (
             <div className="form-server-error" role="alert">
               ⚠️ {editServerError}
@@ -990,11 +880,11 @@ function AdminStaff() {
           <div className="admin-form-grid">
             {/* Username */}
             <div className="admin-form-group">
-              <label className="admin-form-label" htmlFor="edit-staff-username">
+              <label className="admin-form-label" htmlFor="edit-admin-username">
                 Username <span className="required-star">*</span>
               </label>
               <input
-                id="edit-staff-username"
+                id="edit-admin-username"
                 type="text"
                 className={`admin-form-input ${editErrors.username ? "has-error" : ""}`}
                 value={editForm.username}
@@ -1009,11 +899,11 @@ function AdminStaff() {
 
             {/* Full Name */}
             <div className="admin-form-group">
-              <label className="admin-form-label" htmlFor="edit-staff-fullName">
+              <label className="admin-form-label" htmlFor="edit-admin-fullName">
                 Full Name <span className="required-star">*</span>
               </label>
               <input
-                id="edit-staff-fullName"
+                id="edit-admin-fullName"
                 type="text"
                 className={`admin-form-input ${editErrors.fullName ? "has-error" : ""}`}
                 value={editForm.fullName}
@@ -1027,12 +917,12 @@ function AdminStaff() {
             </div>
 
             {/* Email */}
-            <div className="admin-form-group">
-              <label className="admin-form-label" htmlFor="edit-staff-email">
+            <div className="admin-form-group full-width">
+              <label className="admin-form-label" htmlFor="edit-admin-email">
                 Email Address <span className="required-star">*</span>
               </label>
               <input
-                id="edit-staff-email"
+                id="edit-admin-email"
                 type="email"
                 className={`admin-form-input ${editErrors.email ? "has-error" : ""}`}
                 value={editForm.email}
@@ -1044,62 +934,6 @@ function AdminStaff() {
                 <span className="admin-field-error">{editErrors.email}</span>
               )}
             </div>
-
-            {/* Role */}
-            <div className="admin-form-group">
-              <label className="admin-form-label" htmlFor="edit-staff-role">
-                Administrative Role <span className="required-star">*</span>
-              </label>
-              <select
-                id="edit-staff-role"
-                className={`admin-form-select ${editErrors.role ? "has-error" : ""}`}
-                value={editForm.role}
-                onChange={(e) =>
-                  setEditForm({ ...editForm, role: e.target.value })
-                }
-              >
-                {ROLE_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              {editErrors.role && (
-                <span className="admin-field-error">{editErrors.role}</span>
-              )}
-            </div>
-
-            {/* Reset Password (Optional) */}
-            <div className="admin-form-group full-width">
-              <label className="admin-form-label" htmlFor="edit-staff-password">
-                Reset Password <span style={{ fontWeight: "normal", color: "var(--color-text-muted)" }}>(optional)</span>
-              </label>
-              <div className="password-input-wrapper">
-                <input
-                  id="edit-staff-password"
-                  type={showPasswordEdit ? "text" : "password"}
-                  className={`admin-form-input ${editErrors.password ? "has-error" : ""}`}
-                  placeholder="Leave blank to keep existing password unchanged"
-                  value={editForm.password}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, password: e.target.value })
-                  }
-                />
-                <button
-                  type="button"
-                  className="password-toggle-btn"
-                  onClick={() => setShowPasswordEdit(!showPasswordEdit)}
-                  title={showPasswordEdit ? "Hide password" : "Show password"}
-                >
-                  <UiIcon name="eye" size={16} />
-                </button>
-              </div>
-              {editErrors.password ? (
-                <span className="admin-field-error">{editErrors.password}</span>
-              ) : (
-                <span className="admin-field-hint">Leave blank to keep current password</span>
-              )}
-            </div>
           </div>
         </form>
       </Modal>
@@ -1108,7 +942,7 @@ function AdminStaff() {
       <Modal
         open={showConfirmModal}
         onClose={() => !isSubmittingConfirm && setShowConfirmModal(false)}
-        title={confirmAction === "deactivate" ? "Deactivate Staff Account" : "Activate Staff Account"}
+        title={confirmAction === "deactivate" ? "Deactivate Admin Account" : "Activate Admin Account"}
         footer={
           <>
             <button
@@ -1123,13 +957,13 @@ function AdminStaff() {
               type="button"
               className={`hp-btn ${confirmAction === "deactivate" ? "hp-btn-danger" : "hp-btn-primary"}`}
               onClick={handleConfirmToggleStatus}
-              disabled={isSubmittingConfirm}
+              disabled={isSubmittingConfirm || (confirmAction === "deactivate" && targetAdmin && isCurrentUser(targetAdmin))}
             >
               {isSubmittingConfirm
                 ? "Processing..."
                 : confirmAction === "deactivate"
-                ? "Yes, Deactivate Staff"
-                : "Yes, Activate Staff"}
+                ? "Yes, Deactivate Admin"
+                : "Yes, Activate Admin"}
             </button>
           </>
         }
@@ -1141,14 +975,20 @@ function AdminStaff() {
 
           <p className="confirm-description">
             {confirmAction === "deactivate"
-              ? "Are you sure you want to deactivate this staff account? Deactivated staff cannot log into the system or process outpass requests. Past decision history and audit logs will remain intact."
-              : "Are you sure you want to reactivate this staff account? The staff member will immediately regain access to log in and perform administrative duties."}
+              ? "Are you sure you want to deactivate this Super Admin account? Deactivated administrators cannot log in or manage students, staff, or system settings."
+              : "Are you sure you want to reactivate this Super Admin account? The administrator will immediately regain access to the Admin Portal."}
           </p>
 
-          {targetStaff && (
+          {targetAdmin && isCurrentUser(targetAdmin) && confirmAction === "deactivate" && (
+            <div className="form-server-error" style={{ marginBottom: "var(--space-4)" }}>
+              ⚠️ You cannot deactivate your own administrative account.
+            </div>
+          )}
+
+          {targetAdmin && (
             <div className="confirm-target-box">
-              <strong>{targetStaff.fullName}</strong>
-              <small>@{targetStaff.username} • {formatRoleLabel(targetStaff.role)}</small>
+              <strong>{targetAdmin.fullName}</strong>
+              <small>@{targetAdmin.username} • Super Admin</small>
             </div>
           )}
         </div>
@@ -1157,4 +997,4 @@ function AdminStaff() {
   );
 }
 
-export default AdminStaff;
+export default AdminAdmins;

@@ -1,5 +1,7 @@
 package com.hostelpass.admin;
 
+import com.hostelpass.admin.dto.AdminCreateRequest;
+import com.hostelpass.admin.dto.AdminUpdateRequest;
 import com.hostelpass.admin.dto.StaffAdminCreateRequest;
 import com.hostelpass.admin.dto.StaffAdminResponse;
 import com.hostelpass.admin.dto.StaffAdminUpdateRequest;
@@ -22,29 +24,40 @@ public class AdminStaffService {
     private final StaffRepository staffRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // ==========================================
+    // STAFF MANAGEMENT (WARDEN & PRINCIPAL ONLY)
+    // ==========================================
+
     @Transactional(readOnly = true)
     public PageResponse<StaffAdminResponse> getStaff(String search, StaffRole role, Pageable pageable) {
+        if (role == StaffRole.SUPER_ADMIN) {
+            throw new ConflictException("SUPER_ADMIN cannot be queried via the staff endpoint");
+        }
         String trimmedSearch = (search != null && !search.isBlank()) ? search.trim() : null;
-        var staffPage = staffRepository.searchAndFilter(trimmedSearch, role, pageable);
+        var staffPage = staffRepository.searchStaffExcludingSuperAdmin(trimmedSearch, role, pageable);
         return PageResponse.from(staffPage.map(this::toResponse));
     }
 
     @Transactional(readOnly = true)
     public StaffAdminResponse getStaffById(Long id) {
-        return toResponse(findStaff(id));
+        Staff staff = findStaff(id);
+        if (staff.getRole() == StaffRole.SUPER_ADMIN) {
+            throw new ResourceNotFoundException("Staff not found with id: " + id);
+        }
+        return toResponse(staff);
     }
 
     @Transactional
     public StaffAdminResponse createStaff(StaffAdminCreateRequest request) {
+        if (request.getRole() == StaffRole.SUPER_ADMIN) {
+            throw new ConflictException("Cannot create Super Admin via staff endpoint. Use admin management.");
+        }
+
         String username = request.getUsername().trim();
         String email = request.getEmail().trim();
 
-        if (staffRepository.existsByUsernameIgnoreCase(username)) {
-            throw new ConflictException("Username is already in use");
-        }
-        if (staffRepository.existsByEmailIgnoreCase(email)) {
-            throw new ConflictException("Email is already in use");
-        }
+        validateUniqueUsername(username, null);
+        validateUniqueEmail(email, null);
 
         Staff staff = new Staff();
         staff.setUsername(username);
@@ -60,13 +73,18 @@ public class AdminStaffService {
     @Transactional
     public StaffAdminResponse updateStaff(Long id, StaffAdminUpdateRequest request, Long currentUserId) {
         Staff staff = findStaff(id);
+        if (staff.getRole() == StaffRole.SUPER_ADMIN) {
+            throw new ResourceNotFoundException("Staff not found with id: " + id);
+        }
+        if (request.getRole() == StaffRole.SUPER_ADMIN) {
+            throw new ConflictException("Cannot promote staff to SUPER_ADMIN via staff endpoint");
+        }
 
         // Username update uniqueness check
         if (request.getUsername() != null && !request.getUsername().isBlank()) {
             String newUsername = request.getUsername().trim();
-            if (!newUsername.equalsIgnoreCase(staff.getUsername())
-                    && staffRepository.existsByUsernameIgnoreCaseAndIdNot(newUsername, id)) {
-                throw new ConflictException("Username is already in use");
+            if (!newUsername.equalsIgnoreCase(staff.getUsername())) {
+                validateUniqueUsername(newUsername, id);
             }
             staff.setUsername(newUsername);
         }
@@ -74,9 +92,8 @@ public class AdminStaffService {
         // Email update uniqueness check
         if (request.getEmail() != null && !request.getEmail().isBlank()) {
             String newEmail = request.getEmail().trim();
-            if (!newEmail.equalsIgnoreCase(staff.getEmail())
-                    && staffRepository.existsByEmailIgnoreCaseAndIdNot(newEmail, id)) {
-                throw new ConflictException("Email is already in use");
+            if (!newEmail.equalsIgnoreCase(staff.getEmail())) {
+                validateUniqueEmail(newEmail, id);
             }
             staff.setEmail(newEmail);
         }
@@ -86,21 +103,8 @@ public class AdminStaffService {
             staff.setFullName(request.getFullName().trim());
         }
 
-        // Role update with safety guards
+        // Role update
         if (request.getRole() != null && request.getRole() != staff.getRole()) {
-            // Guard 1: Prevent self-demotion
-            if (currentUserId != null && currentUserId.equals(id) && request.getRole() != StaffRole.SUPER_ADMIN) {
-                throw new ConflictException("You cannot remove your own SUPER_ADMIN role");
-            }
-
-            // Guard 2: Prevent demoting the last active super admin
-            if (staff.getRole() == StaffRole.SUPER_ADMIN && staff.isActive()) {
-                long activeSuperAdmins = staffRepository.countByRoleAndActiveTrue(StaffRole.SUPER_ADMIN);
-                if (activeSuperAdmins <= 1) {
-                    throw new ConflictException("Cannot change role of the only active Super Admin account");
-                }
-            }
-
             staff.setRole(request.getRole());
         }
 
@@ -113,8 +117,90 @@ public class AdminStaffService {
     }
 
     @Transactional
-    public StaffAdminResponse setActive(Long id, boolean active, Long currentUserId) {
+    public StaffAdminResponse setStaffActive(Long id, boolean active) {
         Staff staff = findStaff(id);
+        if (staff.getRole() == StaffRole.SUPER_ADMIN) {
+            throw new ResourceNotFoundException("Staff not found with id: " + id);
+        }
+        staff.setActive(active);
+        return toResponse(staffRepository.save(staff));
+    }
+
+    // ==========================================
+    // ADMIN MANAGEMENT (SUPER_ADMIN ONLY)
+    // ==========================================
+
+    @Transactional(readOnly = true)
+    public PageResponse<StaffAdminResponse> getAdmins(String search, Pageable pageable) {
+        String trimmedSearch = (search != null && !search.isBlank()) ? search.trim() : null;
+        var adminPage = staffRepository.searchAndFilter(trimmedSearch, StaffRole.SUPER_ADMIN, pageable);
+        return PageResponse.from(adminPage.map(this::toResponse));
+    }
+
+    @Transactional(readOnly = true)
+    public StaffAdminResponse getAdminById(Long id) {
+        Staff staff = findStaff(id);
+        if (staff.getRole() != StaffRole.SUPER_ADMIN) {
+            throw new ResourceNotFoundException("Admin not found with id: " + id);
+        }
+        return toResponse(staff);
+    }
+
+    @Transactional
+    public StaffAdminResponse createAdmin(AdminCreateRequest request) {
+        String username = request.getUsername().trim();
+        String email = request.getEmail().trim();
+
+        validateUniqueUsername(username, null);
+        validateUniqueEmail(email, null);
+
+        Staff admin = new Staff();
+        admin.setUsername(username);
+        admin.setFullName(request.getFullName().trim());
+        admin.setEmail(email);
+        admin.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        admin.setRole(StaffRole.SUPER_ADMIN);
+        admin.setActive(true);
+
+        return toResponse(staffRepository.save(admin));
+    }
+
+    @Transactional
+    public StaffAdminResponse updateAdmin(Long id, AdminUpdateRequest request, Long currentUserId) {
+        Staff admin = findStaff(id);
+        if (admin.getRole() != StaffRole.SUPER_ADMIN) {
+            throw new ResourceNotFoundException("Admin not found with id: " + id);
+        }
+
+        if (request.getUsername() != null && !request.getUsername().isBlank()) {
+            String newUsername = request.getUsername().trim();
+            if (!newUsername.equalsIgnoreCase(admin.getUsername())) {
+                validateUniqueUsername(newUsername, id);
+            }
+            admin.setUsername(newUsername);
+        }
+
+        if (request.getEmail() != null && !request.getEmail().isBlank()) {
+            String newEmail = request.getEmail().trim();
+            if (!newEmail.equalsIgnoreCase(admin.getEmail())) {
+                validateUniqueEmail(newEmail, id);
+            }
+            admin.setEmail(newEmail);
+        }
+
+        if (request.getFullName() != null && !request.getFullName().isBlank()) {
+            admin.setFullName(request.getFullName().trim());
+        }
+
+        return toResponse(staffRepository.save(admin));
+    }
+
+    @Transactional
+    public StaffAdminResponse setAdminActive(Long id, boolean active, Long currentUserId) {
+        Staff admin = findStaff(id);
+        if (admin.getRole() != StaffRole.SUPER_ADMIN) {
+            throw new ResourceNotFoundException("Admin not found with id: " + id);
+        }
 
         if (!active) {
             // Guard 1: Prevent self-deactivation
@@ -123,21 +209,41 @@ public class AdminStaffService {
             }
 
             // Guard 2: Prevent deactivating the last active super admin
-            if (staff.getRole() == StaffRole.SUPER_ADMIN) {
-                long activeSuperAdmins = staffRepository.countByRoleAndActiveTrue(StaffRole.SUPER_ADMIN);
-                if (activeSuperAdmins <= 1) {
-                    throw new ConflictException("Cannot deactivate the only active Super Admin account");
-                }
+            long activeSuperAdmins = staffRepository.countByRoleAndActiveTrue(StaffRole.SUPER_ADMIN);
+            if (activeSuperAdmins <= 1) {
+                throw new ConflictException("Cannot deactivate the only active Super Admin account");
             }
         }
 
-        staff.setActive(active);
-        return toResponse(staffRepository.save(staff));
+        admin.setActive(active);
+        return toResponse(staffRepository.save(admin));
+    }
+
+    // ==========================================
+    // SHARED PRIVATE HELPERS
+    // ==========================================
+
+    private void validateUniqueUsername(String username, Long excludeId) {
+        boolean inUse = (excludeId == null)
+                ? staffRepository.existsByUsernameIgnoreCase(username)
+                : staffRepository.existsByUsernameIgnoreCaseAndIdNot(username, excludeId);
+        if (inUse) {
+            throw new ConflictException("Username is already in use");
+        }
+    }
+
+    private void validateUniqueEmail(String email, Long excludeId) {
+        boolean inUse = (excludeId == null)
+                ? staffRepository.existsByEmailIgnoreCase(email)
+                : staffRepository.existsByEmailIgnoreCaseAndIdNot(email, excludeId);
+        if (inUse) {
+            throw new ConflictException("Email is already in use");
+        }
     }
 
     private Staff findStaff(Long id) {
         return staffRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Staff not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Record not found with id: " + id));
     }
 
     private StaffAdminResponse toResponse(Staff s) {
