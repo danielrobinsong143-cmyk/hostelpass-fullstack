@@ -1,5 +1,6 @@
 package com.hostelpass.auth;
 
+import com.hostelpass.auth.dto.AdminLoginRequest;
 import com.hostelpass.auth.dto.AuthResponse;
 import com.hostelpass.auth.dto.RefreshResponse;
 import com.hostelpass.auth.dto.StaffLoginRequest;
@@ -11,6 +12,7 @@ import com.hostelpass.security.jwt.JwtProperties;
 import com.hostelpass.security.jwt.JwtTokenProvider;
 import com.hostelpass.staff.Staff;
 import com.hostelpass.staff.StaffRepository;
+import com.hostelpass.staff.StaffRole;
 import com.hostelpass.staff.dto.StaffResponse;
 import com.hostelpass.student.Student;
 import com.hostelpass.student.StudentRepository;
@@ -18,6 +20,7 @@ import com.hostelpass.student.dto.StudentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,6 +89,30 @@ public class AuthService {
     }
 
     @Transactional
+    public LoginResult<StaffResponse> loginAdmin(AdminLoginRequest request) {
+        UserPrincipal principal = authenticate(request.getUsername(), request.getPassword());
+
+        if (principal.getUserType() != UserType.STAFF || !StaffRole.SUPER_ADMIN.name().equals(principal.getRole())) {
+            throw new InvalidCredentialsException("Admin access required");
+        }
+
+        Staff staff = staffRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid credentials"));
+
+        if (!staff.isActive()) {
+            throw new InvalidCredentialsException("Account inactive");
+        }
+
+        String accessToken = issueAccessToken(principal);
+        String rawRefreshToken = issueRefreshToken(UserType.STAFF, staff.getId());
+
+        StaffResponse response = toStaffResponse(staff);
+        AuthResponse<StaffResponse> body =
+                new AuthResponse<>(accessToken, jwtProperties.getAccessTokenExpiryMs() / 1000, response);
+        return new LoginResult<>(body, rawRefreshToken);
+    }
+
+    @Transactional
     public RefreshResponse refresh(String rawRefreshToken) {
         if (rawRefreshToken == null || rawRefreshToken.isBlank()) {
             throw new TokenRefreshException("Refresh token is required");
@@ -133,6 +160,8 @@ public class AuthService {
             var authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(identifier, rawPassword));
             return (UserPrincipal) authentication.getPrincipal();
+        } catch (DisabledException ex) {
+            throw new InvalidCredentialsException("Account inactive");
         } catch (BadCredentialsException ex) {
             throw new InvalidCredentialsException("Invalid credentials");
         }

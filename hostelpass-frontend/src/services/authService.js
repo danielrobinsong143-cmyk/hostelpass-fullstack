@@ -8,6 +8,10 @@ export const staffLogin = async (loginData) => {
   return api.post("/auth/staff/login", loginData);
 };
 
+export const adminLogin = async (loginData) => {
+  return api.post("/auth/admin/login", loginData);
+};
+
 export const logout = async () => {
   return api.post("/auth/logout", {});
 };

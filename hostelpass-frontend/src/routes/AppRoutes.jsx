@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../pages/Login";
+import AdminLogin from "../pages/AdminLogin";
 
 import StudentDashboard from "../pages/StudentDashboard";
 import ApplyOutpass from "../pages/ApplyOutpass";
@@ -27,6 +28,7 @@ function AppRoutes() {
         {/* ==================== PUBLIC ==================== */}
 
         <Route path="/" element={<Login />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
 
         {/* ==================== STUDENT ==================== */}
 
@@ -130,6 +132,19 @@ function AppRoutes() {
         />
 
         {/* ==================== ADMIN ==================== */}
+
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute>
+              <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+                <StaffLayout>
+                  <StaffDashboard />
+                </StaffLayout>
+              </RoleProtectedRoute>
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/admin/students"

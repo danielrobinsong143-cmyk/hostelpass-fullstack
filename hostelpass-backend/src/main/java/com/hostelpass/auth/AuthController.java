@@ -1,5 +1,6 @@
 package com.hostelpass.auth;
 
+import com.hostelpass.auth.dto.AdminLoginRequest;
 import com.hostelpass.auth.dto.AuthResponse;
 import com.hostelpass.auth.dto.RefreshResponse;
 import com.hostelpass.auth.dto.RefreshTokenRequest;
@@ -22,13 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Duration;
 
 /**
- * Exposes exactly the five auth endpoints in SDD Section 7.1, at the frozen
- * base path (note: paths here are relative — "/auth/student/login" becomes
- * "/api/v1/auth/student/login" once server.servlet.context-path=/api/v1 is
- * applied). Kept intentionally thin: all real work happens in AuthService;
- * this class's only real responsibility beyond routing is attaching the
- * refresh token as an HttpOnly cookie per Section 11, since that's an
- * HTTP-transport concern, not a service-layer one.
+ * Exposes auth endpoints at the base path (note: paths here are relative —
+ * "/auth/student/login" becomes "/api/v1/auth/student/login" once
+ * server.servlet.context-path=/api/v1 is applied).
+ * Attaches the refresh token as an HttpOnly cookie per Section 11.
  */
 @RestController
 @RequiredArgsConstructor
@@ -45,7 +43,7 @@ public class AuthController {
     private boolean refreshCookieSecure;
 
     @Value("${app.jwt.refresh-cookie-samesite:Strict}")
-private String refreshCookieSameSite;
+    private String refreshCookieSameSite;
 
     @PostMapping("/student/login")
     public ResponseEntity<AuthResponse<StudentResponse>> loginStudent(@Valid @RequestBody StudentLoginRequest request) {
@@ -58,6 +56,14 @@ private String refreshCookieSameSite;
     @PostMapping("/staff/login")
     public ResponseEntity<AuthResponse<StaffResponse>> loginStaff(@Valid @RequestBody StaffLoginRequest request) {
         AuthService.LoginResult<StaffResponse> result = authService.loginStaff(request);
+        return ResponseEntity.ok()
+                .header("Set-Cookie", buildRefreshCookie(result.rawRefreshToken()).toString())
+                .body(result.response());
+    }
+
+    @PostMapping("/admin/login")
+    public ResponseEntity<AuthResponse<StaffResponse>> loginAdmin(@Valid @RequestBody AdminLoginRequest request) {
+        AuthService.LoginResult<StaffResponse> result = authService.loginAdmin(request);
         return ResponseEntity.ok()
                 .header("Set-Cookie", buildRefreshCookie(result.rawRefreshToken()).toString())
                 .body(result.response());

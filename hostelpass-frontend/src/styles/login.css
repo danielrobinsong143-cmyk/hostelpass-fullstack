@@ -337,7 +337,8 @@
 }
 
 .login-submit-btn,
-.staff-login-button {
+.staff-login-button,
+.admin-entry-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -591,6 +592,19 @@
   background: rgba(30, 58, 94, 0.85);
 }
 
+[data-theme="dark"] .admin-entry-button {
+  margin-top: 8px;
+  border: 1.5px solid rgba(140, 196, 255, 0.22);
+  color: #c9e1fc;
+  background: rgba(14, 28, 48, 0.65);
+}
+
+[data-theme="dark"] .admin-entry-button:hover {
+  border-color: #559ef7;
+  color: #ffffff;
+  background: rgba(22, 48, 80, 0.85);
+}
+
 [data-theme="dark"] .login-footer {
   color: #7890a8;
 }
@@ -822,6 +836,21 @@
   border-color: #92bce6;
   color: #0c478a;
   background: #f0f6ff;
+}
+
+.admin-entry-button,
+[data-theme="light"] .admin-entry-button {
+  margin-top: 8px;
+  border: 1.5px solid #cad6e5;
+  color: #1a426e;
+  background: #f7faff;
+}
+
+.admin-entry-button:hover,
+[data-theme="light"] .admin-entry-button:hover {
+  border-color: #3b82f6;
+  color: #0d3868;
+  background: #ebf3ff;
 }
 
 .login-footer,

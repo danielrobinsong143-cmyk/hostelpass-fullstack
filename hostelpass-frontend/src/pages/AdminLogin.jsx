@@ -2,22 +2,15 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UiIcon from "../components/UiIcon";
 import { AuthContext } from "../context/authContextDefinition";
-import { staffLogin, studentLogin } from "../services/authService";
+import { adminLogin } from "../services/authService";
 import "../styles/login.css";
 
-function Login() {
+function AdminLogin() {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-  const [userType, setUserType] = useState("student");
-  const [formData, setFormData] = useState({ rollNumber: "", username: "", password: "" });
+  const [formData, setFormData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const switchUserType = () => {
-    setUserType((previous) => (previous === "student" ? "staff" : "student"));
-    setError("");
-    setFormData({ rollNumber: "", username: "", password: "" });
-  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -31,15 +24,21 @@ function Login() {
 
     try {
       setLoading(true);
-      const response = userType === "student"
-        ? await studentLogin({ rollNumber: formData.rollNumber.trim(), password: formData.password })
-        : await staffLogin({ username: formData.username.trim(), password: formData.password });
+      const response = await adminLogin({
+        username: formData.username.trim(),
+        password: formData.password,
+      });
+
       const { accessToken, principal } = response.data;
-      const userWithRole = { ...principal, role: userType === "student" ? "STUDENT" : principal.role };
-      login(accessToken, userWithRole);
-      navigate(userType === "student" ? "/student/dashboard" : "/staff/dashboard");
+      if (principal.role !== "SUPER_ADMIN") {
+        setError("Admin access required. Only Super Admins may log in here.");
+        return;
+      }
+
+      login(accessToken, principal);
+      navigate("/admin/dashboard");
     } catch (err) {
-      console.error("Login error:", err);
+      console.error("Admin login error:", err);
       if (!err.response && (err.code === "ERR_NETWORK" || err.message === "Network Error")) {
         setError("Unable to connect to the backend server. Please verify backend is running on port 8081.");
       } else {
@@ -51,39 +50,39 @@ function Login() {
   };
 
   return (
-    <div className="login-page">
+    <div className="login-page admin-login-page">
       <div className="login-atmosphere" aria-hidden="true" />
       <div className="login-topbar">
-        <span className="login-topbar-note">Outpass management system</span>
+        <span className="login-topbar-note">Admin Access Portal</span>
       </div>
 
       <div className="login-shell">
-        <section className="login-hero" aria-label="HostelPass introduction">
+        <section className="login-hero" aria-label="HostelPass Admin Introduction">
           <div className="brand-lockup brand-lockup-light">
             <span className="brand-mark"><UiIcon name="shield" size={34} strokeWidth={1.55} /></span>
             <span>
               <strong>HostelPass</strong>
-              <small>Outpass Management System</small>
+              <small>Admin Control Center</small>
             </span>
           </div>
 
           <div className="login-hero-copy">
-            <p className="eyebrow">Campus life, simplified</p>
-            <h1>Secure. Simple. <span>Seamless.</span></h1>
-            <p>Manage hostel outpasses with efficiency and transparency.</p>
+            <p className="eyebrow">Authorized Personnel Only</p>
+            <h1>Administrative <span>Security &amp; Control.</span></h1>
+            <p>Dedicated access portal for system administrators and hostel controllers.</p>
           </div>
 
           <div className="login-hero-foot">
             <span className="hero-status-dot" />
-            <span>Trusted by students and hostel administration</span>
+            <span>Protected with role-based authentication and security audit</span>
           </div>
         </section>
 
-        <section className="login-card" aria-label="Login form">
+        <section className="login-card" aria-label="Admin Login form">
           <div className="login-card-header">
-            <p className="login-card-kicker">{userType === "student" ? "Student portal" : "Staff portal"}</p>
-            <h2>Welcome Back!</h2>
-            <p>Login to continue to HostelPass</p>
+            <p className="login-card-kicker">Admin Portal</p>
+            <h2>Admin Sign In</h2>
+            <p>Enter your administrator credentials to access system controls</p>
           </div>
 
           {error && (
@@ -95,65 +94,62 @@ function Login() {
 
           <form onSubmit={handleSubmit} className="login-form">
             <div className="login-input-group">
-              <label htmlFor={userType === "student" ? "rollNumber" : "username"}>
-                {userType === "student" ? "Email / Username" : "Username"}
-              </label>
+              <label htmlFor="admin-username">Admin Username</label>
               <div className="login-input-wrap">
                 <UiIcon name="user" size={18} />
                 <input
-                  id={userType === "student" ? "rollNumber" : "username"}
+                  id="admin-username"
                   type="text"
-                  name={userType === "student" ? "rollNumber" : "username"}
-                  placeholder={userType === "student" ? "Enter your email or username" : "Enter your staff username"}
-                  value={userType === "student" ? formData.rollNumber : formData.username}
+                  name="username"
+                  placeholder="Enter admin username"
+                  value={formData.username}
                   onChange={handleChange}
                   required
                   autoComplete="username"
+                  autoFocus
                 />
               </div>
             </div>
 
             <div className="login-input-group">
-              <label htmlFor="password">Password</label>
+              <label htmlFor="admin-password">Password</label>
               <div className="login-input-wrap">
                 <UiIcon name="shield" size={18} />
                 <input
-                  id="password"
+                  id="admin-password"
                   type="password"
                   name="password"
-                  placeholder="Enter your password"
+                  placeholder="Enter admin password"
                   value={formData.password}
                   onChange={handleChange}
                   required
                   autoComplete="current-password"
                 />
-                <span className="login-input-trailing"><UiIcon name="eye" size={17} /></span>
               </div>
             </div>
 
-            <button type="button" className="forgot-password-button" onClick={() => setError("Password recovery is handled by your hostel administrator.")}>
-              Forgot Password?
-            </button>
-
             <button type="submit" className="login-submit-btn" disabled={loading}>
-              {loading ? <span className="login-btn-loading"><span className="login-btn-spinner" /> Signing In...</span> : <>Login <UiIcon name="arrow" size={17} /></>}
+              {loading ? (
+                <span className="login-btn-loading">
+                  <span className="login-btn-spinner" /> Verifying...
+                </span>
+              ) : (
+                <>
+                  Login as Admin <UiIcon name="arrow" size={17} />
+                </>
+              )}
             </button>
           </form>
 
           <div className="login-divider"><span>or</span></div>
 
-          <button type="button" className="staff-login-button" onClick={switchUserType}>
-            <UiIcon name="profile" size={18} />
-            {userType === "student" ? "Login as Staff" : "Login as Student"}
-          </button>
-
           <button
             type="button"
-            className="admin-entry-button"
-            onClick={() => navigate("/admin/login")}
+            className="staff-login-button admin-back-button"
+            onClick={() => navigate("/")}
           >
-            <UiIcon name="shield" size={16} />
-            Admin Login
+            <UiIcon name="arrow" size={17} />
+            Return to Main Portal
           </button>
 
           <p className="login-footer">© 2025 HostelPass. All rights reserved.</p>
@@ -163,4 +159,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default AdminLogin;

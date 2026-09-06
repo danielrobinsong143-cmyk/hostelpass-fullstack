@@ -27,7 +27,14 @@ function StaffSidebar({ isOpen, onClose }) {
 
       <nav className="sidebar-nav" aria-label="Staff navigation">
         <p className="sidebar-section-label">Overview</p>
-        <NavLink to="/staff/dashboard" onClick={handleNavigation} className={({ isActive }) => isActive ? "active" : ""}><UiIcon name="dashboard" size={18} /><span>Dashboard</span></NavLink>
+        <NavLink
+          to={principal?.role === "SUPER_ADMIN" ? "/admin/dashboard" : "/staff/dashboard"}
+          onClick={handleNavigation}
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          <UiIcon name="dashboard" size={18} />
+          <span>Dashboard</span>
+        </NavLink>
         <p className="sidebar-section-label">Management</p>
         <NavLink to="/staff/requests" onClick={handleNavigation} className={({ isActive }) => isActive ? "active" : ""}><UiIcon name="requests" size={18} /><span>Outpass Requests</span></NavLink>
         {principal?.role === "SUPER_ADMIN" && (
