@@ -359,7 +359,7 @@ function AdminAdmins() {
             onClick={() => setSuccessMessage("")}
             aria-label="Dismiss message"
           >
-            ×
+            <UiIcon name="close" size={16} />
           </button>
         </div>
       )}
@@ -377,7 +377,7 @@ function AdminAdmins() {
             onClick={() => setError("")}
             aria-label="Dismiss error"
           >
-            ×
+            <UiIcon name="close" size={16} />
           </button>
         </div>
       )}
@@ -409,7 +409,7 @@ function AdminAdmins() {
               }}
               aria-label="Clear search"
             >
-              ×
+              <UiIcon name="close" size={14} />
             </button>
           )}
         </div>
@@ -829,8 +829,9 @@ function AdminAdmins() {
                   className="password-toggle-btn"
                   onClick={() => setShowPasswordCreate(!showPasswordCreate)}
                   title={showPasswordCreate ? "Hide password" : "Show password"}
+                  aria-label={showPasswordCreate ? "Hide password" : "Show password"}
                 >
-                  <UiIcon name="eye" size={16} />
+                  <UiIcon name={showPasswordCreate ? "eyeOff" : "eye"} size={16} />
                 </button>
               </div>
               {createErrors.password ? (

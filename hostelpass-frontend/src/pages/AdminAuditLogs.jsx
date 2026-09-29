@@ -210,7 +210,7 @@ function AdminAuditLogs() {
                 onClick={handleClearSearch}
                 aria-label="Remove search filter"
               >
-                ×
+                <UiIcon name="close" size={12} />
               </button>
             </span>
           )}
@@ -226,7 +226,7 @@ function AdminAuditLogs() {
                 }}
                 aria-label="Remove action filter"
               >
-                ×
+                <UiIcon name="close" size={12} />
               </button>
             </span>
           )}
@@ -347,7 +347,7 @@ function AdminAuditLogs() {
                           className="audit-action-btn"
                           onClick={() => setSelectedLog(log)}
                         >
-                          Details
+                          <UiIcon name="eye" size={14} /> Details
                         </button>
                       </td>
                     </tr>

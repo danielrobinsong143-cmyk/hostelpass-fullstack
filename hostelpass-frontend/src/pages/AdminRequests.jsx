@@ -253,7 +253,7 @@ function AdminRequests() {
               type="button"
               aria-label="Clear search"
             >
-              ×
+              <UiIcon name="close" size={14} />
             </button>
           )}
         </div>
@@ -349,7 +349,7 @@ function AdminRequests() {
                 }}
                 aria-label="Remove search filter"
               >
-                ×
+                <UiIcon name="close" size={12} />
               </button>
             </span>
           )}
@@ -365,7 +365,7 @@ function AdminRequests() {
                 }}
                 aria-label="Remove status filter"
               >
-                ×
+                <UiIcon name="close" size={12} />
               </button>
             </span>
           )}
@@ -381,7 +381,7 @@ function AdminRequests() {
                 }}
                 aria-label="Remove start date filter"
               >
-                ×
+                <UiIcon name="close" size={12} />
               </button>
             </span>
           )}
@@ -397,7 +397,7 @@ function AdminRequests() {
                 }}
                 aria-label="Remove end date filter"
               >
-                ×
+                <UiIcon name="close" size={12} />
               </button>
             </span>
           )}
@@ -556,7 +556,7 @@ function AdminRequests() {
                 onClick={() => setSelectedRequest(null)}
                 aria-label="Close"
               >
-                ×
+                <UiIcon name="close" size={18} />
               </button>
             </div>
 

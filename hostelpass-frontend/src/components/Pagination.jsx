@@ -1,3 +1,4 @@
+import UiIcon from "./UiIcon";
 import "../styles/pagination.css";
 
 /**
@@ -52,8 +53,9 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         className="hp-pagination-btn"
         onClick={handlePrev}
         disabled={currentPage === 0}
+        aria-label="Previous page"
       >
-        ← Prev
+        <UiIcon name="chevronLeft" size={15} /> Prev
       </button>
 
       <div className="hp-pagination-pages">
@@ -78,8 +80,9 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         className="hp-pagination-btn"
         onClick={handleNext}
         disabled={currentPage === totalPages - 1}
+        aria-label="Next page"
       >
-        Next →
+        Next <UiIcon name="chevronRight" size={15} />
       </button>
     </div>
   );

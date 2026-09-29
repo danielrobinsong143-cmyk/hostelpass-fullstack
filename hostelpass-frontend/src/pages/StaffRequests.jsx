@@ -8,6 +8,7 @@ import {
 
 import "../styles/StaffRequests.css";
 import Pagination from "../components/Pagination";
+import UiIcon from "../components/UiIcon";
 import { formatDecidedBy, formatDecisionRemark } from "../utils/outpassFormatters";
 
 function StaffRequests() {
@@ -199,7 +200,9 @@ function StaffRequests() {
 
       {successMessage && (
         <div className="success-message" role="status">
-          <span className="success-message-icon">✓</span>
+          <span className="success-message-icon">
+            <UiIcon name="check" size={16} />
+          </span>
           <span>{successMessage}</span>
 
           <button
@@ -208,7 +211,7 @@ function StaffRequests() {
             onClick={() => setSuccessMessage("")}
             aria-label="Dismiss success message"
           >
-            ×
+            <UiIcon name="close" size={16} />
           </button>
         </div>
       )}
@@ -216,7 +219,9 @@ function StaffRequests() {
       {/* ================= SEARCH / FILTER ================= */}
       <div className="request-toolbar">
         <div className="search-wrapper">
-          <span className="search-icon">⌕</span>
+          <span className="search-icon">
+            <UiIcon name="search" size={18} />
+          </span>
 
           <input
             type="text"
@@ -233,8 +238,9 @@ function StaffRequests() {
                 setCurrentPage(0);
               }}
               type="button"
+              aria-label="Clear search"
             >
-              ×
+              <UiIcon name="close" size={14} />
             </button>
           )}
         </div>
@@ -358,7 +364,7 @@ function StaffRequests() {
                     className="view-details-button"
                     onClick={() => setSelectedRequest(request)}
                   >
-                    View Details
+                    <UiIcon name="eye" size={15} /> View Details
                   </button>
 
                   {request.status === "PENDING" && (
@@ -367,7 +373,7 @@ function StaffRequests() {
                         className="approve-button"
                         onClick={() => setApproveRequestId(request.id)}
                       >
-                        ✓ Approve
+                        <UiIcon name="check" size={14} /> Approve
                       </button>
 
                       <button
@@ -377,7 +383,7 @@ function StaffRequests() {
                           setDenyRemark("");
                         }}
                       >
-                        ✕ Deny
+                        <UiIcon name="x" size={14} /> Deny
                       </button>
                     </div>
                   )}
@@ -425,7 +431,7 @@ function StaffRequests() {
                 onClick={() => setSelectedRequest(null)}
                 aria-label="Close"
               >
-                ×
+                <UiIcon name="close" size={18} />
               </button>
             </div>
 
@@ -557,7 +563,7 @@ function StaffRequests() {
                     className="approve-button"
                     onClick={() => setApproveRequestId(selectedRequest.id)}
                   >
-                    ✓ Approve
+                    <UiIcon name="check" size={14} /> Approve
                   </button>
 
                   <button
@@ -567,7 +573,7 @@ function StaffRequests() {
                       setDenyRemark("");
                     }}
                   >
-                    ✕ Deny
+                    <UiIcon name="x" size={14} /> Deny
                   </button>
                 </div>
               )}
@@ -602,7 +608,7 @@ function StaffRequests() {
                 type="button"
                 aria-label="Close"
               >
-                ×
+                <UiIcon name="close" size={18} />
               </button>
             </div>
 
@@ -631,7 +637,7 @@ function StaffRequests() {
                 }}
                 type="button"
               >
-                ✓ Confirm Approval
+                <UiIcon name="check" size={15} /> Confirm Approval
               </button>
             </div>
           </div>
@@ -661,7 +667,7 @@ function StaffRequests() {
                 type="button"
                 aria-label="Close"
               >
-                ×
+                <UiIcon name="close" size={18} />
               </button>
             </div>
 
@@ -716,7 +722,7 @@ function StaffRequests() {
                 type="button"
                 disabled={denyRemark.trim().length < 5}
               >
-                ✕ Confirm Denial
+                <UiIcon name="x" size={15} /> Confirm Denial
               </button>
             </div>
           </div>

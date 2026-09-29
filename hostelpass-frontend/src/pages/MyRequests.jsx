@@ -5,6 +5,7 @@ import {
   cancelOutpassRequest,
 } from "../services/outpassService";
 import { formatDecidedBy, formatDecisionRemark } from "../utils/outpassFormatters";
+import UiIcon from "../components/UiIcon";
 
 import "../styles/MyRequests.css";
 
@@ -239,7 +240,9 @@ function MyRequests() {
     <div className="my-requests-page">
       {successMessage && (
         <div className="success-message" role="status">
-          <span className="success-message-icon">✓</span>
+          <span className="success-message-icon">
+            <UiIcon name="check" size={16} />
+          </span>
           <span>{successMessage}</span>
 
           <button
@@ -248,7 +251,7 @@ function MyRequests() {
             onClick={() => setSuccessMessage("")}
             aria-label="Dismiss success message"
           >
-            ×
+            <UiIcon name="close" size={16} />
           </button>
         </div>
       )}
@@ -277,7 +280,9 @@ function MyRequests() {
 
       <div className="request-filters">
         <div className="search-wrapper">
-          <span className="search-icon">⌕</span>
+          <span className="search-icon">
+            <UiIcon name="search" size={18} />
+          </span>
 
           <input
             type="text"
@@ -378,7 +383,7 @@ function MyRequests() {
                   className="details-button"
                   onClick={() => setSelectedRequest(request)}
                 >
-                  View Details
+                  <UiIcon name="eye" size={15} /> View Details
                 </button>
               </div>
             </div>
@@ -396,8 +401,9 @@ function MyRequests() {
             className="pagination-button"
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 0}
+            aria-label="Previous page"
           >
-            ← Previous
+            <UiIcon name="chevronLeft" size={14} /> Previous
           </button>
 
           <div className="pagination-pages">
@@ -418,8 +424,9 @@ function MyRequests() {
             className="pagination-button"
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages - 1}
+            aria-label="Next page"
           >
-            Next →
+            Next <UiIcon name="chevronRight" size={14} />
           </button>
         </div>
       )}
@@ -446,8 +453,9 @@ function MyRequests() {
               <button
                 className="close-button"
                 onClick={() => setSelectedRequest(null)}
+                aria-label="Close"
               >
-                ×
+                <UiIcon name="close" size={18} />
               </button>
             </div>
 
@@ -555,7 +563,7 @@ function MyRequests() {
                 type="button"
                 aria-label="Close"
               >
-                ×
+                <UiIcon name="close" size={18} />
               </button>
             </div>
 

@@ -504,7 +504,7 @@ function AdminStudents() {
             onClick={() => setSuccessMessage("")}
             aria-label="Dismiss message"
           >
-            ×
+            <UiIcon name="close" size={16} />
           </button>
         </div>
       )}
@@ -522,7 +522,7 @@ function AdminStudents() {
             onClick={() => setError("")}
             aria-label="Dismiss error"
           >
-            ×
+            <UiIcon name="close" size={16} />
           </button>
         </div>
       )}
@@ -553,7 +553,7 @@ function AdminStudents() {
               }}
               aria-label="Clear search"
             >
-              ×
+              <UiIcon name="close" size={14} />
             </button>
           )}
         </div>
@@ -984,8 +984,9 @@ function AdminStudents() {
                   className="password-toggle-btn"
                   onClick={() => setShowPasswordCreate(!showPasswordCreate)}
                   title={showPasswordCreate ? "Hide password" : "Show password"}
+                  aria-label={showPasswordCreate ? "Hide password" : "Show password"}
                 >
-                  <UiIcon name="eye" size={16} />
+                  <UiIcon name={showPasswordCreate ? "eyeOff" : "eye"} size={16} />
                 </button>
               </div>
               {createErrors.password ? (
@@ -1410,8 +1411,9 @@ function AdminStudents() {
                 className="password-toggle-btn"
                 onClick={() => setShowResetNewPassword(!showResetNewPassword)}
                 title={showResetNewPassword ? "Hide password" : "Show password"}
+                aria-label={showResetNewPassword ? "Hide password" : "Show password"}
               >
-                <UiIcon name="eye" size={16} />
+                <UiIcon name={showResetNewPassword ? "eyeOff" : "eye"} size={16} />
               </button>
             </div>
             {resetPasswordErrors.newPassword ? (
@@ -1444,8 +1446,9 @@ function AdminStudents() {
                 className="password-toggle-btn"
                 onClick={() => setShowResetConfirmPassword(!showResetConfirmPassword)}
                 title={showResetConfirmPassword ? "Hide password" : "Show password"}
+                aria-label={showResetConfirmPassword ? "Hide password" : "Show password"}
               >
-                <UiIcon name="eye" size={16} />
+                <UiIcon name={showResetConfirmPassword ? "eyeOff" : "eye"} size={16} />
               </button>
             </div>
             {resetPasswordErrors.confirmPassword && (
