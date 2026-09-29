@@ -18,22 +18,30 @@ function AdminRequests() {
   );
   const [status, setStatus] = useState(searchParams.get("status") || "");
   const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [fromDate, setFromDate] = useState(searchParams.get("fromDate") || "");
+  const [toDate, setToDate] = useState(searchParams.get("toDate") || "");
 
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
 
   const pageSize = 6;
 
+  // Sync state with URL search parameters
   useEffect(() => {
     const urlStatus = searchParams.get("status") || "";
     const urlSearch = searchParams.get("search") || "";
+    const urlFromDate = searchParams.get("fromDate") || "";
+    const urlToDate = searchParams.get("toDate") || "";
     const urlPage = Number(searchParams.get("page")) || 0;
 
     setStatus(urlStatus);
     setSearch(urlSearch);
+    setFromDate(urlFromDate);
+    setToDate(urlToDate);
     setCurrentPage(urlPage);
   }, [searchParams]);
 
+  // Load requests with debouncing
   const loadRequests = useCallback(async () => {
     try {
       setLoading(true);
@@ -44,6 +52,8 @@ function AdminRequests() {
         pageSize,
         search,
         status || undefined,
+        fromDate || undefined,
+        toDate || undefined,
       );
 
       setRequests(response.data.content || []);
@@ -55,7 +65,7 @@ function AdminRequests() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, search, status]);
+  }, [currentPage, search, status, fromDate, toDate]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -84,15 +94,22 @@ function AdminRequests() {
     return `status-badge status-${requestStatus?.toLowerCase()}`;
   };
 
+  const updateUrlParams = (newFilters, newPage = 0) => {
+    const params = {};
+    if (newFilters.status) params.status = newFilters.status;
+    if (newFilters.search?.trim()) params.search = newFilters.search.trim();
+    if (newFilters.fromDate) params.fromDate = newFilters.fromDate;
+    if (newFilters.toDate) params.toDate = newFilters.toDate;
+    if (newPage > 0) params.page = newPage;
+
+    setSearchParams(params);
+  };
+
   const handlePageChange = (page) => {
     if (page < 0 || page >= totalPages) return;
     setCurrentPage(page);
 
-    const newParams = {};
-    if (status) newParams.status = status;
-    if (search) newParams.search = search;
-    if (page > 0) newParams.page = page;
-    setSearchParams(newParams);
+    updateUrlParams({ status, search, fromDate, toDate }, page);
 
     window.scrollTo({
       top: 0,
@@ -105,10 +122,7 @@ function AdminRequests() {
     setSearch(val);
     setCurrentPage(0);
 
-    const newParams = {};
-    if (status) newParams.status = status;
-    if (val.trim()) newParams.search = val;
-    setSearchParams(newParams);
+    updateUrlParams({ status, search: val, fromDate, toDate }, 0);
   };
 
   const handleStatusChange = (event) => {
@@ -116,11 +130,35 @@ function AdminRequests() {
     setStatus(newStatus);
     setCurrentPage(0);
 
-    const newParams = {};
-    if (newStatus) newParams.status = newStatus;
-    if (search.trim()) newParams.search = search;
-    setSearchParams(newParams);
+    updateUrlParams({ status: newStatus, search, fromDate, toDate }, 0);
   };
+
+  const handleFromDateChange = (event) => {
+    const newFrom = event.target.value;
+    setFromDate(newFrom);
+    setCurrentPage(0);
+
+    updateUrlParams({ status, search, fromDate: newFrom, toDate }, 0);
+  };
+
+  const handleToDateChange = (event) => {
+    const newTo = event.target.value;
+    setToDate(newTo);
+    setCurrentPage(0);
+
+    updateUrlParams({ status, search, fromDate, toDate: newTo }, 0);
+  };
+
+  const handleClearFilters = () => {
+    setStatus("");
+    setSearch("");
+    setFromDate("");
+    setToDate("");
+    setCurrentPage(0);
+    setSearchParams({});
+  };
+
+  const hasActiveFilters = Boolean(status || search || fromDate || toDate);
 
   return (
     <div className="staff-requests-page admin-requests-page">
@@ -140,8 +178,9 @@ function AdminRequests() {
         </div>
       </div>
 
-      {/* ================= SEARCH & STATUS FILTER ================= */}
-      <div className="request-toolbar">
+      {/* ================= SEARCH & ADVANCED FILTERS ================= */}
+      <div className="admin-toolbar-advanced">
+        {/* Row 1: Search Box */}
         <div className="search-wrapper">
           <span className="search-icon">
             <UiIcon name="search" size={17} />
@@ -149,7 +188,7 @@ function AdminRequests() {
 
           <input
             type="text"
-            placeholder="Search student, roll number, pass code or place..."
+            placeholder="Search student, roll number, pass code or destination..."
             value={search}
             onChange={handleSearchChange}
           />
@@ -160,9 +199,7 @@ function AdminRequests() {
               onClick={() => {
                 setSearch("");
                 setCurrentPage(0);
-                const newParams = {};
-                if (status) newParams.status = status;
-                setSearchParams(newParams);
+                updateUrlParams({ status, search: "", fromDate, toDate }, 0);
               }}
               type="button"
               aria-label="Clear search"
@@ -172,18 +209,127 @@ function AdminRequests() {
           )}
         </div>
 
-        <div className="filter-wrapper">
-          <span className="filter-label">Status</span>
+        {/* Row 2: Filter Controls */}
+        <div className="admin-filter-row">
+          {/* Status Filter */}
+          <div className="admin-filter-group">
+            <span className="admin-filter-label">Status</span>
+            <select value={status} onChange={handleStatusChange}>
+              <option value="">All Statuses</option>
+              <option value="PENDING">Pending</option>
+              <option value="APPROVED">Approved</option>
+              <option value="DENIED">Denied</option>
+              <option value="CANCELLED">Cancelled</option>
+            </select>
+          </div>
 
-          <select value={status} onChange={handleStatusChange}>
-            <option value="">All Statuses</option>
-            <option value="PENDING">Pending</option>
-            <option value="APPROVED">Approved</option>
-            <option value="DENIED">Denied</option>
-            <option value="CANCELLED">Cancelled</option>
-          </select>
+          {/* Departure Date From */}
+          <div className="admin-filter-group">
+            <span className="admin-filter-label">Departure From</span>
+            <input
+              type="date"
+              value={fromDate}
+              onChange={handleFromDateChange}
+              max={toDate || undefined}
+              aria-label="Filter departure from date"
+            />
+          </div>
+
+          {/* Departure Date To */}
+          <div className="admin-filter-group">
+            <span className="admin-filter-label">Departure To</span>
+            <input
+              type="date"
+              value={toDate}
+              onChange={handleToDateChange}
+              min={fromDate || undefined}
+              aria-label="Filter departure to date"
+            />
+          </div>
+
+          {/* Clear Filters Action */}
+          {hasActiveFilters && (
+            <button
+              type="button"
+              className="clear-filters-btn"
+              onClick={handleClearFilters}
+            >
+              <UiIcon name="close" size={14} /> Clear Filters
+            </button>
+          )}
         </div>
       </div>
+
+      {/* ================= ACTIVE FILTER CHIPS ================= */}
+      {hasActiveFilters && (
+        <div className="admin-active-chips">
+          <span className="admin-chip-label">Active Filters:</span>
+          {search && (
+            <span className="admin-filter-chip">
+              Search: &ldquo;{search}&rdquo;
+              <button
+                type="button"
+                className="admin-chip-remove"
+                onClick={() => {
+                  setSearch("");
+                  updateUrlParams({ status, search: "", fromDate, toDate }, 0);
+                }}
+                aria-label="Remove search filter"
+              >
+                ×
+              </button>
+            </span>
+          )}
+          {status && (
+            <span className="admin-filter-chip">
+              Status: {status}
+              <button
+                type="button"
+                className="admin-chip-remove"
+                onClick={() => {
+                  setStatus("");
+                  updateUrlParams({ status: "", search, fromDate, toDate }, 0);
+                }}
+                aria-label="Remove status filter"
+              >
+                ×
+              </button>
+            </span>
+          )}
+          {fromDate && (
+            <span className="admin-filter-chip">
+              From: {fromDate}
+              <button
+                type="button"
+                className="admin-chip-remove"
+                onClick={() => {
+                  setFromDate("");
+                  updateUrlParams({ status, search, fromDate: "", toDate }, 0);
+                }}
+                aria-label="Remove start date filter"
+              >
+                ×
+              </button>
+            </span>
+          )}
+          {toDate && (
+            <span className="admin-filter-chip">
+              To: {toDate}
+              <button
+                type="button"
+                className="admin-chip-remove"
+                onClick={() => {
+                  setToDate("");
+                  updateUrlParams({ status, search, fromDate, toDate: "" }, 0);
+                }}
+                aria-label="Remove end date filter"
+              >
+                ×
+              </button>
+            </span>
+          )}
+        </div>
+      )}
 
       {/* ================= LOADING ================= */}
       {loading && (
@@ -207,12 +353,21 @@ function AdminRequests() {
       {!loading && !error && requests.length === 0 && (
         <div className="request-message empty">
           <div className="empty-icon">✓</div>
-          <h2>No Requests Found</h2>
+          <h2>{hasActiveFilters ? "No Matching Requests Found" : "No Requests Found"}</h2>
           <p>
-            {search || status
-              ? "Try changing your search keywords or status filter."
+            {hasActiveFilters
+              ? "No outpass requests matched your filter criteria. Try adjusting your search keyword, status, or departure date range."
               : "There are currently no outpass requests recorded in the system."}
           </p>
+          {hasActiveFilters && (
+            <button
+              type="button"
+              className="clear-empty-action"
+              onClick={handleClearFilters}
+            >
+              Clear All Filters
+            </button>
+          )}
         </div>
       )}
 

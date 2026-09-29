@@ -3,10 +3,13 @@ package com.hostelpass.outpass;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+
+import java.time.LocalDate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -98,10 +101,12 @@ public class OutpassController {
         public ResponseEntity<PageResponse<OutpassResponse>> getRequests(
                         @RequestParam(required = false) String search,
                         @RequestParam(required = false) OutpassStatus status,
+                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
                         @PageableDefault(size = 20, sort = "submittedAt", direction = Sort.Direction.ASC) Pageable pageable) {
 
                 return ResponseEntity.ok(
-                                outpassService.getRequests(search, status, pageable));
+                                outpassService.getRequests(search, status, fromDate, toDate, pageable));
         }
 
         @PatchMapping("/{id}/approve")

@@ -2,7 +2,7 @@
 
 /* ============================================================
    ADMIN REQUESTS SPECIFIC STYLES
-   Administrative Read-Only Inspection View
+   Administrative Read-Only Inspection View & Advanced Filters
    Extends StaffRequests.css tokens & responsive layout
    ============================================================ */
 
@@ -15,6 +15,128 @@
   color: #4338ca;
 }
 
+/* Expanded Filter Bar */
+.admin-toolbar-advanced {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.admin-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 6px 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.admin-filter-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.admin-filter-group select,
+.admin-filter-group input[type="date"] {
+  border: 0;
+  background: transparent;
+  color: #1e293b;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.admin-filter-group select option {
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
+.admin-filter-group input[type="date"] {
+  color-scheme: light;
+}
+
+.clear-filters-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+
+.clear-filters-btn:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+}
+
+/* Active Filter Summary Chips */
+.admin-active-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: -6px;
+  margin-bottom: 16px;
+}
+
+.admin-chip-label {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.admin-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.admin-chip-remove {
+  border: 0;
+  background: transparent;
+  color: #4338ca;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0;
+  cursor: pointer;
+}
+
+.admin-chip-remove:hover {
+  color: #1e1b4b;
+}
+
+/* Card & Modal Read-Only Footer */
 .admin-requests-card-footer {
   display: flex;
   justify-content: flex-end;
@@ -53,6 +175,23 @@
   border-top: 1px solid #e5e7eb;
 }
 
+.clear-empty-action {
+  margin-top: 14px;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 8px;
+  background: #4338ca;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.16s ease;
+}
+
+.clear-empty-action:hover {
+  background: #3730a3;
+}
+
 /* Dark mode adjustments */
 [data-theme="dark"] .admin-requests-page .page-label {
   color: #a5b4fc !important;
@@ -60,6 +199,51 @@
 
 [data-theme="dark"] .admin-requests-page .request-count strong {
   color: #a5b4fc;
+}
+
+[data-theme="dark"] .admin-filter-group {
+  background: rgba(20, 43, 68, 0.8);
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+[data-theme="dark"] .admin-filter-label {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .admin-filter-group select,
+[data-theme="dark"] .admin-filter-group input[type="date"] {
+  color: #edf5ff;
+  color-scheme: dark;
+}
+
+[data-theme="dark"] .admin-filter-group select option {
+  background-color: #1e293b;
+  color: #edf5ff;
+}
+
+[data-theme="dark"] .clear-filters-btn {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(148, 163, 184, 0.2);
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .clear-filters-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+[data-theme="dark"] .admin-filter-chip {
+  background: rgba(67, 56, 202, 0.35);
+  color: #c7d2fe;
+}
+
+[data-theme="dark"] .admin-chip-remove {
+  color: #a5b4fc;
+}
+
+[data-theme="dark"] .admin-chip-remove:hover {
+  color: #ffffff;
 }
 
 [data-theme="dark"] .admin-requests-card-footer {
@@ -80,4 +264,18 @@
 
 [data-theme="dark"] .admin-modal-footer-readonly {
   border-color: rgba(148, 163, 184, 0.14);
+}
+
+/* Responsive adjustments */
+@media (max-width: 800px) {
+  .admin-filter-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .admin-filter-group {
+    justify-content: space-between;
+  }
+  .clear-filters-btn {
+    justify-content: center;
+  }
 }

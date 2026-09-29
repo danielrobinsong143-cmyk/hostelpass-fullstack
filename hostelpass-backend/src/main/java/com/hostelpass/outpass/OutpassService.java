@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.UUID;
@@ -170,12 +171,26 @@ public class OutpassService {
                         String search,
                         OutpassStatus status,
                         Pageable pageable) {
+                return getRequests(search, status, null, null, pageable);
+        }
+
+        @Transactional(readOnly = true)
+        public PageResponse<OutpassResponse> getRequests(
+                        String search,
+                        OutpassStatus status,
+                        LocalDate fromDate,
+                        LocalDate toDate,
+                        Pageable pageable) {
 
                 Specification<OutpassRequest> statusSpecification = OutpassSpecification.statusFilter(status);
 
                 Specification<OutpassRequest> searchSpecification = OutpassSpecification.staffSearch(search);
 
-                Specification<OutpassRequest> finalSpecification = statusSpecification.and(searchSpecification);
+                Specification<OutpassRequest> dateSpecification = OutpassSpecification.dateRangeFilter(fromDate, toDate);
+
+                Specification<OutpassRequest> finalSpecification = statusSpecification
+                                .and(searchSpecification)
+                                .and(dateSpecification);
 
                 return PageResponse.from(
                                 outpassRepository

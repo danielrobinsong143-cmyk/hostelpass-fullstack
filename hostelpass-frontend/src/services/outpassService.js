@@ -33,13 +33,17 @@ export const getOutpassRequests = async (
   size = 20,
   search = "",
   status,
+  fromDate,
+  toDate,
 ) => {
   return api.get("/outpass-requests", {
     params: {
       page,
       size,
-      search,
-      status,
+      search: search?.trim() ? search.trim() : undefined,
+      status: status || undefined,
+      fromDate: fromDate || undefined,
+      toDate: toDate || undefined,
     },
   });
 };
