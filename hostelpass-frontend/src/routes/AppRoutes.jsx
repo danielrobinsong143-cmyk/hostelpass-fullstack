@@ -23,6 +23,7 @@ import AdminRequests from "../pages/AdminRequests";
 import AdminStudents from "../pages/AdminStudents";
 import AdminStaff from "../pages/AdminStaff";
 import AdminAdmins from "../pages/AdminAdmins";
+import AdminAuditLogs from "../pages/AdminAuditLogs";
 import AdminProfile from "../pages/AdminProfile";
 
 function AppRoutes() {
@@ -196,6 +197,19 @@ function AppRoutes() {
               <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
                 <StaffLayout>
                   <AdminAdmins />
+                </StaffLayout>
+              </RoleProtectedRoute>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/audit-logs"
+          element={
+            <ProtectedRoute>
+              <RoleProtectedRoute allowedRoles={["SUPER_ADMIN"]}>
+                <StaffLayout>
+                  <AdminAuditLogs />
                 </StaffLayout>
               </RoleProtectedRoute>
             </ProtectedRoute>

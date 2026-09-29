@@ -1,12 +1,15 @@
 package com.hostelpass.admin;
 
+import com.hostelpass.auditlog.AuditAction;
 import com.hostelpass.auditlog.AuditLog;
 import com.hostelpass.auditlog.AuditLogRepository;
+import com.hostelpass.auditlog.AuditLogSpecification;
 import com.hostelpass.auditlog.dto.AuditLogResponse;
 import com.hostelpass.common.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +25,16 @@ public class AdminAuditLogService {
 
     @Transactional(readOnly = true)
     public PageResponse<AuditLogResponse> getAuditLogs(Pageable pageable) {
-        Page<AuditLog> page = auditLogRepository.findAll(pageable);
+        return getAuditLogs(null, null, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse<AuditLogResponse> getAuditLogs(String search, AuditAction action, Pageable pageable) {
+        Specification<AuditLog> spec = Specification
+                .where(AuditLogSpecification.actionFilter(action))
+                .and(AuditLogSpecification.searchFilter(search));
+
+        Page<AuditLog> page = auditLogRepository.findAll(spec, pageable);
         return PageResponse.from(page.map(this::toResponse));
     }
 
@@ -33,8 +45,15 @@ public class AdminAuditLogService {
         }
 
         Long requestId = null;
+        String passCode = null;
+        String studentName = null;
+
         if (log.getOutpassRequest() != null) {
             requestId = log.getOutpassRequest().getId();
+            passCode = log.getOutpassRequest().getPassCode();
+            if (log.getOutpassRequest().getStudent() != null) {
+                studentName = log.getOutpassRequest().getStudent().getFullName();
+            }
         }
 
         return new AuditLogResponse(
@@ -45,7 +64,9 @@ public class AdminAuditLogService {
                 log.getPreviousStatus(),
                 log.getNewStatus(),
                 log.getRemark(),
-                log.getPerformedAt()
+                log.getPerformedAt(),
+                passCode,
+                studentName
         );
     }
 }

@@ -2,7 +2,10 @@ package com.hostelpass.auditlog;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
@@ -14,7 +17,15 @@ import java.util.List;
  *    needed here, but the list return type keeps this future-proof)
  *  - GET /audit-logs?staffId=...                -> findByActorStaffId, paginated
  */
-public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
+public interface AuditLogRepository extends JpaRepository<AuditLog, Long>, JpaSpecificationExecutor<AuditLog> {
+
+    @Override
+    @EntityGraph(attributePaths = { "outpassRequest", "outpassRequest.student", "actorStaff" })
+    Page<AuditLog> findAll(Specification<AuditLog> spec, Pageable pageable);
+
+    @Override
+    @EntityGraph(attributePaths = { "outpassRequest", "outpassRequest.student", "actorStaff" })
+    Page<AuditLog> findAll(Pageable pageable);
 
     List<AuditLog> findByOutpassRequestId(Long outpassRequestId);
 

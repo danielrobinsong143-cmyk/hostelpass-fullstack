@@ -523,6 +523,13 @@ function AdminDashboard() {
                       <h2>Audit Activity Log</h2>
                       <p>Actions performed by staff on outpass applications</p>
                     </div>
+                    <button
+                      type="button"
+                      className="panel-link"
+                      onClick={() => navigate("/admin/audit-logs")}
+                    >
+                      View all audit logs <UiIcon name="arrow" size={14} />
+                    </button>
                   </div>
 
                   {recentAuditLogs.length === 0 ? (

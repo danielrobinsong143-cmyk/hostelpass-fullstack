@@ -7,6 +7,9 @@ import com.hostelpass.outpass.dto.OutpassDecisionRequest;
 import com.hostelpass.outpass.dto.OutpassResponse;
 import com.hostelpass.outpass.dto.OutpassStatsResponse;
 
+import com.hostelpass.auditlog.AuditAction;
+import com.hostelpass.auditlog.AuditLog;
+import com.hostelpass.auditlog.AuditLogRepository;
 import com.hostelpass.common.PageResponse;
 import com.hostelpass.staff.Staff;
 import com.hostelpass.staff.StaffRepository;
@@ -57,6 +60,7 @@ public class OutpassService {
         private final OutpassRepository outpassRepository;
         private final StudentRepository studentRepository;
         private final StaffRepository staffRepository;
+        private final AuditLogRepository auditLogRepository;
 
         @Transactional
         public OutpassResponse createRequest(Long studentId, OutpassCreateRequest request) {
@@ -220,7 +224,19 @@ public class OutpassService {
                 entity.setDecisionRemark(request.getRemark());
                 entity.setDecidedAt(LocalDateTime.now());
 
-                return toResponse(outpassRepository.save(entity));
+                OutpassRequest saved = outpassRepository.save(entity);
+
+                AuditLog auditLog = new AuditLog();
+                auditLog.setOutpassRequest(saved);
+                auditLog.setActorStaff(staff);
+                auditLog.setAction(AuditAction.APPROVED);
+                auditLog.setPreviousStatus(OutpassStatus.PENDING.name());
+                auditLog.setNewStatus(OutpassStatus.APPROVED.name());
+                auditLog.setRemark(request.getRemark());
+                auditLog.setPerformedAt(LocalDateTime.now());
+                auditLogRepository.save(auditLog);
+
+                return toResponse(saved);
         }
 
         @Transactional
@@ -252,7 +268,19 @@ public class OutpassService {
                 entity.setDecisionRemark(request.getRemark());
                 entity.setDecidedAt(LocalDateTime.now());
 
-                return toResponse(outpassRepository.save(entity));
+                OutpassRequest saved = outpassRepository.save(entity);
+
+                AuditLog auditLog = new AuditLog();
+                auditLog.setOutpassRequest(saved);
+                auditLog.setActorStaff(staff);
+                auditLog.setAction(AuditAction.DENIED);
+                auditLog.setPreviousStatus(OutpassStatus.PENDING.name());
+                auditLog.setNewStatus(OutpassStatus.DENIED.name());
+                auditLog.setRemark(request.getRemark());
+                auditLog.setPerformedAt(LocalDateTime.now());
+                auditLogRepository.save(auditLog);
+
+                return toResponse(saved);
         }
 
         @Transactional(readOnly = true)
