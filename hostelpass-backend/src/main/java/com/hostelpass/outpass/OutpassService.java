@@ -18,13 +18,19 @@ import com.hostelpass.student.StudentRepository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
+
+import com.hostelpass.staff.StaffRole;
 
 import org.springframework.data.jpa.domain.Specification;
 //import org.springframework.data.jpa.domain.Specification;
@@ -334,10 +340,138 @@ public class OutpassService {
                                 r.getStatus(),
 
                                 // Decision details
-                                decidedBy != null ? decidedBy.getFullName() : null,
-                                decidedBy != null && decidedBy.getRole() != null ? decidedBy.getRole().name() : null,
-                                r.getDecisionRemark(),
-                                r.getSubmittedAt(),
-                                r.getDecidedAt());
-        }
+				decidedBy != null ? decidedBy.getFullName() : null,
+				decidedBy != null && decidedBy.getRole() != null ? decidedBy.getRole().name() : null,
+				r.getDecisionRemark(),
+				r.getSubmittedAt(),
+				r.getDecidedAt());
+	}
+
+	private static final DateTimeFormatter CSV_DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+	private String formatDateTime(LocalDateTime dt) {
+		return dt != null ? dt.format(CSV_DATETIME_FORMATTER) : "";
+	}
+
+	private String escapeCsv(String value) {
+		if (value == null) {
+			return "";
+		}
+		String s = value;
+		if (s.contains("\"") || s.contains(",") || s.contains("\n") || s.contains("\r")) {
+			return "\"" + s.replace("\"", "\"\"") + "\"";
+		}
+		return s;
+	}
+
+	private String formatStaffDesignation(StaffRole role) {
+		if (role == null) return "";
+		switch (role) {
+			case PRINCIPAL: return "Principal";
+			case WARDEN: return "Warden";
+			case DEAN: return "Dean";
+			case VICE_PRINCIPAL: return "Vice Principal";
+			case VC: return "VC";
+			case SUPER_ADMIN: return "Super Admin";
+			default: return role.name();
+		}
+	}
+
+	private String formatStaffDesignationLower(StaffRole role) {
+		if (role == null) return "staff";
+		switch (role) {
+			case PRINCIPAL: return "principal";
+			case WARDEN: return "warden";
+			case DEAN: return "dean";
+			case VICE_PRINCIPAL: return "vice principal";
+			case VC: return "vc";
+			case SUPER_ADMIN: return "super admin";
+			default: return role.name().toLowerCase().replace("_", " ");
+		}
+	}
+
+	@Transactional(readOnly = true)
+	public byte[] exportRequestsToCsv(
+			String search,
+			OutpassStatus status,
+			LocalDate fromDate,
+			LocalDate toDate) {
+
+		Specification<OutpassRequest> statusSpecification = OutpassSpecification.statusFilter(status);
+		Specification<OutpassRequest> searchSpecification = OutpassSpecification.staffSearch(search);
+		Specification<OutpassRequest> dateSpecification = OutpassSpecification.dateRangeFilter(fromDate, toDate);
+
+		Specification<OutpassRequest> finalSpecification = statusSpecification
+				.and(searchSpecification)
+				.and(dateSpecification);
+
+		Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+		List<OutpassRequest> requests = outpassRepository.findAll(finalSpecification, sort);
+
+		StringBuilder sb = new StringBuilder();
+		// UTF-8 BOM for Excel compatibility
+		sb.append('\uFEFF');
+
+		// Header row
+		sb.append(String.join(",",
+				"Pass Code",
+				"Student Name",
+				"Roll Number",
+				"Room Number",
+				"Branch",
+				"Department",
+				"Year of Study",
+				"Mobile Number",
+				"Place of Visit",
+				"Purpose",
+				"Reason",
+				"Departure Time",
+				"Expected Return Time",
+				"Status",
+				"Decided By",
+				"Decision Remark",
+				"Submitted At"
+		)).append("\r\n");
+
+		for (OutpassRequest r : requests) {
+			Student student = r.getStudent();
+			Staff staff = r.getDecidedByStaff();
+
+			String decidedBy = "";
+			String decisionRemark = "";
+			if (r.getStatus() != OutpassStatus.PENDING && staff != null) {
+				String roleStr = staff.getRole() != null ? " (" + formatStaffDesignation(staff.getRole()) + ")" : "";
+				decidedBy = (staff.getFullName() != null ? staff.getFullName() : "") + roleStr;
+			}
+
+			if (r.getStatus() == OutpassStatus.APPROVED) {
+				String designationLower = staff != null ? formatStaffDesignationLower(staff.getRole()) : "staff";
+				decisionRemark = "Approved by " + designationLower;
+			} else if (r.getStatus() == OutpassStatus.DENIED) {
+				decisionRemark = r.getDecisionRemark() != null ? r.getDecisionRemark() : "";
+			}
+
+			sb.append(String.join(",",
+					escapeCsv(r.getPassCode()),
+					escapeCsv(student != null ? student.getFullName() : ""),
+					escapeCsv(student != null ? student.getRollNumber() : ""),
+					escapeCsv(student != null ? student.getRoomNumber() : ""),
+					escapeCsv(student != null ? student.getBranch() : ""),
+					escapeCsv(student != null ? student.getDepartment() : ""),
+					escapeCsv(student != null ? student.getYearOfStudy() : ""),
+					escapeCsv(student != null ? student.getMobileNumber() : ""),
+					escapeCsv(r.getPlaceOfVisit()),
+					escapeCsv(r.getPurpose() != null ? r.getPurpose().name() : ""),
+					escapeCsv(r.getReason()),
+					escapeCsv(formatDateTime(r.getDepartureAt())),
+					escapeCsv(formatDateTime(r.getReturnAt())),
+					escapeCsv(r.getStatus() != null ? r.getStatus().name() : ""),
+					escapeCsv(decidedBy),
+					escapeCsv(decisionRemark),
+					escapeCsv(formatDateTime(r.getSubmittedAt()))
+			)).append("\r\n");
+		}
+
+		return sb.toString().getBytes(StandardCharsets.UTF_8);
+	}
 }

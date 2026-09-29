@@ -4,6 +4,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -107,6 +108,23 @@ public class OutpassController {
 
                 return ResponseEntity.ok(
                                 outpassService.getRequests(search, status, fromDate, toDate, pageable));
+        }
+
+        @GetMapping("/export")
+        @PreAuthorize("hasRole('SUPER_ADMIN')")
+        public ResponseEntity<byte[]> exportRequests(
+                        @RequestParam(required = false) String search,
+                        @RequestParam(required = false) OutpassStatus status,
+                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+                        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate) {
+
+                byte[] csvBytes = outpassService.exportRequestsToCsv(search, status, fromDate, toDate);
+                String filename = "hostelpass_outpass_report_" + LocalDate.now() + ".csv";
+
+                return ResponseEntity.ok()
+                                .header(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+                                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                                .body(csvBytes);
         }
 
         @PatchMapping("/{id}/approve")

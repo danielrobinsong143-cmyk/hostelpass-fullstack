@@ -266,6 +266,74 @@
   border-color: rgba(148, 163, 184, 0.14);
 }
 
+/* ============================================================
+   EXPORT CSV BUTTON
+   ============================================================ */
+
+.admin-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid #4338ca;
+  border-radius: 10px;
+  background: #4338ca;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(67, 56, 202, 0.2);
+  margin-left: auto;
+}
+
+.admin-export-btn:hover:not(:disabled) {
+  background: #3730a3;
+  border-color: #3730a3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(67, 56, 202, 0.3);
+}
+
+.admin-export-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.admin-export-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.export-spinner {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: export-spin 0.75s linear infinite;
+}
+
+@keyframes export-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+[data-theme="dark"] .admin-export-btn {
+  background: #4f46e5;
+  border-color: #6366f1;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .admin-export-btn:hover:not(:disabled) {
+  background: #4338ca;
+  border-color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+}
+
 /* Responsive adjustments */
 @media (max-width: 800px) {
   .admin-filter-row {
@@ -277,5 +345,10 @@
   }
   .clear-filters-btn {
     justify-content: center;
+  }
+  .admin-export-btn {
+    margin-left: 0;
+    justify-content: center;
+    width: 100%;
   }
 }

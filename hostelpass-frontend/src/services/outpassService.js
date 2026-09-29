@@ -69,3 +69,20 @@ export const getOutpassStats = async () => {
 export const getMyOutpassStats = async () => {
   return api.get("/outpass-requests/my/stats");
 };
+
+export const exportOutpassRequestsCsv = async ({
+  search = "",
+  status,
+  fromDate,
+  toDate,
+} = {}) => {
+  return api.get("/outpass-requests/export", {
+    params: {
+      search: search?.trim() ? search.trim() : undefined,
+      status: status || undefined,
+      fromDate: fromDate || undefined,
+      toDate: toDate || undefined,
+    },
+    responseType: "blob",
+  });
+};

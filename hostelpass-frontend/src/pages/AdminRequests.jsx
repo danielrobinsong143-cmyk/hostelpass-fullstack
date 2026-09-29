@@ -1,16 +1,19 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getOutpassRequests } from "../services/outpassService";
+import { getOutpassRequests, exportOutpassRequestsCsv } from "../services/outpassService";
 import Pagination from "../components/Pagination";
 import UiIcon from "../components/UiIcon";
 import { formatDecidedBy, formatDecisionRemark } from "../utils/outpassFormatters";
+import { AuthContext } from "../context/authContextDefinition";
 import "../styles/AdminRequests.css";
 
 function AdminRequests() {
+  const { principal } = useContext(AuthContext);
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -159,6 +162,51 @@ function AdminRequests() {
     setSearchParams({});
   };
 
+  const handleExportCsv = async () => {
+    if (isExporting || principal?.role !== "SUPER_ADMIN") return;
+    try {
+      setIsExporting(true);
+      setError("");
+
+      const response = await exportOutpassRequestsCsv({
+        search,
+        status,
+        fromDate,
+        toDate,
+      });
+
+      let filename = `hostelpass_outpass_report_${new Date().toISOString().split("T")[0]}.csv`;
+      const disposition =
+        response.headers?.["content-disposition"] ||
+        response.headers?.["Content-Disposition"];
+      if (disposition) {
+        const filenameMatch = disposition.match(/filename=["']?([^"';]+)["']?/i);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].trim();
+        }
+      }
+
+      const blob = new Blob([response.data], { type: "text/csv;charset=utf-8;" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to export outpass requests:", err);
+      setError(
+        err.response?.status === 403
+          ? "Unauthorized: Super Admin access required to export outpasses."
+          : "Failed to export outpass requests. Please try again."
+      );
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const hasActiveFilters = Boolean(status || search || fromDate || toDate);
 
   return (
@@ -256,6 +304,30 @@ function AdminRequests() {
               onClick={handleClearFilters}
             >
               <UiIcon name="close" size={14} /> Clear Filters
+            </button>
+          )}
+
+          {/* Export CSV Action (SUPER_ADMIN ONLY) */}
+          {principal?.role === "SUPER_ADMIN" && (
+            <button
+              type="button"
+              className="admin-export-btn"
+              onClick={handleExportCsv}
+              disabled={isExporting}
+              aria-label="Export filtered outpass requests to CSV"
+              title="Export matching outpasses to CSV"
+            >
+              {isExporting ? (
+                <>
+                  <span className="export-spinner" />
+                  <span>Exporting...</span>
+                </>
+              ) : (
+                <>
+                  <UiIcon name="download" size={15} />
+                  <span>Export CSV</span>
+                </>
+              )}
             </button>
           )}
         </div>
