@@ -40,8 +40,14 @@ public class AdminAuditLogService {
 
     private AuditLogResponse toResponse(AuditLog log) {
         String actorName = "System";
-        if (log.getActorStaff() != null && log.getActorStaff().getFullName() != null) {
-            actorName = log.getActorStaff().getFullName();
+        String actorRole = null;
+        if (log.getActorStaff() != null) {
+            if (log.getActorStaff().getFullName() != null) {
+                actorName = log.getActorStaff().getFullName();
+            }
+            if (log.getActorStaff().getRole() != null) {
+                actorRole = log.getActorStaff().getRole().name();
+            }
         }
 
         Long requestId = null;
@@ -60,6 +66,7 @@ public class AdminAuditLogService {
                 log.getId(),
                 requestId,
                 actorName,
+                actorRole,
                 log.getAction(),
                 log.getPreviousStatus(),
                 log.getNewStatus(),

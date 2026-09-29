@@ -225,9 +225,11 @@ public class OutpassService {
                 Staff staff = staffRepository.findById(staffId)
                                 .orElseThrow(() -> new ResourceNotFoundException("Staff not found"));
 
+                String approvalRemark = "Approved by " + formatStaffDesignationLower(staff.getRole());
+
                 entity.setStatus(OutpassStatus.APPROVED);
                 entity.setDecidedByStaff(staff);
-                entity.setDecisionRemark(request.getRemark());
+                entity.setDecisionRemark(approvalRemark);
                 entity.setDecidedAt(LocalDateTime.now());
 
                 OutpassRequest saved = outpassRepository.save(entity);
@@ -238,7 +240,7 @@ public class OutpassService {
                 auditLog.setAction(AuditAction.APPROVED);
                 auditLog.setPreviousStatus(OutpassStatus.PENDING.name());
                 auditLog.setNewStatus(OutpassStatus.APPROVED.name());
-                auditLog.setRemark(request.getRemark());
+                auditLog.setRemark(approvalRemark);
                 auditLog.setPerformedAt(LocalDateTime.now());
                 auditLogRepository.save(auditLog);
 

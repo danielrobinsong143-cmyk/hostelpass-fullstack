@@ -547,7 +547,11 @@ function AdminDashboard() {
                             <strong>
                               {log.actorStaffName} processed Request #{log.outpassRequestId}
                             </strong>
-                            <span>{log.remark ? `“${log.remark}”` : "No remark provided"}</span>
+                            <span>
+                              {formatDecisionRemark(log) !== "—"
+                                ? `“${formatDecisionRemark(log)}”`
+                                : "No remark provided"}
+                            </span>
                           </div>
                           <span className="admin-audit-transition">
                             {log.previousStatus} → {log.newStatus}

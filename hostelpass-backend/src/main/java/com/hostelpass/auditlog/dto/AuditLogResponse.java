@@ -22,6 +22,7 @@ public class AuditLogResponse {
     private Long id;
     private Long outpassRequestId;
     private String actorStaffName;
+    private String actorStaffRole;
     private AuditAction action;
     private String previousStatus;
     private String newStatus;
@@ -39,6 +40,6 @@ public class AuditLogResponse {
             String newStatus,
             String remark,
             LocalDateTime performedAt) {
-        this(id, outpassRequestId, actorStaffName, action, previousStatus, newStatus, remark, performedAt, null, null);
+        this(id, outpassRequestId, actorStaffName, null, action, previousStatus, newStatus, remark, performedAt, null, null);
     }
 }

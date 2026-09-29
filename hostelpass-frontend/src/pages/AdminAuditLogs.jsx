@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { getAdminAuditLogs } from "../services/adminAuditLogService";
 import Pagination from "../components/Pagination";
 import UiIcon from "../components/UiIcon";
+import { formatAuditDecisionRemark, formatDecidedBy } from "../utils/outpassFormatters";
 import "../styles/AdminAuditLogs.css";
 
 function formatDateTime(dateStr) {
@@ -333,8 +334,11 @@ function AdminAuditLogs() {
                         </span>
                       </td>
                       <td>
-                        <div className="audit-remark-preview" title={log.remark || "No remark provided"}>
-                          {log.remark ? `“${log.remark}”` : "—"}
+                        <div
+                          className="audit-remark-preview"
+                          title={formatAuditDecisionRemark(log) !== "—" ? formatAuditDecisionRemark(log) : "No remark provided"}
+                        >
+                          {formatAuditDecisionRemark(log) !== "—" ? `“${formatAuditDecisionRemark(log)}”` : "—"}
                         </div>
                       </td>
                       <td style={{ textAlign: "right" }} onClick={(e) => e.stopPropagation()}>
@@ -430,7 +434,7 @@ function AdminAuditLogs() {
                   <label>Decision Maker</label>
                   <strong style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     <UiIcon name="shield" size={14} />
-                    {selectedLog.actorStaffName}
+                    {formatDecidedBy(selectedLog)}
                   </strong>
                 </div>
 
@@ -452,7 +456,9 @@ function AdminAuditLogs() {
                 <div className="audit-modal-item audit-modal-item-full">
                   <label>Decision Remark</label>
                   <div className="audit-modal-remark-box">
-                    {selectedLog.remark ? `“${selectedLog.remark}”` : "No decision remark was provided."}
+                    {formatAuditDecisionRemark(selectedLog) !== "—"
+                      ? `“${formatAuditDecisionRemark(selectedLog)}”`
+                      : "No decision remark was provided."}
                   </div>
                 </div>
               </div>

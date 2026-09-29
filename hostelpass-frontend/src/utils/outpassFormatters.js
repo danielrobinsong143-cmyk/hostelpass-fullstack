@@ -34,22 +34,34 @@ export function formatStaffDesignationLower(role) {
   return roleMap[role.toUpperCase()] || role.toLowerCase().replace(/_/g, " ");
 }
 
-export function formatDecidedBy(request) {
-  if (!request?.decidedByStaffName) return "—";
-  const designation = formatStaffDesignation(request.decidedByStaffRole);
-  return designation
-    ? `${request.decidedByStaffName} (${designation})`
-    : request.decidedByStaffName;
+export function formatDecidedBy(item) {
+  if (!item) return "—";
+  const name = item.decidedByStaffName || item.actorStaffName;
+  if (!name) return "—";
+  const role = item.decidedByStaffRole || item.actorStaffRole;
+  const designation = formatStaffDesignation(role);
+  return designation ? `${name} (${designation})` : name;
 }
 
-export function formatDecisionRemark(request) {
-  if (!request) return "—";
-  if (request.status === "APPROVED") {
-    const designationLower = formatStaffDesignationLower(request.decidedByStaffRole);
+export function formatDecisionRemark(item) {
+  if (!item) return "—";
+  const isApproved =
+    item.status === "APPROVED" || item.action === "APPROVED";
+  const role = item.decidedByStaffRole || item.actorStaffRole;
+  if (isApproved) {
+    const designationLower = formatStaffDesignationLower(role);
     return `Approved by ${designationLower}`;
   }
-  if (request.status === "DENIED" || request.status === "REJECTED") {
-    return request.decisionRemark || "—";
+  const isDenied =
+    item.status === "DENIED" ||
+    item.status === "REJECTED" ||
+    item.action === "DENIED";
+  if (isDenied) {
+    return item.decisionRemark || item.remark || "—";
   }
-  return request.decisionRemark || "—";
+  return item.decisionRemark || item.remark || "—";
+}
+
+export function formatAuditDecisionRemark(auditLog) {
+  return formatDecisionRemark(auditLog);
 }
