@@ -9,6 +9,7 @@ import { getAdminStudents } from "../services/adminStudentService";
 import { getAdminStaff } from "../services/adminStaffService";
 import { getAdminAdmins } from "../services/adminAdminService";
 import { getAdminAuditLogs } from "../services/adminAuditLogService";
+import { formatDecidedBy, formatDecisionRemark } from "../utils/outpassFormatters";
 import "../styles/AdminDashboard.css";
 
 function formatDate(dateTime, options = {}) {
@@ -628,19 +629,19 @@ function AdminDashboard() {
                 <span>Detailed Reason</span>
                 <strong>{selectedRequest.reason || "No detailed reason provided."}</strong>
               </div>
-              {selectedRequest.decidedByStaffName && (
-                <div style={{ gridColumn: "span 2" }}>
-                  <span>Decided By</span>
-                  <strong>
-                    {selectedRequest.decidedByStaffName} at{" "}
-                    {formatDate(selectedRequest.decidedAt)}
-                  </strong>
-                  {selectedRequest.decisionRemark && (
-                    <p style={{ margin: "4px 0 0", fontSize: "11px", color: "#64748b" }}>
-                      Remark: {selectedRequest.decisionRemark}
-                    </p>
-                  )}
-                </div>
+              {selectedRequest.status !== "PENDING" && selectedRequest.decidedByStaffName && (
+                <>
+                  <div className="modal-decision-item">
+                    <span>Decided By</span>
+                    <strong>{formatDecidedBy(selectedRequest)}</strong>
+                  </div>
+                  <div className="modal-decision-item modal-full">
+                    <span>Decision Remark</span>
+                    <strong className="decision-remark-text">
+                      {formatDecisionRemark(selectedRequest)}
+                    </strong>
+                  </div>
+                </>
               )}
             </div>
 

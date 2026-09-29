@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import UiIcon from "../components/UiIcon";
 import { AuthContext } from "../context/authContextDefinition";
 import { getMyOutpassRequests, getMyOutpassStats } from "../services/outpassService";
+import { formatDecidedBy, formatDecisionRemark } from "../utils/outpassFormatters";
 import "../styles/StudentDashboard.css";
 
 const statusMeta = {
@@ -167,8 +168,18 @@ function StudentDashboard() {
               <div><span>Departure</span><strong>{formatDate(selectedRequest.departureAt)}</strong></div>
               <div><span>Return</span><strong>{formatDate(selectedRequest.returnAt)}</strong></div>
               <div><span>Submitted</span><strong>{formatDate(selectedRequest.submittedAt)}</strong></div>
-              <div><span>Decided by</span><strong>{selectedRequest.decidedByStaffName || "-"}</strong></div>
-              <div><span>Decision remark</span><strong>{selectedRequest.decisionRemark || "-"}</strong></div>
+              {selectedRequest.status !== "PENDING" && selectedRequest.decidedByStaffName && (
+                <>
+                  <div className="modal-decision-item">
+                    <span>Decided by</span>
+                    <strong>{formatDecidedBy(selectedRequest)}</strong>
+                  </div>
+                  <div className="modal-decision-item modal-full">
+                    <span>Decision remark</span>
+                    <strong className="decision-remark-text">{formatDecisionRemark(selectedRequest)}</strong>
+                  </div>
+                </>
+              )}
             </div>
             <button type="button" className="modal-close-action" onClick={() => setSelectedRequest(null)}>Close</button>
           </div>

@@ -335,6 +335,7 @@ public class OutpassService {
 
                                 // Decision details
                                 decidedBy != null ? decidedBy.getFullName() : null,
+                                decidedBy != null && decidedBy.getRole() != null ? decidedBy.getRole().name() : null,
                                 r.getDecisionRemark(),
                                 r.getSubmittedAt(),
                                 r.getDecidedAt());

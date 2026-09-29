@@ -87,6 +87,9 @@ button.stat-card:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rg
 .modal-details div { display: flex; flex-direction: column; gap: 5px; padding: 10px 12px; border-radius: 9px; background: #eef4fa; }
 .modal-details span { color: #8a98a9; font-size: 9px; font-weight: 800; letter-spacing: .75px; text-transform: uppercase; }
 .modal-details strong { color: #24344a; font-size: 12px; }
+.modal-details .modal-full { grid-column: 1 / -1; }
+.modal-details .modal-decision-item { border-left: 3px solid #3b82f6; background: #e8f1fc; }
+.decision-remark-text { font-size: 13px !important; line-height: 1.45; color: #1e293b !important; }
 .modal-close-action { width: 100%; min-height: 42px; margin-top: 20px; border: 0; border-radius: 9px; color: #fff; background: #102b4c; font-size: 12px; font-weight: 700; cursor: pointer; }
 .modal-close-action:hover { background: #1e4775; }
 [data-theme="dark"] .dashboard-heading h1, [data-theme="dark"] .panel-heading h2, [data-theme="dark"] .stat-copy strong, [data-theme="dark"] .dashboard-user-chip strong, [data-theme="dark"] .request-summary strong, [data-theme="dark"] .quick-action strong, [data-theme="dark"] .dashboard-empty-state h3 { color: #edf5ff; }
@@ -105,6 +108,8 @@ button.stat-card:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rg
 [data-theme="dark"] .modal-header { border-color: rgba(178, 207, 237, .16); }
 [data-theme="dark"] .modal-header h2, [data-theme="dark"] .modal-details strong { color: #edf5ff; }
 [data-theme="dark"] .modal-details div { background: rgba(88, 130, 174, .18); }
+[data-theme="dark"] .modal-details .modal-decision-item { border-left-color: #60a5fa; background: rgba(59, 130, 246, 0.22); }
+[data-theme="dark"] .decision-remark-text { color: #edf5ff !important; }
 [data-theme="dark"] .modal-details span, [data-theme="dark"] .modal-header span { color: #9caec1; }
 [data-theme="dark"] .close-button { color: #c6d5e5; background: rgba(121, 159, 199, .18); }
 @media (max-width: 1050px) { .dashboard-content-grid { grid-template-columns: 1fr; } .quick-actions-panel { min-height: auto; } .quick-action-list { display: grid; grid-template-columns: repeat(3, 1fr); } .quick-action { border-top: 0; border-left: 1px solid rgba(47, 86, 124, .09); } .quick-action:first-child { border-left: 0; } }

@@ -8,6 +8,7 @@ import {
 
 import "../styles/StaffRequests.css";
 import Pagination from "../components/Pagination";
+import { formatDecidedBy, formatDecisionRemark } from "../utils/outpassFormatters";
 
 function StaffRequests() {
   const [requests, setRequests] = useState([]);
@@ -526,26 +527,24 @@ function StaffRequests() {
               </div>
 
               {/* DECISION INFORMATION */}
-              {(selectedRequest.decidedByStaffName ||
-                selectedRequest.decisionRemark) && (
+              {selectedRequest.status !== "PENDING" &&
+                selectedRequest.decidedByStaffName && (
                 <>
                   <div className="modal-section-title full-width">
                     Decision Information
                   </div>
 
-                  {selectedRequest.decidedByStaffName && (
-                    <div className="modal-detail">
-                      <span>Decided By</span>
-                      <strong>{selectedRequest.decidedByStaffName}</strong>
-                    </div>
-                  )}
+                  <div className="modal-detail modal-decision-item">
+                    <span>Decided By</span>
+                    <strong>{formatDecidedBy(selectedRequest)}</strong>
+                  </div>
 
-                  {selectedRequest.decisionRemark && (
-                    <div className="modal-detail full-width">
-                      <span>Decision Remark</span>
-                      <strong>{selectedRequest.decisionRemark}</strong>
-                    </div>
-                  )}
+                  <div className="modal-detail full-width modal-decision-item">
+                    <span>Decision Remark</span>
+                    <strong className="decision-remark-text">
+                      {formatDecisionRemark(selectedRequest)}
+                    </strong>
+                  </div>
                 </>
               )}
             </div>

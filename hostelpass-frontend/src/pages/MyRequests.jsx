@@ -4,6 +4,7 @@ import {
   getMyOutpassRequests,
   cancelOutpassRequest,
 } from "../services/outpassService";
+import { formatDecidedBy, formatDecisionRemark } from "../utils/outpassFormatters";
 
 import "../styles/MyRequests.css";
 
@@ -495,15 +496,19 @@ function MyRequests() {
                 <strong>{formatDateTime(selectedRequest.submittedAt)}</strong>
               </div>
 
-              <div>
-                <span>DECIDED BY</span>
-                <strong>{selectedRequest.decidedByStaffName || "—"}</strong>
-              </div>
+              {selectedRequest.status !== "PENDING" && selectedRequest.decidedByStaffName && (
+                <>
+                  <div className="modal-decision-item">
+                    <span>DECIDED BY</span>
+                    <strong>{formatDecidedBy(selectedRequest)}</strong>
+                  </div>
 
-              <div className="modal-full">
-                <span>DECISION REMARK</span>
-                <strong>{selectedRequest.decisionRemark || "—"}</strong>
-              </div>
+                  <div className="modal-decision-item modal-full">
+                    <span>DECISION REMARK</span>
+                    <strong className="decision-remark-text">{formatDecisionRemark(selectedRequest)}</strong>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Cancel */}

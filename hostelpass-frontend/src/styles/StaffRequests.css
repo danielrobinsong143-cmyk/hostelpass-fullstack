@@ -875,6 +875,27 @@
   grid-column: 1 / -1;
 }
 
+.modal-decision-item {
+  border-left: 3px solid #3b82f6;
+  background: #f0f7ff;
+  padding: 10px 14px;
+  border-radius: 8px;
+}
+
+.decision-remark-text {
+  line-height: 1.45;
+  color: #1e293b;
+}
+
+[data-theme="dark"] .modal-decision-item {
+  border-left-color: #60a5fa;
+  background: rgba(59, 130, 246, 0.14);
+}
+
+[data-theme="dark"] .decision-remark-text {
+  color: #edf5ff;
+}
+
 /* ========================================
    MODAL FOOTER
 ======================================== */
