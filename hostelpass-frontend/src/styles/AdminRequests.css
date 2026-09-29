@@ -1,0 +1,83 @@
+@import "./StaffRequests.css";
+
+/* ============================================================
+   ADMIN REQUESTS SPECIFIC STYLES
+   Administrative Read-Only Inspection View
+   Extends StaffRequests.css tokens & responsive layout
+   ============================================================ */
+
+.admin-requests-page .page-label {
+  color: #4338ca !important;
+  letter-spacing: 1.4px;
+}
+
+.admin-requests-page .request-count strong {
+  color: #4338ca;
+}
+
+.admin-requests-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 14px;
+  border-top: 1px solid #eef2f6;
+  margin-top: 14px;
+}
+
+.admin-view-details-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 10px 16px;
+  border: 1px solid #dbeafe;
+  border-radius: 9px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.16s ease, border-color 0.16s ease, color 0.16s ease;
+}
+
+.admin-view-details-btn:hover {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1e40af;
+}
+
+.admin-modal-footer-readonly {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .admin-requests-page .page-label {
+  color: #a5b4fc !important;
+}
+
+[data-theme="dark"] .admin-requests-page .request-count strong {
+  color: #a5b4fc;
+}
+
+[data-theme="dark"] .admin-requests-card-footer {
+  border-color: rgba(148, 163, 184, 0.14);
+}
+
+[data-theme="dark"] .admin-view-details-btn {
+  background: rgba(37, 99, 235, 0.18);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: #93c5fd;
+}
+
+[data-theme="dark"] .admin-view-details-btn:hover {
+  background: rgba(37, 99, 235, 0.28);
+  border-color: rgba(59, 130, 246, 0.45);
+  color: #bfdbfe;
+}
+
+[data-theme="dark"] .admin-modal-footer-readonly {
+  border-color: rgba(148, 163, 184, 0.14);
+}

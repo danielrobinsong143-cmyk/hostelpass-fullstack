@@ -242,7 +242,7 @@ function AdminDashboard() {
               <button
                 type="button"
                 className="stat-card stat-card-blue"
-                onClick={() => navigate("/staff/requests")}
+                onClick={() => navigate("/admin/requests")}
               >
                 <span className="stat-icon">
                   <UiIcon name="pass" size={21} />
@@ -258,7 +258,7 @@ function AdminDashboard() {
               <button
                 type="button"
                 className="stat-card stat-card-amber"
-                onClick={() => navigate("/staff/requests?status=PENDING")}
+                onClick={() => navigate("/admin/requests?status=PENDING")}
               >
                 <span className="stat-icon">
                   <UiIcon name="clock" size={21} />
@@ -274,7 +274,7 @@ function AdminDashboard() {
               <button
                 type="button"
                 className="stat-card stat-card-green"
-                onClick={() => navigate("/staff/requests?status=APPROVED")}
+                onClick={() => navigate("/admin/requests?status=APPROVED")}
               >
                 <span className="stat-icon">
                   <UiIcon name="check" size={21} />
@@ -290,7 +290,7 @@ function AdminDashboard() {
               <button
                 type="button"
                 className="stat-card stat-card-red"
-                onClick={() => navigate("/staff/requests?status=DENIED")}
+                onClick={() => navigate("/admin/requests?status=DENIED")}
               >
                 <span className="stat-icon">
                   <UiIcon name="x" size={21} />
@@ -387,10 +387,10 @@ function AdminDashboard() {
 
               <div
                 className="admin-nav-card"
-                onClick={() => navigate("/staff/requests")}
+                onClick={() => navigate("/admin/requests")}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => e.key === "Enter" && navigate("/staff/requests")}
+                onKeyDown={(e) => e.key === "Enter" && navigate("/admin/requests")}
               >
                 <div className="admin-nav-card-top">
                   <span className="admin-nav-icon stat-card-blue">
@@ -466,7 +466,7 @@ function AdminDashboard() {
                     <button
                       type="button"
                       className="panel-link"
-                      onClick={() => navigate("/staff/requests")}
+                      onClick={() => navigate("/admin/requests")}
                     >
                       View all requests <UiIcon name="arrow" size={14} />
                     </button>
